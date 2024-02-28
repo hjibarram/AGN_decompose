@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+import click
+import cloup
+from cloup.constraints import mutually_exclusive, RequireExactly, IsSet, If
+import numpy as np
+from astropy.io import fits
+import warnings
+warnings.filterwarnings("ignore")
+from AGNdecomp.tools.prof_fit import prof_ana
+from AGNdecomp.tools.models import get_model
+from AGNdecomp.tools.tools import plot_outputs
+
+
+@click.group('run_agndec', short_help='CLI for the AGN spectra decomposition')
+def cli():
+    pass
+
+
+@cloup.command(short_help='Run the AGN decomposition')
+@click.option('-n', '--name', type=str, help='name of the IFS cube')
+@click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
+@click.option('-c', '--ncpus', type=int, default=10, help='number of CPUs')
+@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
+@click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis')
+@click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis')
+@click.option('-f', '--nofull',is_flag=True, default=False, help='only run a single run')
+@click.option('-r', '--clean',is_flag=True, default=False, help='generate a clean run')
+@click.option('-e', '--ellipse',is_flag=True, default=False, help='fit the geometry of the psf')
+@click.option('-a', '--psamp',type=int, default=10, help='spectral sampling of the previus phase, default 10')
+@click.option('-i', '--fcenter',is_flag=True, default=False, help='interpolate the centroid')
+@click.option('-u', '--intpsf',is_flag=True, default=False, help='interpolate the psf value')
+@click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
+def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,fcenter,intpsf,path_out):
+    dir_cube=path[0]
+    dir_out=path_out#[0]
+    if nameb == '':
+        cube_file='NAME'.replace('NAME',name)
+    else:
+        cube_file=nameb.replace('NAME',name)#'NAME.cube.fits.gz'
+    [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, 0, header=True)
+    cube_dataE=fits.getdata(dir_cube+cube_file, 1, header=False)
+    cube_dataE[np.where(cube_dataE == 1)]=np.nan
+    if clean:
+        str_p=False
+    else:
+        str_p=True
+    if test:
+        local=True
+    else:
+        local=False
+    if intpsf:
+        psft=False
+    else:
+        psft=True
+    if nofull or local:
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,moffat=True,mc=True,ncpu=ncpus,
+             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter)
+    else:
+        psamp=sampling
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
+             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=True,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=False)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
+             sp=1,bt=26.0,psf_t=True,str_p=True,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter)
+        get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,cosmetic=False,vt='_sp1',corr=False)
+        plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=1)
+
+# register full fit command
+cli.add_command(run)
+
+@cli.command('model', short_help='obtain the cube model')
+#@click.argument('filename', type=click.Path(exists=True))
+@click.option('-n', '--name', type=str, help='name of the IFS cube')
+@click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
+@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
+@click.option('-c', '--cosmetic',is_flag=True, default=False, help='apply cosmetics')
+@click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
+@click.option('-t', '--pathc_out', type=str, default='', help='path for the save cube')
+def model(name,path,nameb,cosmetic,path_out,pathc_out):
+    dir_cube=path[0]
+    dir_out=path_out
+    dir_cube_m=pathc_out
+    get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,cosmetic=cosmetic,vt='_sp1',corr=False)
+
+    
+@cli.command('plots', short_help='obtain the final plots')
+@click.option('-n', '--name', type=str, help='name of the IFS cube')
+@click.option('-a', '--aperture', type=float, default=1.5, help='aperture radius, default 1.5 arcsec')
+@click.option('-r', '--rapos', type=str, default='', help='ra position in h:m:s.s, default None')
+@click.option('-d', '--decpos', type=str, default='', help='dec position in d:m:s.s, default None')
+@click.option('-y', '--path_out', type=str, default='', help='path of the output cubes')
+def plots(name,aperture,rapos,decpos,path_out):
+    dir_out=path_out
+    plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos)
+
+#cli.add_command(model)
+
+
+if __name__ == "__main__":
+    cli()
