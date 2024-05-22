@@ -282,8 +282,8 @@ def moffat_model0(theta, x_t=0, y_t=0, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=Fal
     else:
         At,dx,dy,Io,bn,Re,ns,ds_t=theta
         #e,th0=0,0
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-        #r2=(x_t-dx)**2.0+(y_t-dy)**2.0
+        #r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
+        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
     spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
     r1=np.sqrt(r2)
     #tht=np.arctan2(y_t-dy,x_t-dx)
