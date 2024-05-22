@@ -1,0 +1,3 @@
+ulimit -n 2000
+cd WORKING_PATH/
+/home/USER/.local/bin/run_agndec run --name NAMECUBE --path PATH_CUBE/ --ncpus NCPUS --nameb=NAMESTR.cube.fits.gz --verbose --sampling 20 --ellipse --fcenter --clean --path_out outputs-files/
