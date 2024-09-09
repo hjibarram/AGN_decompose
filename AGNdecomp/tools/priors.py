@@ -58,8 +58,8 @@ def lnlike_moffat2_s(theta, spec, specE, x_t, y_t, ds_m, db_m, dx, dy, e_m, tht_
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
 
-def lnlike_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, bn, ns, e_m, tht_m, ellip, dxt, dyt, fcenter):
-    model=mod.moffat_model2(theta, x_t=x_t, y_t=y_t, ds_t=ds_m, be_t=db_m, bn=bn, ns=ns, e_m=e_m, tht_m=tht_m, ellip=ellip, dxt=dxt, dyt=dyt, fcenter=fcenter)
+def lnlike_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, bn, ns, e_m, tht_m, ellip, dxt, dyt, fcenter, re_int, Re_c):
+    model=mod.moffat_model2(theta, x_t=x_t, y_t=y_t, ds_t=ds_m, be_t=db_m, bn=bn, ns=ns, e_m=e_m, tht_m=tht_m, ellip=ellip, dxt=dxt, dyt=dyt, fcenter=fcenter, re_int=re_int, Re_c=Re_c)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
 
@@ -221,33 +221,61 @@ def lnprior_mofft2_s(theta, At1=20):
     else:
         return -np.inf    
 
-def lnprior_mofft2(theta, At1=20, ellip=False, fcenter=False):
+def lnprior_mofft2(theta, At1=20, ellip=False, fcenter=False, re_int=False):
     if ellip:
         if fcenter:
-            At,Io,Re,e,th0=theta
-            if ((At >= 0) and (At < At1)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
-                return 0.0
+            if re_int:
+                At,Io,e,th0=theta
+                if ((At >= 0) and (At < At1)) and (Io >= 0) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
+                    return 0.0
+                else:
+                    return -np.inf
             else:
-                return -np.inf
+                At,Io,Re,e,th0=theta
+                if ((At >= 0) and (At < At1)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
+                    return 0.0
+                else:
+                    return -np.inf
         else:
-            At,dx,dy,Io,Re,e,th0=theta
-            if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
-                return 0.0
+            if re_int:
+                At,dx,dy,Io,e,th0=theta
+                if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
+                    return 0.0
+                else:
+                    return -np.inf
             else:
-                return -np.inf
+                At,dx,dy,Io,Re,e,th0=theta
+                if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180)):                 
+                    return 0.0
+                else:
+                    return -np.inf
     else:
         if fcenter:
-            At,Io,Re=theta
-            if ((At >= 0) and (At < At1)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)):                 
-                return 0.0
+            if re_int:
+                At,Io=theta
+                if ((At >= 0) and (At < At1)) and (Io >= 0):                 
+                    return 0.0
+                else:
+                    return -np.inf
             else:
-                return -np.inf
+                At,Io,Re=theta
+                if ((At >= 0) and (At < At1)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)):                 
+                    return 0.0
+                else:
+                    return -np.inf
         else:
-            At,dx,dy,Io,Re=theta
-            if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)):               
-                return 0.0
+            if re_int:
+                At,dx,dy,Io=theta
+                if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0):               
+                    return 0.0
+                else:
+                    return -np.inf
             else:
-                return -np.inf
+                At,dx,dy,Io,Re=theta
+                if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)):               
+                    return 0.0
+                else:
+                    return -np.inf
     
 def lnprior_mofft0_s(theta, At1=20, beta=True, ellip=False):
     if beta:
@@ -400,12 +428,12 @@ def lnprob_moffat2_s(theta, spec, specE, x_t, y_t, ds_m, db_m, At, dx, dy, e_t, 
     else:
         return lp + lnlike_moffat2_s(theta, spec, specE, x_t, y_t, ds_m, db_m, dx, dy, e_t, tht_t, ellip) 
 
-def lnprob_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, At, bn, ns, e_t, tht_t, ellip, dxt, dyt, fcenter):
-    lp = lnprior_mofft2(theta, At1=At, ellip=ellip, fcenter=fcenter)
+def lnprob_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, At, bn, ns, e_t, tht_t, ellip, Re_c, re_int, dxt, dyt, fcenter):
+    lp = lnprior_mofft2(theta, At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
     if not np.isfinite(lp):
         return -np.inf
     else:
-        return lp + lnlike_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, bn, ns, e_t, tht_t, ellip, dxt, dyt, fcenter)  
+        return lp + lnlike_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, bn, ns, e_t, tht_t, ellip, dxt, dyt, fcenter, re_int, Re_c)  
 
 def lnprob_moffat0_s(theta, spec, specE, x_t, y_t, db_m, At, e_t, tht_t, beta, ellip):
     lp = lnprior_mofft0_s(theta, At1=At, beta=beta, ellip=ellip)

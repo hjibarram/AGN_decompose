@@ -59,7 +59,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plot_f=False,beta=True,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4):#ds_m=64.82#db_m=2.064,ds_m=3.47
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4):#ds_m=64.82#db_m=2.064,ds_m=3.47
     #if singlepsf:
     #    Re_c=100
     #sys.exit()
@@ -171,7 +171,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                 elif singlepsf:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
                 else:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+                    #data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
              #                 spec,   specE, x_t, y_t, ds_m, db_m, At,   bn,   ns
         else:
             if psft:
@@ -234,14 +235,26 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                     else:
                         if ellip:
                             if fcenter:
-                                initial = np.array([At*0.9, At*0.1, 3, 0.0, 0.0])
+                                if re_int:
+                                    initial = np.array([At*0.9, At*0.1, 0.0, 0.0])
+                                else:
+                                    initial = np.array([At*0.9, At*0.1, 3, 0.0, 0.0])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 0.0, 0.0])
+                                if re_int:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.0, 0.0])
+                                else:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 0.0, 0.0])
                         else:
                             if fcenter:
-                                initial = np.array([At*0.9, At*0.1, 3])
+                                if re_int:
+                                    initial = np.array([At*0.9, At*0.1])
+                                else:
+                                    initial = np.array([At*0.9, At*0.1, 3])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3])
+                                if re_int:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1])
+                                else:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3])
             else:
                 if psft:
                     if ring:
@@ -383,18 +396,34 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                     else:
                         if ellip:
                             if fcenter:
-                                At0,Io_m,Re_m,e_m,tht_m=theta_max
+                                if re_int:
+                                    At0,Io_m,e_m,tht_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,Io_m,Re_m,e_m,tht_m=theta_max
                                 dx_m=pi_x-min_in[1]
                                 dy_m=pi_y-min_in[0] 
                             else:
-                                At0,dx_m,dy_m,Io_m,Re_m,e_m,tht_m=theta_max
+                                if re_int:
+                                    At0,dx_m,dy_m,Io_m,e_m,tht_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,dx_m,dy_m,Io_m,Re_m,e_m,tht_m=theta_max
                         else:
                             if fcenter:
-                                At0,Io_m,Re_m=theta_max
+                                if re_int:
+                                    At0,Io_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,Io_m,Re_m=theta_max
                                 dx_m=pi_x-min_in[1]
                                 dy_m=pi_y-min_in[0] 
                             else:
-                                At0,dx_m,dy_m,Io_m,Re_m=theta_max
+                                if re_int:
+                                    At0,dx_m,dy_m,Io_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,dx_m,dy_m,Io_m,Re_m=theta_max
                 #dx_m=pi_x-min_in[1]
                 #dy_m=pi_y-min_in[0]
                 bn_m=bs_c
@@ -576,14 +605,26 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                             else:
                                 if ellip:
                                     if fcenter:
-                                        labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$I_o$',r'$e$',r'$\theta$']
+                                        else:
+                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$e$',r'$\theta$']
+                                        else:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
                                 else:
                                     if fcenter:
-                                        labels = [r'$A_t$',r'$I_o$',r'$R_e$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$I_o$']
+                                        else:
+                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$']
                                     else:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$']
+                                        else:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$']
                     else:
                         if psft:
                             if ring:

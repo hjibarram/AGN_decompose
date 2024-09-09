@@ -3,5 +3,5 @@ import numpy as np
 globally across the AGNdecomp modules
 """
 
-__version__ = 'AGNdecomp v1.0.0'
+__version__ = 'AGNdecomp v1.1.0'
 
