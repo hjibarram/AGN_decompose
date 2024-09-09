@@ -61,7 +61,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
 
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4):#ds_m=64.82#db_m=2.064,ds_m=3.47
     #if singlepsf:
-    #    Re_c=100
+    #    Re_c=100 
     #sys.exit()
     nx,ny=pf_map.shape
     if trip:
