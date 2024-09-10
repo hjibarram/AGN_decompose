@@ -429,7 +429,7 @@ def lnprob_moffat2_s(theta, spec, specE, x_t, y_t, ds_m, db_m, At, dx, dy, e_t, 
         return lp + lnlike_moffat2_s(theta, spec, specE, x_t, y_t, ds_m, db_m, dx, dy, e_t, tht_t, ellip) 
 
 def lnprob_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, At, bn, ns, e_t, tht_t, ellip, Re_c, re_int, dxt, dyt, fcenter):
-    lp = lnprior_mofft2(theta, At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
+    lp = lnprior_mofft2(theta, At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int) 
     if not np.isfinite(lp):
         return -np.inf
     else:
