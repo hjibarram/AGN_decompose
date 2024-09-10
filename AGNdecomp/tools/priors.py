@@ -48,7 +48,7 @@ def lnlike_moffat3_s(theta, spec, specE, x_t, y_t, db_m, dx, dy, e_m, tht_m, al_
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
 
-def lnlike_moffat3(theta, spec, specE, x_t, y_t, db_m, bn, ns, e_m, tht_m, ellip, dxt, dyt, fcenter):
+def lnlike_moffat3(theta, spec, specE, x_t, y_t, db_m, bn, ns, e_m, tht_m, ellip, dxt, dyt, fcenter): 
     model=mod.moffat_model3(theta, x_t=x_t, y_t=y_t, be_t=db_m, bn=bn, ns=ns, e_m=e_m, tht_m=tht_m, ellip=ellip, dxt=dxt, dyt=dyt, fcenter=fcenter)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
@@ -410,7 +410,7 @@ def lnprob_ring(theta, spec, specE, x_t, y_t, At, ds_m, ro_m, dx, dy):
 def lnprob_moffat3_s(theta, spec, specE, x_t, y_t, db_m, At, dx, dy, e_t, tht_t, beta, ellip):
     lp = lnprior_mofft3_s(theta, At1=At, beta=beta, ellip=ellip)#alpha=alpha
     if not np.isfinite(lp):
-        return -np.inf
+        return -np.inf 
     else:
         return lp + lnlike_moffat3_s(theta, spec, specE, x_t, y_t, db_m, dx, dy, e_t, tht_t, 5.0, beta, ellip, True) #alpha
 

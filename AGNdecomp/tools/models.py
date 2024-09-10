@@ -233,7 +233,7 @@ def moffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0, e_
     if ellip:
         if fcenter:
             if re_int:
-                At,Io,e_t,tht_t=theta
+                At,Io,e_t,tht_t=theta 
                 Re=Re_c
             else:
                 At,Io,Re,e_t,tht_t=theta

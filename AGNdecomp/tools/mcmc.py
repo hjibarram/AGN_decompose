@@ -293,7 +293,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
         p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
         if moffat:
             if plot_f:
-                tim=True
+                tim=True 
             else:
                 tim=False
             tim=True    
