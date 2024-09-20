@@ -193,20 +193,36 @@ def moffat_model3_s(theta, x_t=0, y_t=0, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False):
+def moffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
     if ellip:
         if fcenter:
-            At,Io,Re,ds_t,e_t,tht_t=theta
+            if re_int:
+                At,Io,ds_t,e_t,tht_t=theta
+                Re=Re_c
+            else:
+                At,Io,Re,ds_t,e_t,tht_t=theta
             r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_t,tht_t) 
         else:
-            At,dx,dy,Io,Re,ds_t,e_t,tht_t=theta
+            if re_int:
+                At,dx,dy,Io,ds_t,e_t,tht_t=theta
+                Re=Re_c
+            else:
+                At,dx,dy,Io,Re,ds_t,e_t,tht_t=theta
             r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
     else:
         if fcenter:
-            At,Io,Re,ds_t=theta
+            if re_int:
+                At,Io,ds_t=theta
+                Re=Re_c
+            else:
+                At,Io,Re,ds_t=theta
             r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_m,tht_m)
         else:
-            At,dx,dy,Io,Re,ds_t=theta
+            if re_int:
+                At,dx,dy,Io,ds_t=theta
+                Re=Re_c
+            else:
+                At,dx,dy,Io,Re,ds_t=theta
             r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
     r2=r2**2.0  
     spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    

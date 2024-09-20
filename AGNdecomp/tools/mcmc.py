@@ -158,7 +158,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                 else:
                     #print("B")
                     #if fcenter:
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)                    
+                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
                     #else:
                     #    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip)
              #                    spec,   specE, x_t, y_t, db_m, At,   bn,   ns
@@ -219,14 +220,26 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                     else:
                         if ellip:
                             if fcenter:
-                                initial = np.array([At*0.9, At*0.1, 3, 14.8, 0.0, 0.0])
+                                if re_int:
+                                    initial = np.array([At*0.9, At*0.1, 14.8, 0.0, 0.0])
+                                else:
+                                    initial = np.array([At*0.9, At*0.1, 3, 14.8, 0.0, 0.0])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8, 0.0, 0.0])
+                                if re_int:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 14.8, 0.0, 0.0])
+                                else:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8, 0.0, 0.0])
                         else:
                             if fcenter:
-                                initial = np.array([At*0.9, At*0.1, 3, 14.8])
+                                if re_int:
+                                    initial = np.array([At*0.9, At*0.1, 14.8])
+                                else:
+                                    initial = np.array([At*0.9, At*0.1, 3, 14.8])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8])
+                                if re_int:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 14.8])
+                                else:
+                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 3])  
@@ -367,18 +380,34 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                     else:
                         if ellip:
                             if fcenter:
-                                At0,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
+                                if re_int:
+                                    At0,Io_m,ds_m,e_m,tht_m=theta_max
+                                    Re_m=Re_c
+                                else:    
+                                    At0,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
                                 dx_m=pi_x-min_in[1]
                                 dy_m=pi_y-min_in[0]  
                             else:
-                                At0,dx_m,dy_m,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
+                                if re_int:
+                                    At0,dx_m,dy_m,Io_m,ds_m,e_m,tht_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,dx_m,dy_m,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
                         else:
                             if fcenter:
-                                At0,Io_m,Re_m,ds_m=theta_max
+                                if re_int:
+                                    At0,Io_m,ds_m=theta_max
+                                    Re_m=Re_c
+                                else:    
+                                    At0,Io_m,Re_m,ds_m=theta_max
                                 dx_m=pi_x-min_in[1]
                                 dy_m=pi_y-min_in[0]  
                             else:
-                                At0,dx_m,dy_m,Io_m,Re_m,ds_m=theta_max
+                                if re_int:
+                                    At0,dx_m,dy_m,Io_m,ds_m=theta_max
+                                    Re_m=Re_c
+                                else:
+                                    At0,dx_m,dy_m,Io_m,Re_m,ds_m=theta_max
                 else:
                     if ring:
                         At0,Io_m,Re_m=theta_max
@@ -589,14 +618,26 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                             else:
                                 if ellip:
                                     if fcenter:
-                                        labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        else:
+                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        else:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
                                 else:
                                     if fcenter:
-                                        labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$I_o$',r'$\alpha$']
+                                        else:
+                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$']
                                     else:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$']
+                                        if re_int:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$']
+                                        else:
+                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$']
                         else:
                             if ring:
                                 labels = ['At','Io','Re']
