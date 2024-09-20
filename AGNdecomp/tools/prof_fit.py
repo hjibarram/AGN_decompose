@@ -190,7 +190,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                 else:
                     bs_c=p_bs(wave_1)    
                 #bs_c=p_bs(wave_1)
-                    Re_c=p_Re(wave_1)
+                    Re_c=p_Re(wave_1)/dpix
                     ns_c=p_ns(wave_1)
                     if ellip:
                         et_c=p_eli(wave_1)
