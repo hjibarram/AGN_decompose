@@ -46,10 +46,10 @@ def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,f
     [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, head_dat, header=True)
     try:
         cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
-    else:
+    except:
         print('Warrning, No error extension found, using the scaled data as error')
         cube_dataE=cube_data*0.1
-        
+
     cube_dataE[np.where(cube_dataE == 1)]=np.nan
     if clean:
         str_p=False
