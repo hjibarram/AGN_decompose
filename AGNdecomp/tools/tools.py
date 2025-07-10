@@ -67,16 +67,6 @@ def sersic_enc_lum(r, Ie, re, n):
     x = b_s(n) * (r/re)**(1.0/n)
     return sersic_lum(Ie, re, n) * gammainc(2*n, x)
 
-def wfits_ext(name,hlist):
-    sycall("rm "+name+'.gz')
-    if ptt.exists(name) == False:
-        hlist.writeto(name)
-    else:
-        name1=name.replace("\ "," ")
-        name1=name1.replace(" ","\ ")
-        sycall("rm "+name1)
-        hlist.writeto(name)
-
 def sycall(comand):
     import os
     linp=comand

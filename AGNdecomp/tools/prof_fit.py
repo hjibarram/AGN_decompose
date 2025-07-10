@@ -26,11 +26,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
         tpt='_trip'
     else:
         tpt=''
-    #p_ds=get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=7,out_p=True,deg=5,tp=tpt+vas)    
     if str_p:
-        #
         try:
-        #if True:
             if singlepsf:
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tpt+vas)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tpt+vas)
@@ -58,8 +55,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                 p_ls=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=15,tp='_trip',convt=True)#sigma=20
             str_p=True
         except:
-            str_p=False
-    #print(str_p)        
+            str_p=False      
     try:
         dx=np.sqrt((hdr['CD1_1'])**2.0+(hdr['CD1_2'])**2.0)*3600.0
         dy=np.sqrt((hdr['CD2_1'])**2.0+(hdr['CD2_2'])**2.0)*3600.0
@@ -71,7 +67,6 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
             dx=hdr['CDELT1']*3600.
             dy=hdr['CDELT2']*3600.
     dpix=(np.abs(dx)+np.abs(dy))/2.0    
-    #print(dpix)
     crpix=hdr["CRPIX3"]
     try:
         cdelt=hdr["CD3_3"]
@@ -132,7 +127,6 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                         ro_i=2.0
                     psf_coef=0
                 else:
-                    #pt=get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=7,out_p=True,deg=5)   
                     if psft == False:#singlepsf and 
                         psf_coef=p_ds(wave_1)
                     else: 
@@ -148,7 +142,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                     ro_i=p_ro(wave_1)  
                     psf_coef=0
                 else:
-                    if psft == False:#singlepsf and 
+                    if psft == False:
                         psf_coef=p_ds(wave_1)
                     else:
                         pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
@@ -177,13 +171,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                         Re_c=100
                     if ellip:
                         et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)#147 
+                        th_c=p_tht(wave_1)
                         ellip=False  
                         et=1
                     else:
                         if et==1:
                             et_c=p_eli(wave_1)
-                            th_c=p_tht(wave_1)#147 
+                            th_c=p_tht(wave_1)
                         else:
                             et_c=0
                             th_c=0    
@@ -194,13 +188,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                     ns_c=p_ns(wave_1)
                     if ellip:
                         et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)#147 
+                        th_c=p_tht(wave_1)
                         ellip=False
                         et=1
                     else: 
                         if et==1:
                             et_c=p_eli(wave_1)
-                            th_c=p_tht(wave_1)#147 
+                            th_c=p_tht(wave_1)
                         else:
                             et_c=0
                             th_c=0    
@@ -216,9 +210,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                 th_c=0   
             if pi_x == 0 and pi_y == 0:
                 fcenter=False    
-            #print(pi_y,pi_x)               
             if moffat:
-                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,ring=ring,trip=trip,sig=sig,fcenter=fcenter,beta=beta,ellip=ellip,re_int=re_int,singlepsf=singlepsf,moffat=moffat,mc=mc,ncpu=ncpu,db_m=bt,psf_coef=psf_coef,pi_x=pi_x,pi_y=pi_y,bs_c=bs_c,Re_c=Re_c,ns_c=ns_c,psft=psft,ro_i=ro_i,ds_i=ds_i,Lt_c=Lt_c,e_m=et_c,tht_m=th_c)#,ds_m=72.2)#comentar parametros db_m,ds_m 
+                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,ring=ring,trip=trip,sig=sig,fcenter=fcenter,beta=beta,ellip=ellip,re_int=re_int,singlepsf=singlepsf,moffat=moffat,mc=mc,ncpu=ncpu,db_m=bt,psf_coef=psf_coef,pi_x=pi_x,pi_y=pi_y,bs_c=bs_c,Re_c=Re_c,ns_c=ns_c,psft=psft,ro_i=ro_i,ds_i=ds_i,Lt_c=Lt_c,e_m=et_c,tht_m=th_c) 
             else:
                 dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,sig=sig,mc=mc,ncpu=ncpu)
             sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
@@ -246,67 +239,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
             map1=np.nanmean(cube[0:sp,:,:],axis=0)
             map1e=np.nanmean(cubeE[0:sp,:,:],axis=0)
             wave_1=np.nanmean(wave_f[0:sp])
-            #map1=cube[214,:,:]
-            #map1e=cubeE[214,:,:]
-            #wave_1=wave_f[214]
-            #map1=cube[920,:,:]
-            #map1e=cubeE[920,:,:]
-            #wave_1=wave_f[920]
-#            map1=cube[2147,:,:]#
-#            map1e=cubeE[2147,:,:]#2372
-#            wave_1=wave_f[2147]
-        #    map1=cube[2447,:,:]#
-        #    map1e=cubeE[2447,:,:]#2372
-        #    wave_1=wave_f[2447]
-#            map1=cube[2316,:,:]#
-#            map1e=cubeE[2316,:,:]#2372
-#            wave_1=wave_f[2316]   
-            #map1=cube[2095,:,:]#       # Este
-            #map1e=cubeE[2095,:,:]#2372 # Este
-            #wave_1=wave_f[2095]        # Este
-#            map1=cube[2053,:,:]#
-#            map1e=cubeE[2053,:,:]#2372
-#            wave_1=wave_f[2053]               
-#            map1=cube[2267,:,:]#       # Este
-#            map1e=cubeE[2267,:,:]#2372 # Este
-#            wave_1=wave_f[2267]        # Este
-#            map1=cube[2119,:,:]#       # Este
-#            map1e=cubeE[2119,:,:]#2372 # Este
-#            wave_1=wave_f[2119]        # Este      
-#            map1=cube[2085,:,:]#       # Este
-#            map1e=cubeE[2085,:,:]#2372 # Este
-#            wave_1=wave_f[2085]        # Este                        
-#            map1=cube[2479,:,:]#
-#            map1e=cubeE[2479,:,:]#2372
-#            wave_1=wave_f[2479]
             ntw=np.where((wave_f > 4850) & (wave_f < 5150))[0]
             map1=np.nanmean(cube[ntw,:,:],axis=0)
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
             if ring:
-                pi_x=np.nanmean(pia_x[0:sp])
-                pi_y=np.nanmean(pia_y[0:sp])
-                pi_x=pia_x[214]#
-                pi_y=pia_y[214]
-#                pi_x=pia_x[920]
-#                pi_y=pia_y[920]
-#                pi_x=pia_x[2147]
-#                pi_y=pia_y[2147]
-        #        pi_x=pia_x[2447]
-        #        pi_y=pia_y[2447]     
-#                pi_x=pia_x[2316]
-#                pi_y=pia_y[2316]      
-                #pi_x=pia_x[2095] # Este
-                #pi_y=pia_y[2095] # Este     
-#                pi_x=pia_x[2053]
-#                pi_y=pia_y[2053]
-                pi_x=pia_x[2267] #2123 Este
-                pi_y=pia_y[2267] # Este
-                pi_x=pia_x[2119] #2123 Este
-                pi_y=pia_y[2119] # Este                
-#                pi_x=pia_x[2479]
-#                pi_y=pia_y[2479]                                     
-            print(wave_1)
+                pi_x=np.nanmean(pia_x[ntw])
+                pi_y=np.nanmean(pia_y[ntw])
             if psf_t:
                 if ring:
                     psf_coef=0
@@ -318,12 +257,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
                         psf_coef=p_ds(wave_1)
                     else:   
                         psf_coef=pt(wave_1)/dpix
-                    #print(psf_coef,psft)
                     ds_i=0
                     ro_i=0
             else:
                 if ring:
-                    print(name)
                     pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=7,out_p=False,deg=5,tp='_ring')
                     ds_i=pt(wave_1)
                     pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=8,out_p=False,deg=5,tp='_ring')

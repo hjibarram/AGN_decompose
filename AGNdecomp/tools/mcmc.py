@@ -59,17 +59,42 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4):#ds_m=64.82#db_m=2.064,ds_m=3.47
-    #if singlepsf:
-    #    Re_c=100 
-    #sys.exit()
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
+    if len(valsT):
+        if 'ds_i' in valsT:
+            ds_i=valsT['ds_i']
+        if 'db_m' in valsT:
+            db_m=valsT['db_m']
+        if 'ro_i' in valsT:
+            ro_i=valsT['ro_i']
+        if 'psf_coef' in valsT:
+            psf_coef=valsT['psf_coef']
+        if 'e_m' in valsT:
+            e_m=valsT['e_m']
+        if 'tht_m' in valsT:
+            tht_m=valsT['tht_m']
+        if 'pi_x' in valsT:
+            pi_x=valsT['pi_x']
+        if 'pi_y' in valsT:
+            pi_y=valsT['pi_y']
+        if 'bs_c' in valsT:
+            bs_c=valsT['bs_c']
+        if 'Re_c' in valsT:
+            Re_c=valsT['Re_c']
+        if 'ns_c' in valsT:
+            ns_c=valsT['ns_c']
+        if 'Lt_c' in valsT:
+            Lt_c=valsT['Lt_c']
+        if 'dxo' in valsT:
+            dxo=valsT['dxo']
+        if 'dyo' in valsT:
+            dyo=valsT['dyo']    
     nx,ny=pf_map.shape
     if trip:
         ring=False
     if db_m > 0 and psf_coef > 0:
         if moffat:
             ds_m=psf_coef/(2.0*np.sqrt(2.0**(1./db_m)-1))
-            #print(ds_mt,psf_coef)
         else:
             ds_m=2.5/(2.0*np.sqrt(2.0*np.log(2.0)))
     else:
@@ -77,9 +102,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
         ds_m=72.2
     if psft == False:#singlepsf and 
         ds_m=psf_coef   
-        #ds_m=(ds_m-13.43)*0.67+13.43
-    #    print("TEST_A",ds_m) 
-    #print("TEST_B",ds_m)
     if ring:
         if ds_i > 0:
             ds_m = ds_i
@@ -89,16 +111,18 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
             ro_m = ro_i
         else:
             ro_m = 2.0
-    
-    if sig == 0:
-        pf_map_c=pf_map
+    if autocent:
+        if sig == 0:
+            pf_map_c=pf_map
+        else:
+            try:
+                PSF=Gaussian2DKernel(stddev=sig)
+            except:
+                PSF=Gaussian2DKernel(x_stddev=sig,y_stddev=sig)
+            pf_map_c=convolve(pf_map, PSF)
+        min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
     else:
-        try:
-            PSF=Gaussian2DKernel(stddev=sig)
-        except:
-            PSF=Gaussian2DKernel(x_stddev=sig,y_stddev=sig)
-        pf_map_c=convolve(pf_map, PSF)
-    min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
+        min_in=[dxo,dyo]
     At=np.nanmax(pf_map)
     x_t=np.arange(ny)-min_in[1]
     y_t=np.arange(nx)-min_in[0]
@@ -143,61 +167,49 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
             dy_m=dy[min_int[2]]
         At0=At
     else:
-        #print(At)
         if Re_c > 0:
-            #data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], bs_c, Re_c, ns_c)
             if psft:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-             #                 spec,   specE, x_t, y_t, At,   bn,   ns
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    #print("A")    
+                        
+                        #theta, spec, specE, x_t, y_t, db_m, At, dx,             dy,             e_m, tht_m, beta, ellip    
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
                 else:
-                    #print("B")
-                    #if fcenter:
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)                    
-                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
-                    #else:
-                    #    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip)
-             #                    spec,   specE, x_t, y_t, db_m, At,   bn,   ns
+                        #theta, spec, specE, x_t, y_t, db_m,     bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, dx,             dy,             fcenter, al_m, Lt_m, ds_m, ro_m, ring, beta,  aplha, , 
+                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-             #                 spec,   specE, x_t, y_t, ds_m, ro_m, At,   bn,   ns
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
                 else:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
-                    #data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, pi_x-min_in[1], pi_y-min_in[0], fcenter)
-             #                 spec,   specE, x_t, y_t, ds_m, db_m, At,   bn,   ns
         else:
             if psft:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
-             #                 spec,   specE, x_t, y_t, At
                 elif singlepsf:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
                 else:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
-             #                 spec,   specE, x_t, y_t, db_m, At
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])
-             #                 spec,   specE, x_t, y_t, At, ds_m, ro_m
                 elif singlepsf:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
                 else:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
-             #                 spec,   specE, x_t, y_t, ds_m, db_m, At
+        #theta, spec, specE, x_t, y_t, 
+        #db_m, dx, dy, e_m, tht_m, al_m, bn, ns, Lt_m, ds_m, ro_m, Re_c
+        #ring, beta, ellip, aplha, fcenter, re_int           
+        data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI)            
         nwalkers=240
         niter=1024
-        #print(pi_x-min_in[1], pi_y-min_in[0],min_in)
-        #print(data)
         if moffat:
             if Re_c > 0:
                 if psft:
@@ -213,10 +225,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                             if ellip:
                                 initial = np.array([At*0.9, 14.8, 0.0, 0])
                             else:
-                                #if alpha:
-                                initial = np.array([At*0.9, 14.8])
-                                #else:
-                                #    initial = np.array([At*0.9])     
+                                initial = np.array([At*0.9, 14.8]) 
                     else:
                         if ellip:
                             if fcenter:
@@ -301,7 +310,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                         initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0])
         else:
             initial = np.array([At, 0.2, 0.0, 1.75])
-        #print(initial)
+        
         ndim = len(initial)
         p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
         if moffat:

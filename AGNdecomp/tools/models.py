@@ -166,7 +166,16 @@ def moffat_model_residual(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, At=1.0, ps
     spec_t=spec_agn+spec_hst
     return spec_t   
 
-def moffat_model3_s(theta, x_t=0, y_t=0, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, al_m=5.0, beta=True, ellip=False, alpha=True):
+def moffat_model3_s(theta, valsI, keysI, x_t=0, y_t=0):#, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, al_m=5.0, beta=True, ellip=False, alpha=True):
+    ellip=keysI['ellip']
+    alpha=keysI['alpha']
+    beta=keysI['beta']
+    db_m=valsI['db_m']
+    e_m=valsI['e_m']
+    tht_m=valsI['tht_m']
+    dx=valsI['dx']
+    dy=valsI['dy']
+    al_m=valsI['al_m']
     if ellip:
         if beta:
             At,ds_t,be_t,e_t,tht_t=theta
@@ -188,12 +197,22 @@ def moffat_model3_s(theta, x_t=0, y_t=0, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht
                 ds_t=al_m
         r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
         r2=r2**2.0      
-        #r2=(x_t-dx)**2.0+(y_t-dy)**2.0
     spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
+def moffat_model3(theta, valsI, keysI, x_t=0, y_t=0):#, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
+    ellip=keysI['ellip']
+    re_int=keysI['re_int']
+    fcenter=keysI['fcenter']
+    be_t=valsI['db_m']
+    bn=valsI['bn']
+    ns=valsI['ns']
+    e_m=valsI['e_m']
+    tht_m=valsI['tht_m']
+    Re_c=valsI['Re_c']
+    dxt=valsI['dx']
+    dyt=valsI['dy']
     if ellip:
         if fcenter:
             if re_int:
@@ -440,7 +459,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Na
     hlist=fits.HDUList([h1])
     hlist.update_extend()
     out_fit=dir_cube_m+outf1+'.fits'
-    tol.wfits_ext(out_fit,hlist)
+    hlist.writeto(out_fit, overwrite=True)
     tol.sycall('gzip  '+out_fit)
     
     res=cube-cube_mod
@@ -472,5 +491,5 @@ def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Na
     hlist=fits.HDUList([h1,h2,h3])
     hlist.update_extend()
     out_fit=dir_cube_m+outf3+'.fits'
-    tol.wfits_ext(out_fit,hlist)
+    hlist.writeto(out_fit, overwrite=True)
     tol.sycall('gzip -f '+out_fit)         
