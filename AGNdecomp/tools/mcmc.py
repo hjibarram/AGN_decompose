@@ -289,7 +289,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,fcenter=False,sig=2,plo
                         if ellip:
                             initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
                         else:
-                            initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8])
+                            initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 0.5, 3, 1.0])#, 0.0, 0.0])
