@@ -348,7 +348,7 @@ def lnprior_mofft0(theta, At1=20, ellip=False):
     else:
         At,dx,dy,Io,bn,Re,ns,ds_t=theta#,e,th0
         #Ao=Io*np.exp(bn)
-        if ((ds_t >= 2) and (ds_t <= 22)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
+        if ((ds_t >= 2) and (ds_t <= 7.5)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
             return 0.0
         else:
             return -np.inf
