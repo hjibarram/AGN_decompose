@@ -246,9 +246,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
             map1=np.nanmean(cube[0:sp,:,:],axis=0)
             map1e=np.nanmean(cubeE[0:sp,:,:],axis=0)
             wave_1=np.nanmean(wave_f[0:sp])
-            map1=cube[214,:,:]
-            map1e=cubeE[214,:,:]
-            wave_1=wave_f[214]
+            #map1=cube[214,:,:]
+            #map1e=cubeE[214,:,:]
+            #wave_1=wave_f[214]
             #map1=cube[920,:,:]
             #map1e=cubeE[920,:,:]
             #wave_1=wave_f[920]
@@ -267,21 +267,22 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
 #            map1=cube[2053,:,:]#
 #            map1e=cubeE[2053,:,:]#2372
 #            wave_1=wave_f[2053]               
-            map1=cube[2267,:,:]#       # Este
-            map1e=cubeE[2267,:,:]#2372 # Este
-            wave_1=wave_f[2267]        # Este
-            map1=cube[2119,:,:]#       # Este
-            map1e=cubeE[2119,:,:]#2372 # Este
-            wave_1=wave_f[2119]        # Este      
+#            map1=cube[2267,:,:]#       # Este
+#            map1e=cubeE[2267,:,:]#2372 # Este
+#            wave_1=wave_f[2267]        # Este
+#            map1=cube[2119,:,:]#       # Este
+#            map1e=cubeE[2119,:,:]#2372 # Este
+#            wave_1=wave_f[2119]        # Este      
 #            map1=cube[2085,:,:]#       # Este
 #            map1e=cubeE[2085,:,:]#2372 # Este
 #            wave_1=wave_f[2085]        # Este                        
 #            map1=cube[2479,:,:]#
 #            map1e=cubeE[2479,:,:]#2372
-#            wave_1=wave_f[2479]              
-            #map1=np.nanmean(cube[2147:2157,:,:],axis=0)
-            #map1e=np.nanmean(cubeE[2147:2157,:,:],axis=0)
-            #wave_1=np.nanmean(wave_f[2147:2157])
+#            wave_1=wave_f[2479]
+            ntw=np.where((wave_f > 4950) & (wave_f < 5050))[0]
+            map1=np.nanmean(cube[ntw,:,:],axis=0)
+            map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
+            wave_1=np.nanmean(wave_f[ntw])
             if ring:
                 pi_x=np.nanmean(pia_x[0:sp])
                 pi_y=np.nanmean(pia_y[0:sp])
