@@ -279,7 +279,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,verbose=False,beta=True,fcenter=False,ellip=Fa
 #            map1=cube[2479,:,:]#
 #            map1e=cubeE[2479,:,:]#2372
 #            wave_1=wave_f[2479]
-            ntw=np.where((wave_f > 4950) & (wave_f < 5050))[0]
+            ntw=np.where((wave_f > 2950) & (wave_f < 15050))[0]
             map1=np.nanmean(cube[ntw,:,:],axis=0)
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
