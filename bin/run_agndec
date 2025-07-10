@@ -33,15 +33,23 @@ def cli():
 @click.option('-u', '--psf_int',is_flag=True, default=False, help='interpolate the psf value')
 @click.option('-b', '--re_int',is_flag=True, default=False, help='interpolate the Re value')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
-def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,fcenter,psf_int,path_out,re_int):
+@click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
+@click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
+
+def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,fcenter,psf_int,re_int,path_out,head_dat,head_err):
     dir_cube=path[0]
     dir_out=path_out#[0]
     if nameb == '':
         cube_file='NAME'.replace('NAME',name)
     else:
         cube_file=nameb.replace('NAME',name)#'NAME.cube.fits.gz'
-    [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, 0, header=True)
-    cube_dataE=fits.getdata(dir_cube+cube_file, 1, header=False)
+    [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, head_dat, header=True)
+    try:
+        cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
+    else:
+        print('Warrning, No error extension found, using the scaled data as error')
+        cube_dataE=cube_data*0.1
+        
     cube_dataE[np.where(cube_dataE == 1)]=np.nan
     if clean:
         str_p=False
