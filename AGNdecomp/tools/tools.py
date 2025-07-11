@@ -33,7 +33,11 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
             mpars['parameters']=modpars['parameters']
             model_pars.extend([mpars])
             model_name.extend([modpars['name']])
-        mpars=model_pars[mod_ind]
+        try:    
+            mpars=model_pars[mod_ind]
+        except:
+            print('Model index out of range. Available models: '+model_name)
+            return
         parameters=mpars['parameters'] 
         npar=len(parameters)   
         if verbose:

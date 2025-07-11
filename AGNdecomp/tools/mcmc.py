@@ -59,7 +59,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
     if len(valsT):
         if 'ds_i' in valsT:
             ds_i=valsT['ds_i']
@@ -174,10 +174,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=F
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues)
+                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
                 else:
-                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues)
+                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
             else:
                 if ring:
@@ -221,9 +221,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=F
                                 initial = np.array([At*0.9, 14.8, 36.8])
                         else:
                             if ellip:
-                                initial = np.array([At*0.9, 14.8, 0.0, 0])
+                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 0.0, 0])
                             else:
-                                initial = np.array([At*0.9, 14.8]) 
+                                initial = np.array([*Inpvalues])#At*0.9, 14.8]) 
                     else:
                         if ellip:
                             if fcenter:
