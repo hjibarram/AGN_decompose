@@ -2,13 +2,14 @@
 # Input line config
 types:
   - name: moffat #name of the line, Example of unconstrained line
-    - parameter: x0  #central wavelenght
-      value: 0  #central wavelenght
-      inf_value: -10  #central wavelenght 
-      sup_value: 10
-    - parameter: y0  #central wavelenght
-      value: 0  #central wavelenght
-      inf_value: -10  #central wavelenght 
-      sup_value: 10  
-
-  
+    parameters:   #central wavelenght
+      - name: xo
+        name_plot: $X_0$
+        ini_value: 0  #central wavelenght
+        inf_value: -10  #central wavelenght 
+        sup_value: 10
+      - name: yo
+        name_plot: $Y_0$
+        ini_value: 0  #central wavelenght
+        inf_value: -10  #central wavelenght 
+        sup_value: 10   
