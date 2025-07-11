@@ -41,7 +41,7 @@ def get_priorsvalues(filename):
             kesys=parameters.keys()
             mpars={}
             for j in range(0, npar):
-                if keys[j] == 'name'
+                if keys[j] == 'name':
                     model_name.extend([parameters['name']])
                 mpars[keys[j]]=parameters[keys[j]]
             print('Model parameters:',mpars)
