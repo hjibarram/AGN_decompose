@@ -16,103 +16,49 @@ def get_priorsvalues(filename):
     """
     Reads the priors values from a YAML file.
     """
-    data_lines=read_config_file(filename)
+    data_lines=read_config_file(filename,mod_ind=0,verbose=True)
     if data_lines:
-        n_types=len(data_lines['types'])
-        #pac=['AoN','dvoN','fwhmoN']
-        #pacL=[r'$A_{N}$',r'$\Delta v_{N}$',r'$FWHM_{N}$']
-        #pacH=['N_Amplitude','N_Velocity','N_FWHM']
-        #waves0=[]
+        n_models=len(data_lines['models'])
         model_name=[]
         model_pars=[]
-        #vals0=[]
-        #vals=[]
-        #valsL=[]
-        #valsH=[]
-        #fac0=[]
-        #facN0=[]
-        #velfac0=[]
-        #velfacN0=[]
-        #fwhfac0=[]
-        #fwhfacN0=[]
-        for i in range(0, n_types):
-            parameters=data_lines['types'][i]
-            npar=len(parameters)
-            keys=parameters.keys()
-            mpars={}
-            for j in range(0, npar):
-                if keys[j] == 'name':
-                    model_name.extend([parameters['name']])
-                mpars[keys[j]]=parameters[keys[j]]
-            print('Model parameters:',mpars)
-            sys.exit()
-            try:
-                facN0.extend([parameters['fac_Name']])
-                fac0.extend([parameters['fac']])
-                facp=True
-            except:
-                facN0.extend(['NoNe'])
-                fac0.extend([None])
-                facp=False
-            try:
-                velfacN0.extend([parameters['vel_Name']])
-                velfac0.extend([parameters['velF']])
-                velfacp=True
-            except:
-                velfacN0.extend(['NoNe'])
-                velfac0.extend([None])
-                velfacp=False    
-            try:
-                fwhfacN0.extend([parameters['fwh_Name']])
-                fwhfac0.extend([parameters['fwhF']])
-                fwhfacp=True
-            except:
-                fwhfacN0.extend(['NoNe'])
-                fwhfac0.extend([None])
-                fwhfacp=False    
-            inr=0    
-            for a in pac:
-                val_t=a.replace('N',str(i))
-                val_tL=pacL[inr].replace('N',names0[i])
-                val_tH=pacH[inr].replace('N',names0[i])
-                if 'AoN' in a:
-                    if facp == False:
-                        vals.extend([val_t])
-                        valsL.extend([val_tL])
-                elif 'dvoN' in a:
-                    if velfacp == False:
-                        vals.extend([val_t])
-                        valsL.extend([val_tL])        
-                elif 'fwhmoN' in a:
-                    if fwhfacp == False:
-                        vals.extend([val_t])
-                        valsL.extend([val_tL])
-                else:    
-                    vals.extend([val_t])
-                    valsL.extend([val_tL])
-                valsH.extend([val_tH])
-                vals0.extend([val_t])    
-                inr=inr+1
-        valsp=data_lines['priors']
+        Labelvalues=[]
         Inpvalues=[]
         Infvalues=[]
         Supvalues=[]
-        for valt in vals:
+        for i in range(0, n_models):
+            mpars={}
+            modpars=data_lines['models'][i]
+            mpars['modelname']=modpars['name']
+            mpars['parameters']=modpars['parameters']
+            model_pars.extend([mpars])
+            model_name.extend([modpars['name']])
+        mpars=model_pars[mod_ind]
+        parameters=mpars['parameters'] 
+        npar=len(parameters)   
+        if verbose:
+            print('Get info for model '+model_name[mod_ind]+' with '+str(npar)+' parameters')
+        for i in range(0, npar):
+            par=parameters[i]
             try:
-                Inpvalues.extend([valsp[valt]])
+                Labelvalues.extend([par['name_plot']])
             except:
-                print('The keyword '+valt+' is missing in the line config file')
+                Labelvalues.extend([par['name']])
+            try:
+                Inpvalues.extend([par['ini_value']])
+            except:
+                print('The keyword ini_value is missing for the parameter '+par['name']+' in the line config file')
                 return
             try:
-                Infvalues.extend([valsp[valt.replace('o','i')]])
+                Infvalues.extend([par['inf_value']])
             except:
-                print('The keyword '+valt.replace('o','i')+' is missing in the line config file')
+                print('The keyword inf_value is missing for the parameter '+par['name']+' in the line config file')
                 return
             try:
-                Supvalues.extend([valsp[valt.replace('o','s')]])
+                Supvalues.extend([par['sup_value']])
             except:
-                print('The keyword '+valt.replace('o','s')+' is missing in the line config file')
+                print('The keyword sup_value is missing for the parameter '+par['name']+' in the line config file')
                 return
+        return Inpvalues, Infvalues, Supvalues, mpars['modelname'], Labelvalues, model_name[mod_ind]
     else:
         print('No configuration line model file')
         return
