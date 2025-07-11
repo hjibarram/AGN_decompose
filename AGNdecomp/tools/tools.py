@@ -38,6 +38,8 @@ def get_priorsvalues(filename):
             parameters=data_lines['types'][i]
             npar=len(parameters)
             model_name.extend([parameters['name']])
+            for j in range(0, npar):
+                print(parameters.keys())
             sys.exit()
             try:
                 facN0.extend([parameters['fac_Name']])
