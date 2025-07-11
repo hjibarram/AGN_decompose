@@ -24,6 +24,7 @@ def get_priorsvalues(filename):
         #pacH=['N_Amplitude','N_Velocity','N_FWHM']
         #waves0=[]
         model_name=[]
+        model_pars=[]
         #vals0=[]
         #vals=[]
         #valsL=[]
@@ -37,9 +38,13 @@ def get_priorsvalues(filename):
         for i in range(0, n_types):
             parameters=data_lines['types'][i]
             npar=len(parameters)
-            model_name.extend([parameters['name']])
+            kesys=parameters.keys()
+            mpars={}
             for j in range(0, npar):
-                print(parameters.keys())
+                if keys[j] == 'name'
+                    model_name.extend([parameters['name']])
+                mpars[keys[j]]=parameters[keys[j]]
+            print('Model parameters:',mpars)
             sys.exit()
             try:
                 facN0.extend([parameters['fac_Name']])
