@@ -16,7 +16,7 @@ def get_priorsvalues(filename):
     """
     Reads the priors values from a YAML file.
     """
-    data_lines=tol.read_config_file(filename)
+    data_lines=read_config_file(filename)
     if data_lines:
         n_types=len(data_lines['types'])
         #pac=['AoN','dvoN','fwhmoN']
