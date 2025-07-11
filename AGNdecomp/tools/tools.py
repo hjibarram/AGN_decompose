@@ -38,7 +38,7 @@ def get_priorsvalues(filename):
         for i in range(0, n_types):
             parameters=data_lines['types'][i]
             npar=len(parameters)
-            kesys=parameters.keys()
+            keys=parameters.keys()
             mpars={}
             for j in range(0, npar):
                 if keys[j] == 'name':
