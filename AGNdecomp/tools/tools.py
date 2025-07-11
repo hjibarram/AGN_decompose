@@ -12,11 +12,11 @@ from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
 from astropy.wcs import WCS
 
-def get_priorsvalues(filename):
+def get_priorsvalues(filename,mod_ind=0,verbose=True):
     """
     Reads the priors values from a YAML file.
     """
-    data_lines=read_config_file(filename,mod_ind=0,verbose=True)
+    data_lines=read_config_file(filename)
     if data_lines:
         n_models=len(data_lines['models'])
         model_name=[]
