@@ -174,12 +174,11 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=F
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                        
-                        #theta, spec, specE, x_t, y_t, db_m, At, dx,             dy,             e_m, tht_m, beta, ellip    
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
+                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues)
+                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
                 else:
-                        #theta, spec, specE, x_t, y_t, db_m,     bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, dx,             dy,             fcenter, al_m, Lt_m, ds_m, ro_m, ring, beta,  aplha, , 
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues)
+                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
@@ -206,8 +205,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',model=True,autocent=True,fcenter=F
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
         #theta, spec, specE, x_t, y_t, 
         #db_m, dx, dy, e_m, tht_m, al_m, bn, ns, Lt_m, ds_m, ro_m, Re_c
-        #ring, beta, ellip, aplha, fcenter, re_int           
-        data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI)            
+        #ring, beta, ellip, aplha, fcenter, re_int                       
         nwalkers=240
         niter=1024
         if moffat:

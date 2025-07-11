@@ -151,7 +151,7 @@ def lnprior_ring(theta, At1=20):
     else:
         return -np.inf
 
-def lnprior_mofft3_s(theta, valsI, keysI):#At1=20, beta=True, ellip=False, alpha=True):
+def lnprior_mofft3_s(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, beta=True, ellip=False, alpha=True):
     boolf=True 
     At1=valsI['At1']
     ellip=keysI['ellip']
@@ -429,15 +429,15 @@ def lnprob_ring(theta, spec, specE, x_t, y_t, At, ds_m, ro_m, dx, dy):
     else:
         return lp + lnlike_ring(theta, spec, specE, x_t, y_t, ds_m, ro_m, dx, dy)    
 
-def lnprob_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI):#, db_m, At, dx, dy, e_t, tht_t, beta, ellip):
-    lp = lnprior_mofft3_s(theta, valsI, keysI)# At1=At, beta=beta, ellip=ellip)#alpha=alpha
+def lnprob_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues):#, db_m, At, dx, dy, e_t, tht_t, beta, ellip):
+    lp = lnprior_mofft3_s(theta, Infvalues, Supvalues, valsI, keysI)# At1=At, beta=beta, ellip=ellip)#alpha=alpha
     if not np.isfinite(lp):
         return -np.inf
     else:
         return lp + lnlike_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI)#db_m, dx, dy, e_t, tht_t, 5.0, beta, ellip, True) #alpha
 
-def lnprob_moffat3(theta, spec, specE, x_t, y_t, valsI, keysI):#db_m, At, bn, ns, e_t, tht_t, ellip, Re_c, re_int, dxt, dyt, fcenter):
-    lp = lnprior_mofft3(theta, valsI, keysI):#At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
+def lnprob_moffat3(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues):#db_m, At, bn, ns, e_t, tht_t, ellip, Re_c, re_int, dxt, dyt, fcenter):
+    lp = lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):#At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
     if not np.isfinite(lp):
         return -np.inf
     else:

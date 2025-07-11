@@ -1,0 +1,11 @@
+--- 
+# Input line config
+types:
+  - name: moffat #name of the line, Example of unconstrained line
+    x0o: 0  #central wavelenght
+    x0s: -10  #central wavelenght
+    x0i: 10  #central wavelenght 
+    y0o: 0
+    y0s: -10
+    y0i: 10
+  

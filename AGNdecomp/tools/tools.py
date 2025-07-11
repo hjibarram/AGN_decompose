@@ -4,12 +4,139 @@ import numpy as np
 from scipy.special import gamma, gammaincinv, gammainc
 from scipy.ndimage.filters import gaussian_filter1d as filt1d
 import os.path as ptt
+import yaml
 from astropy.io import fits
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import ICRS, Galactic, FK4, FK5
 from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
 from astropy.wcs import WCS
+
+def get_priorsvalues(filename):
+    """
+    Reads the priors values from a YAML file.
+    """
+    data_lines=tol.read_config_file(filename)
+    if data_lines:
+        n_types=len(data_lines['types'])
+        #pac=['AoN','dvoN','fwhmoN']
+        #pacL=[r'$A_{N}$',r'$\Delta v_{N}$',r'$FWHM_{N}$']
+        #pacH=['N_Amplitude','N_Velocity','N_FWHM']
+        #waves0=[]
+        model_name=[]
+        #vals0=[]
+        #vals=[]
+        #valsL=[]
+        #valsH=[]
+        #fac0=[]
+        #facN0=[]
+        #velfac0=[]
+        #velfacN0=[]
+        #fwhfac0=[]
+        #fwhfacN0=[]
+        for i in range(0, n_types):
+            parameters=data_lines['types'][i]
+            npar=len(parameters)
+            model_name.extend([parameters['name']])
+            sys.exit()
+            try:
+                facN0.extend([parameters['fac_Name']])
+                fac0.extend([parameters['fac']])
+                facp=True
+            except:
+                facN0.extend(['NoNe'])
+                fac0.extend([None])
+                facp=False
+            try:
+                velfacN0.extend([parameters['vel_Name']])
+                velfac0.extend([parameters['velF']])
+                velfacp=True
+            except:
+                velfacN0.extend(['NoNe'])
+                velfac0.extend([None])
+                velfacp=False    
+            try:
+                fwhfacN0.extend([parameters['fwh_Name']])
+                fwhfac0.extend([parameters['fwhF']])
+                fwhfacp=True
+            except:
+                fwhfacN0.extend(['NoNe'])
+                fwhfac0.extend([None])
+                fwhfacp=False    
+            inr=0    
+            for a in pac:
+                val_t=a.replace('N',str(i))
+                val_tL=pacL[inr].replace('N',names0[i])
+                val_tH=pacH[inr].replace('N',names0[i])
+                if 'AoN' in a:
+                    if facp == False:
+                        vals.extend([val_t])
+                        valsL.extend([val_tL])
+                elif 'dvoN' in a:
+                    if velfacp == False:
+                        vals.extend([val_t])
+                        valsL.extend([val_tL])        
+                elif 'fwhmoN' in a:
+                    if fwhfacp == False:
+                        vals.extend([val_t])
+                        valsL.extend([val_tL])
+                else:    
+                    vals.extend([val_t])
+                    valsL.extend([val_tL])
+                valsH.extend([val_tH])
+                vals0.extend([val_t])    
+                inr=inr+1
+        valsp=data_lines['priors']
+        Inpvalues=[]
+        Infvalues=[]
+        Supvalues=[]
+        for valt in vals:
+            try:
+                Inpvalues.extend([valsp[valt]])
+            except:
+                print('The keyword '+valt+' is missing in the line config file')
+                return
+            try:
+                Infvalues.extend([valsp[valt.replace('o','i')]])
+            except:
+                print('The keyword '+valt.replace('o','i')+' is missing in the line config file')
+                return
+            try:
+                Supvalues.extend([valsp[valt.replace('o','s')]])
+            except:
+                print('The keyword '+valt.replace('o','s')+' is missing in the line config file')
+                return
+    else:
+        print('No configuration line model file')
+        return
+
+
+
+    data_lines = read_config_file(filename)
+    if data is None:
+        return None
+    if 'priors' in data:
+        priors = data['priors']
+        if 'values' in priors:
+            return priors['values']
+        else:
+            print('No values found in priors')
+            return None
+    else:
+        print('No priors found in the configuration file')
+        return None
+
+def read_config_file(file):
+    try:
+        with open(file, 'r') as stream:
+            try:
+                data = yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+        return data
+    except:
+        print('Config File not found')
+        return None
 
 def get_spectra(vect_pyqsfit,wave):
     ct=299792.458
