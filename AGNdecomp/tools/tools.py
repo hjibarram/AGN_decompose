@@ -22,6 +22,7 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
         model_name=[]
         model_pars=[]
         Labelvalues=[]
+        Namevalues=[]
         Inpvalues=[]
         Infvalues=[]
         Supvalues=[]
@@ -39,6 +40,11 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
             print('Get info for model '+model_name[mod_ind]+' with '+str(npar)+' parameters')
         for i in range(0, npar):
             par=parameters[i]
+            try:
+                Namevalues.extend([par['name']])
+            except:
+                print('The keyword name is missing for the parameter '+par['name']+' in the line config file')
+                return
             try:
                 Labelvalues.extend([par['name_plot']])
             except:
@@ -58,7 +64,7 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
             except:
                 print('The keyword sup_value is missing for the parameter '+par['name']+' in the line config file')
                 return
-        return Inpvalues, Infvalues, Supvalues, mpars['modelname'], Labelvalues, model_name[mod_ind]
+        return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
         print('No configuration line model file')
         return
