@@ -191,11 +191,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
-                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)    
                 else: 
-                    data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
-                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
@@ -379,7 +377,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
         theta_max  = samples[np.argmax(sampler.flatlnprobability)]
         if moffat:
             if Re_c > 0:
-                #At0,Io_m=theta_max
                 if psft:
                     if ring:
                         At0,Io_m,Re_m,ds_m,r0_m=theta_max
@@ -477,10 +474,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                                     Re_m=Re_c
                                 else:
                                     At0,dx_m,dy_m,Io_m,Re_m=theta_max
-                #dx_m=pi_x-min_in[1]
-                #dy_m=pi_y-min_in[0]
                 bn_m=bs_c
-                #Re_m=Re_c
                 ns_m=ns_c
             else:
                 if psft:
@@ -517,24 +511,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     elif singlepsf:   
                         At0,dx_m,dy_m=theta_max     
                     else:
-                        At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m=theta_max#,e_m,th0_m=theta_max
-            #tp=np.percentile(samples[:, 0], [16, 50, 84])
-            #At0=tp[1]
-            #tp=np.percentile(samples[:, 1], [16, 50, 84])
-            #dx_m=tp[1]
-            #tp=np.percentile(samples[:, 2], [16, 50, 84])
-            #dy_m=tp[1]
-            #tp=np.percentile(samples[:, 3], [16, 50, 84])
-            #Io_m=tp[1]
-            #tp=np.percentile(samples[:, 3], [16, 50, 84])
-            #bn_m=tp[1]
-            #tp=np.percentile(samples[:, 3], [16, 50, 84])
-            #Re_m=tp[1]
-            #tp=np.percentile(samples[:, 3], [16, 50, 84])
-            #ns_m=tp[1]
+                        At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m=theta_max
         else:
             At0,dx_m,dy_m,ds_m=theta_max
-        #print(At0)    
                
         
     
@@ -572,11 +551,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 spec_t=mod.Dmoffat_model_s(theta_t, x_t, y_t)
             else:
                 if singlepsf:
-                    #print(ds_m,e_m,tht_m)
                     if ellip:
                         r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
                         rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
-                        #print(np.nanmean(rt/r1))
                         spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
                     else:
                         spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
@@ -587,13 +564,11 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     else:
                         spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
             r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
-            #tht=np.arctan2(y_t-dy_m,x_t-dx_m)
             bt=r1#ellipse2(tht,r1,e_m,th0_m)
             if singlepsf:
                 spec_hst=0.0
             else:
                 spec_hst=Io_m*np.exp(-bn_m*((bt/Re_m)**(1./ns_m)-1))
-            #spec_hst=Io_m*np.exp(-bn_m*((bt/Re_m)**(1./ns_m)-1))
         else:
             spec_t=np.exp(-0.5*((((x_t-dx_m)/ds_m)**2.0)+((y_t-dy_m)/ds_m)**2.0))*At0
         if plot_f:    
@@ -721,21 +696,15 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                                 labels = [r'$A_t$',r'$x_0$',r'$y_0$']    
                             else:
                                 labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$']
-                    #At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m
                 else:
                     labels = ['At','x1','x2','sigma']
                 import corner  
-                #fig = figsize=(6.8*1.1,6.8*1.1) 
                 fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
-                #fig.set_size_inches(6.8, 6.8)
                 fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
-                
-                #fig.tight_layout()
                 fig.savefig('corners_NAME.pdf'.replace('NAME',name))
-                #plt.show()
-            
-        dx_m=dx_m+min_in[1]#0
-        dy_m=dy_m+min_in[0]#1
+                            
+        dx_m=dx_m+min_in[1]
+        dy_m=dy_m+min_in[0]
         if moffat:
             if ring:
                 psf=np.nan
@@ -743,7 +712,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 psf=ds_m*2.0*np.sqrt(2.0**(1./db_m)-1)
         else:
             psf=ds_m*2.0*np.sqrt(2.0*np.log10(2.0))
-        #print(ft_num/ft_fit)
         if moffat:
             if ring:
                 return dx_m,dy_m,ds_m,r0_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m

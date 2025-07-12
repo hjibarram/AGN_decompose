@@ -166,88 +166,71 @@ def moffat_model_residual(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, At=1.0, ps
     spec_t=spec_agn+spec_hst
     return spec_t   
 
-def moffat_model3_s(theta, valsI, keysI, x_t=0, y_t=0):#, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, al_m=5.0, beta=True, ellip=False, alpha=True):
+def moffat_model3_s(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
     ellip=keysI['ellip']
     alpha=keysI['alpha']
     beta=keysI['beta']
-    db_m=valsI['db_m']
-    e_m=valsI['e_m']
-    tht_m=valsI['tht_m']
+    be_t=valsI['db_m']
+    e_t=valsI['e_m']
+    tht_t=valsI['tht_m']
     dx=valsI['dx']
     dy=valsI['dy']
-    al_m=valsI['al_m']
+    ds_t=valsI['al_m']
     if ellip:
         if beta:
             At,ds_t,be_t,e_t,tht_t=theta
         else:
             At,ds_t,e_t,tht_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0  
     else:
         if beta:
             At,ds_t,be_t=theta
         else:
             if alpha:
                 At,ds_t=theta
-                be_t=db_m
             else:
                 At=theta
-                be_t=db_m
-                ds_t=al_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
-        r2=r2**2.0      
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)    
+    spec_agn=At*(1.0 + (r1**2/ds_t**2.0))**(-be_t)    
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model3(theta, valsI, keysI, x_t=0, y_t=0):#, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
+def moffat_model3(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
     ellip=keysI['ellip']
     re_int=keysI['re_int']
     fcenter=keysI['fcenter']
     be_t=valsI['db_m']
     bn=valsI['bn']
     ns=valsI['ns']
-    e_m=valsI['e_m']
-    tht_m=valsI['tht_m']
-    Re_c=valsI['Re_c']
-    dxt=valsI['dx']
-    dyt=valsI['dy']
+    e_t=valsI['e_m']
+    tht_t=valsI['tht_m']
+    Re=valsI['Re_c']
+    dx=valsI['dx']
+    dy=valsI['dy']
     if ellip:
         if fcenter:
             if re_int:
                 At,Io,ds_t,e_t,tht_t=theta
-                Re=Re_c
             else:
                 At,Io,Re,ds_t,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_t,tht_t) 
         else:
             if re_int:
                 At,dx,dy,Io,ds_t,e_t,tht_t=theta
-                Re=Re_c
             else:
                 At,dx,dy,Io,Re,ds_t,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
     else:
         if fcenter:
             if re_int:
                 At,Io,ds_t=theta
-                Re=Re_c
             else:
                 At,Io,Re,ds_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_m,tht_m)
         else:
             if re_int:
                 At,dx,dy,Io,ds_t=theta
-                Re=Re_c
             else:
                 At,dx,dy,Io,Re,ds_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
-    r2=r2**2.0  
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
+    spec_agn=At*(1.0 + (r1**2/ds_t**2.0))**(-be_t)
+    spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
     return spec_t       
 
