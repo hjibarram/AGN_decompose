@@ -186,7 +186,7 @@ def lnprior_mofft3_s(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, beta=Tr
     else:
         return -np.inf 
 
-def lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI)#:At1=20, ellip=False, fcenter=False, re_int=False):
+def lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=False, fcenter=False, re_int=False):
     boolf=True 
     #db_m, At1, bn, ns, e_t, tht_t, Re_c, dxt, dyt 
     At1=valsI['At1']
