@@ -345,8 +345,8 @@ def lnprior_mofft0_s(theta,  Infvalues, Supvalues, valsI, keysI):#At1=20, beta=T
 
 def lnprior_mofft0(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=False):
     boolf=True 
-    At1=valsI['At1']
-    ellip=keysI['ellip']
+    #At1=valsI['At1']
+    #ellip=keysI['ellip']
     '''
     if ellip:
         At,dx,dy,Io,bn,Re,ns,ds_t,e,th0=theta
