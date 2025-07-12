@@ -286,7 +286,7 @@ def moffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0, e_
     spec_t=spec_agn+spec_hst
     return spec_t        
 
-def moffat_model0_s(theta, x_t=0, y_t=0, db_m=2.06, e_m=0.0, tht_m=0.0, beta=True, ellip=False):
+def moffat_model0_s(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):#, db_m=2.06, e_m=0.0, tht_m=0.0, beta=True, ellip=False):
     ellip=keysI['ellip']
     be_t=valsI['db_m']
     e_t=valsI['e_m']
@@ -300,14 +300,13 @@ def moffat_model0_s(theta, x_t=0, y_t=0, db_m=2.06, e_m=0.0, tht_m=0.0, beta=Tru
         if beta:
             At,dx,dy,ds_t,be_t=theta
         else:
-            At,dx,dy,ds_t=theta
-        r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)    
-        r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)     
+            At,dx,dy,ds_t=theta 
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)     
     spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model0(theta, valsI, keysI, Namevalues, x_t=0, y_t=0)#, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=False):
+def moffat_model0(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):#, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=False):
     ellip=keysI['ellip']
     be_t=valsI['db_m']
     e_t=valsI['e_m']
