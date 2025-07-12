@@ -213,7 +213,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
                     print('A3')
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
+                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
                 else:
                     print('B3')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
@@ -237,9 +238,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     elif singlepsf:
                         if beta:
                             if ellip:    
-                                initial = np.array([At*0.9, 14.8, 36.8, 0.0, 0])
+                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 36.8, 0.0, 0])
                             else:
-                                initial = np.array([At*0.9, 14.8, 36.8])
+                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 36.8])
                         else:
                             if ellip:
                                 initial = np.array([*Inpvalues])#At*0.9, 14.8, 0.0, 0])
@@ -249,25 +250,25 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                         if ellip:
                             if fcenter:
                                 if re_int:
-                                    initial = np.array([At*0.9, At*0.1, 14.8, 0.0, 0.0])
+                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 14.8, 0.0, 0.0])
                                 else:
-                                    initial = np.array([At*0.9, At*0.1, 3, 14.8, 0.0, 0.0])
+                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 3, 14.8, 0.0, 0.0])
                             else:
                                 if re_int:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 14.8, 0.0, 0.0])
+                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 14.8, 0.0, 0.0])
                                 else:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8, 0.0, 0.0])
+                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 3, 14.8, 0.0, 0.0])
                         else:
                             if fcenter:
                                 if re_int:
-                                    initial = np.array([At*0.9, At*0.1, 14.8])
+                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 14.8])
                                 else:
-                                    initial = np.array([At*0.9, At*0.1, 3, 14.8])
+                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 3, 14.8])
                             else:
                                 if re_int:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 14.8])
+                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 14.8])
                                 else:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 14.8])
+                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 3, 14.8])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 3])  
@@ -305,19 +306,19 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     elif singlepsf:
                         if beta:    
                             if ellip:
-                                initial = np.array([At*0.9, 0.2, 0.0, 14.8, 36.8, 0.0, 0])
+                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 36.8, 0.0, 0])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, 14.8, 36.8])
+                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 36.8])
                         else:
                             if ellip:
-                                initial = np.array([At*0.9, 0.2, 0.0, 14.8, 0.0, 0])
+                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 0.0, 0])
                             else:
-                                initial = np.array([At*0.9, 0.2, 0.0, 14.8])        
+                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8])        
                     else:
                         if ellip:
-                            initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
+                            initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
                         else:
-                            initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
+                            initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 0.5, 3, 1.0])#, 0.0, 0.0])
