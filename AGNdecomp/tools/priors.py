@@ -482,14 +482,14 @@ def lnprob_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, At, bn, ns, e_t, th
     else:
         return lp + lnlike_moffat2(theta, spec, specE, x_t, y_t, ds_m, db_m, bn, ns, e_t, tht_t, ellip, dxt, dyt, fcenter, re_int, Re_c)  
 
-def lnprob_moffat0_s(theta, spec, specE, x_t, y_t, db_m, At, e_t, tht_t, beta, ellip):
+def lnprob_moffat0_s(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues):#db_m, At, e_t, tht_t, beta, ellip):
     lp = lnprior_mofft0_s(theta, At1=At, beta=beta, ellip=ellip)
     if not np.isfinite(lp):
         return -np.inf
     else:
         return lp + lnlike_moffat0_s(theta, spec, specE, x_t, y_t, db_m, e_t, tht_t, beta, ellip)
 
-def lnprob_moffat0(theta, spec, specE, x_t, y_t,  valsI, keysI, Infvalues, Supvalues, Namevalues):#db_m, At, e_t, tht_t, ellip):
+def lnprob_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues):#db_m, At, e_t, tht_t, ellip):
     lp = lnprior_mofft0(theta, Infvalues, Supvalues, valsI, keysI)#At1=At, ellip=ellip)
     if not np.isfinite(lp):
         return -np.inf

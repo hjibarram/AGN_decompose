@@ -60,7 +60,6 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
 
 
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
-    print(Inpvalues)
     if len(valsT):
         if 'ds_i' in valsT:
             ds_i=valsT['ds_i']
@@ -193,10 +192,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
                     print('A1')
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)    
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)    
                 else: 
                     print('B1')
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
@@ -215,10 +214,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 elif singlepsf:
                     print('A3')
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
                 else:
                     print('B3')
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
             else:
                 if ring:
@@ -319,8 +318,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                         if ellip:
                             initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
                         else:
-                            print('B4')
-                            print(Inpvalues)
                             initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
                 else:
                     if ring:
