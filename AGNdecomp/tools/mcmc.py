@@ -212,15 +212,19 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
+                    print('A3')
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
                 else:
+                    print('B3')
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
+                    print('A4')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
                 else:
+                    print('B5')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
         nwalkers=240
         niter=1024
