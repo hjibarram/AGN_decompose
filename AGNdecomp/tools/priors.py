@@ -197,7 +197,7 @@ def lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=Fal
         if fcenter:
             if re_int:
                 At,Io,ds_t,e,th0=theta
-                boolf=((ds_t >= 10) 6 (ds_t <= 22)) & ((At >= 0) & (At < At1)) & (Io >= 0) & ((e >= 0.0) & (e <= 10.0)) & ((th0 >= 0) & (th0 < 180)) & boolf
+                boolf=((ds_t >= 10) & (ds_t <= 22)) & ((At >= 0) & (At < At1)) & (Io >= 0) & ((e >= 0.0) & (e <= 10.0)) & ((th0 >= 0) & (th0 < 180)) & boolf
             else:
                 At,Io,Re,ds_t,e,th0=theta
                 boolf=((ds_t >= 10) & (ds_t <= 22)) & ((At >= 0) & (At < At1)) & (Io >= 0) & ((Re >= 0.5) & (Re <= 50.0)) & ((e >= 0.0) & (e <= 10.0)) & ((th0 >= 0) & (th0 < 180)) & boolf
