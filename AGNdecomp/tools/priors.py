@@ -54,7 +54,7 @@ def lnlike_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues):
     return LnLike
                    
 def lnlike_moffat3(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues):
-    model=mod.moffat_model3(theta,  valsI, keysI, Namevalues, x_t=x_t, y_t=y_t)
+    model=mod.moffat_model3(theta, valsI, keysI, Namevalues, x_t=x_t, y_t=y_t)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)
     return LnLike
                      
@@ -73,8 +73,8 @@ def lnlike_moffat0_s(theta, spec, specE, x_t, y_t, db_m, e_m, tht_m, beta, ellip
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
                    
-def lnlike_moffat0(theta, spec, specE, x_t, y_t, db_m, e_m, tht_m, ellip):
-    model=mod.moffat_model0(theta, x_t=x_t, y_t=y_t, be_t=db_m, e_m=e_m, tht_m=tht_m, ellip=ellip)
+def lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues):#db_m, e_m, tht_m, ellip):
+    model=mod.moffat_model0(theta, valsI, keysI, Namevalues, x_t=x_t, y_t=y_t)#, be_t=db_m, e_m=e_m, tht_m=tht_m, ellip=ellip)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
                     
@@ -300,20 +300,20 @@ def lnprior_mofft2(theta, At1=20, ellip=False, fcenter=False, re_int=False):
                 else:
                     return -np.inf
     
-def lnprior_mofft0_s(theta, At1=20, beta=True, ellip=False):
+def lnprior_mofft0_s(theta,  Infvalues, Supvalues, valsI, keysI):#At1=20, beta=True, ellip=False):
+    boolf=True 
+    At1=valsI['At1']
+    ellip=keysI['ellip']
+    '''
     if beta:
         if ellip:
             At,dx,dy,ds_t,db_t,e_t,tht_t=theta
-            # and (ds_t <= 152)
-            # and (db_t <= 162)
             if ((ds_t >= 5)) and ((db_t >= 0.5)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and ((e_t >= 0) and (e_t < 1)) and ((tht_t >= 0.0) and (tht_t < 180.)):# and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 5.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
                 return 0.0
             else:
                 return -np.inf
         else:
             At,dx,dy,ds_t,db_t=theta
-            # and (ds_t <= 152)
-            # and (db_t <= 162)
             if ((ds_t >= 5)) and ((db_t >= 0.5)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)):# and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 5.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
                 return 0.0
             else:
@@ -327,13 +327,27 @@ def lnprior_mofft0_s(theta, At1=20, beta=True, ellip=False):
                 return -np.inf    
         else:
             At,dx,dy,ds_t=theta
-            # and (ds_t <= 152)  and (At < (At1))
             if ((ds_t >= 5)) and ((At >= 0)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)):# and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 5.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
                 return 0.0
             else:
                 return -np.inf    
+    '''      
+    f_param=theta
+    for i in range(0, len(f_parm)):
+        bool1=(f_parm[i] <= Supvalues[i])
+        bool2=(f_parm[i] >= Infvalues[i])
+        boolf=(bool1 & bool2) & boolf
 
-def lnprior_mofft0(theta, At1=20, ellip=False):
+    if boolf:
+        return 0.0
+    else:
+        return -np.inf          
+
+def lnprior_mofft0(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=False):
+    boolf=True 
+    At1=valsI['At1']
+    ellip=keysI['ellip']
+    '''
     if ellip:
         At,dx,dy,Io,bn,Re,ns,ds_t,e,th0=theta
         if ((ds_t >= 10) and (ds_t <= 22)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)) and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 180.0)):                 
@@ -341,12 +355,22 @@ def lnprior_mofft0(theta, At1=20, ellip=False):
         else:
             return -np.inf
     else:
-        At,dx,dy,Io,bn,Re,ns,ds_t=theta#,e,th0
-        #Ao=Io*np.exp(bn)
+        At,dx,dy,Io,bn,Re,ns,ds_t=theta
         if ((ds_t >= 2) and (ds_t <= 8.5)) and ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
             return 0.0
         else:
             return -np.inf
+    '''
+    f_param=theta
+    for i in range(0, len(f_parm)):
+        bool1=(f_parm[i] <= Supvalues[i])
+        bool2=(f_parm[i] >= Infvalues[i])
+        boolf=(bool1 & bool2) & boolf
+
+    if boolf:
+        return 0.0
+    else:
+        return -np.inf    
 
 def lnprior_mofft_s(theta, At1=20):
     At,dx,dy=theta#,e,th0
@@ -465,12 +489,12 @@ def lnprob_moffat0_s(theta, spec, specE, x_t, y_t, db_m, At, e_t, tht_t, beta, e
     else:
         return lp + lnlike_moffat0_s(theta, spec, specE, x_t, y_t, db_m, e_t, tht_t, beta, ellip)
 
-def lnprob_moffat0(theta, spec, specE, x_t, y_t, db_m, At, e_t, tht_t, ellip):
-    lp = lnprior_mofft0(theta, At1=At, ellip=ellip)
+def lnprob_moffat0(theta, spec, specE, x_t, y_t,  valsI, keysI, Infvalues, Supvalues, Namevalues):#db_m, At, e_t, tht_t, ellip):
+    lp = lnprior_mofft0(theta, Infvalues, Supvalues, valsI, keysI)#At1=At, ellip=ellip)
     if not np.isfinite(lp):
         return -np.inf
     else:
-        return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, db_m, e_t, tht_t, ellip) 
+        return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues)#db_m, e_t, tht_t, ellip) 
     
 def lnprob_moffat_s(theta, spec, specE, x_t, y_t, ds_m, db_m, At, e_t, tht_t, ellip):
     lp = lnprior_mofft_s(theta, At1=At)

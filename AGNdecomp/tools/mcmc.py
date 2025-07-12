@@ -216,7 +216,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
                 else:
                     print('B3')
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
+                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])

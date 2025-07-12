@@ -229,7 +229,7 @@ def moffat_model3(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
             else:
                 At,dx,dy,Io,Re,ds_t=theta
     r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-    spec_agn=At*(1.0 + (r1**2/ds_t**2.0))**(-be_t)
+    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)
     spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
     return spec_t       
@@ -287,42 +287,38 @@ def moffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0, e_
     return spec_t        
 
 def moffat_model0_s(theta, x_t=0, y_t=0, db_m=2.06, e_m=0.0, tht_m=0.0, beta=True, ellip=False):
+    ellip=keysI['ellip']
+    be_t=valsI['db_m']
+    e_t=valsI['e_m']
+    tht_t=valsI['tht_m']
     if ellip:
         if beta:
             At,dx,dy,ds_t,be_t,e_t,tht_t=theta
         else:
             At,dx,dy,ds_t,e_t,tht_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-        r2=r2**2.0 
     else:
         if beta:
             At,dx,dy,ds_t,be_t=theta
         else:
             At,dx,dy,ds_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-        r2=r2**2.0     
-        #r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
+        r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)    
+        r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)     
+    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model0(theta, x_t=0, y_t=0, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=False):
+def moffat_model0(theta, valsI, keysI, Namevalues, x_t=0, y_t=0)#, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=False):
+    ellip=keysI['ellip']
+    be_t=valsI['db_m']
+    e_t=valsI['e_m']
+    tht_t=valsI['tht_m']
     if ellip:
         At,dx,dy,Io,bn,Re,ns,ds_t,e_t,tht_t=theta
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-        r2=r2**2.0 
     else:
         At,dx,dy,Io,bn,Re,ns,ds_t=theta
-        #e,th0=0,0
-        #r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    #tht=np.arctan2(y_t-dy,x_t-dx)
-    bt=r1#ellipse2(tht,r1,e,th0)
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
+    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
+    spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
     return spec_t     
 
