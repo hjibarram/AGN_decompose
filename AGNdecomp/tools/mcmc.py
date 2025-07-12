@@ -319,6 +319,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                             initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
                         else:
                             print('B4')
+                            print(Inpvalues)
                             initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
                 else:
                     if ring:
