@@ -59,7 +59,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
     if len(valsT):
         if 'ds_i' in valsT:
             ds_i=valsT['ds_i']
@@ -191,10 +191,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    print('A1')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)    
                 else: 
-                    print('B1')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
             else:
                 if ring:
@@ -202,31 +200,23 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    print('A2')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
                 else:
-                    print('B2')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
         else:
             if psft:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
-                    print('A3')
-                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, beta, ellip)
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
                 else:
-                    print('B3')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
-                    #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, e_m, tht_m, ellip)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
-                    print('A4')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
                 else:
-                    print('B5')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
         nwalkers=240
         niter=1024
@@ -651,7 +641,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                                 if ellip:
                                     labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$',r'$e$',r'$\theta$']
                                 else:
-                                    labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$']
+                                    labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$']
                         else:
                             if ring:
                                 labels = ['At','Io','bn','Re','ns']
