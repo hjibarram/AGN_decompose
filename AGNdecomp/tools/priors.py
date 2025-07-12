@@ -47,7 +47,7 @@ def lnlike_ring(theta, spec, specE, x_t, y_t, ds_m, ro_m, dx, dy):
     model=mod.ring_model_residual(theta, x_t=x_t, y_t=y_t, ds_t=ds_m, r0=ro_m, dx=dx, dy=dy)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
-                    
+    
 def lnlike_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI):#db_m, dx, dy, e_m, tht_m, al_m, beta, ellip, alpha):
     model=mod.moffat_model3_s(theta, valsI, keysI, x_t=x_t, y_t=y_t)#s, db_m=db_m, dx=dx, dy=dy, e_m=e_m, tht_m=tht_m, al_m=al_m, beta=beta, ellip=ellip, alpha=alpha)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))

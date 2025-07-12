@@ -167,6 +167,23 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
             dy_m=dy[min_int[2]]
         At0=At
     else:
+        valsI={}
+        keysI={}
+        keysI['ellip']=ellip
+        keysI['alpha']=alpha
+        keysI['beta']=beta
+        keysI['fcenter']=fcenter
+        keysI['re_int']=re_int
+        valsI['db_m']=db_m
+        valsI['e_m']=e_m
+        valsI['tht_m']=tht_m
+        valsI['dx']=pi_x-min_in[1]
+        valsI['dy']=pi_y-min_in[0]
+        valsI['At1']=At
+        valsI['al_m']=5.0
+        valsI['Re_c']=Re_c
+        valsI['bn']=bs_c
+        valsI['ns']=ns_c
         if Re_c > 0:
             if psft:
                 if ring:
@@ -176,7 +193,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 elif singlepsf:
                     data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, beta, ellip)    
-                else:
+                else: 
                     data=(pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues)
                     #data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
             else:
