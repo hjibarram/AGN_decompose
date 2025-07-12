@@ -333,9 +333,9 @@ def lnprior_mofft0_s(theta,  Infvalues, Supvalues, valsI, keysI):#At1=20, beta=T
                 return -np.inf    
     '''      
     f_param=theta
-    for i in range(0, len(f_parm)):
-        bool1=(f_parm[i] <= Supvalues[i])
-        bool2=(f_parm[i] >= Infvalues[i])
+    for i in range(0, len(f_param)):
+        bool1=(f_param[i] <= Supvalues[i])
+        bool2=(f_param[i] >= Infvalues[i])
         boolf=(bool1 & bool2) & boolf
 
     if boolf:
@@ -362,9 +362,9 @@ def lnprior_mofft0(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=Fal
             return -np.inf
     '''
     f_param=theta
-    for i in range(0, len(f_parm)):
-        bool1=(f_parm[i] <= Supvalues[i])
-        bool2=(f_parm[i] >= Infvalues[i])
+    for i in range(0, len(f_param)):
+        bool1=(f_param[i] <= Supvalues[i])
+        bool2=(f_param[i] >= Infvalues[i])
         boolf=(bool1 & bool2) & boolf
 
     if boolf:
