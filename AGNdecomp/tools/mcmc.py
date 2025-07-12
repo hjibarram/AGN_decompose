@@ -191,10 +191,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
-                    print('A')
+                    print('A1')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)    
                 else: 
-                    print('B')
+                    print('B1')
                     data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Inpvalues, Namevalues)
             else:
                 if ring:
@@ -202,8 +202,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                 if trip:
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
                 elif singlepsf:
+                    print('A2')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
                 else:
+                    print('B2')
                     data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
         else:
             if psft:
