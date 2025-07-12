@@ -170,7 +170,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
         valsI={}
         keysI={}
         keysI['ellip']=ellip
-        keysI['alpha']=alpha
+        keysI['alpha']=True#alpha
         keysI['beta']=beta
         keysI['fcenter']=fcenter
         keysI['re_int']=re_int
