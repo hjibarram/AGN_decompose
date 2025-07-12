@@ -236,39 +236,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 3, 0.5, 2.0])
                     elif singlepsf:
-                        if beta:
-                            if ellip:    
-                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 36.8, 0.0, 0])
-                            else:
-                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 36.8])
-                        else:
-                            if ellip:
-                                initial = np.array([*Inpvalues])#At*0.9, 14.8, 0.0, 0])
-                            else:
-                                initial = np.array([*Inpvalues])#At*0.9, 14.8]) 
+                        initial = np.array([*Inpvalues])
                     else:
-                        if ellip:
-                            if fcenter:
-                                if re_int:
-                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 14.8, 0.0, 0.0])
-                                else:
-                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 3, 14.8, 0.0, 0.0])
-                            else:
-                                if re_int:
-                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 14.8, 0.0, 0.0])
-                                else:
-                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 3, 14.8, 0.0, 0.0])
-                        else:
-                            if fcenter:
-                                if re_int:
-                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 14.8])
-                                else:
-                                    initial = np.array([*Inpvalues])#At*0.9, At*0.1, 3, 14.8])
-                            else:
-                                if re_int:
-                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 14.8])
-                                else:
-                                    initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 3, 14.8])
+                        initial = np.array([*Inpvalues])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 3])  
@@ -304,21 +274,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
                     elif trip:
                         initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 4.4])
                     elif singlepsf:
-                        if beta:    
-                            if ellip:
-                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 36.8, 0.0, 0])
-                            else:
-                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 36.8])
-                        else:
-                            if ellip:
-                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8, 0.0, 0])
-                            else:
-                                initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, 14.8])        
+                        initial = np.array([*Inpvalues])       
                     else:
-                        if ellip:
-                            initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 0.0, 0.0])
-                        else:
-                            initial = np.array([*Inpvalues])#At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 7.8])
+                        initial = np.array([*Inpvalues])
                 else:
                     if ring:
                         initial = np.array([At*0.9, At*0.1, 0.5, 3, 1.0])#, 0.0, 0.0])
