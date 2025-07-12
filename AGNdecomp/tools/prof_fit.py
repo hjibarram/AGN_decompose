@@ -12,7 +12,6 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 
 def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,beta=True,fcenter=False,ellip=False,re_int=False,singlepsf=False,psamp=10,ds_i=0,ro_i=0,Lt_i=0,vas='',dir_o='',name='spectra',trip=False,ring=False,psft=False,str_p=False,local=False,moffat=False,mc=False,ncpu=10,sp=0,coef=[-9.50013525e-21,8.18487432e-16,-1.88951248e-11,1.87198198e-07,-8.58072070e-04,3.90811581e+00],bt=0,psf_t=False):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
-    print("Input values:",Inpvalues)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
