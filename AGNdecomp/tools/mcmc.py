@@ -183,7 +183,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Namevalues=[],Inpvalues=[],Infvalu
         valsI['al_m']=5.0
         valsI['Re_c']=Re_c
         valsI['bn']=bs_c
-        valsI['ns']=ns_c
+        valsI['ns']=ns_c 
         if Re_c > 0:
             if psft:
                 if ring:
