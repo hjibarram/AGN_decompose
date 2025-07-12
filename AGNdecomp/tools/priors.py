@@ -175,7 +175,7 @@ def lnprior_mofft3_s(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, beta=Tr
             else:
                 At=theta
                 boolf=((At >= 0))
-    *f_param=theta
+    f_param=theta
     for i in range(0, len(f_parm)):
         bool1=(f_parm[i] <= Supvalues[i])
         bool2=(f_parm[i] >= Infvalues[i])
@@ -223,7 +223,7 @@ def lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):#At1=20, ellip=Fal
             else:
                 At,dx,dy,Io,Re,ds_t=theta#,e,th0
                 boolf= ((ds_t >= 10) & (ds_t <= 22)) & ((At >= 0) & (At < At1)) & ((dx >= -5) & (dx <= 5)) & ((dy >= -5) & (dy <= 5)) & (Io >= 0) & ((Re >= 0.5) & (Re <= 50.0)) & boolf                
-    *f_param=theta
+    f_param=theta
     for i in range(0, len(f_parm)):
         bool1=(f_parm[i] <= Supvalues[i])
         bool2=(f_parm[i] >= Infvalues[i])
