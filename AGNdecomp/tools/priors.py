@@ -437,7 +437,7 @@ def lnprob_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supv
         return lp + lnlike_moffat3_s(theta, spec, specE, x_t, y_t, valsI, keysI)#db_m, dx, dy, e_t, tht_t, 5.0, beta, ellip, True) #alpha
 
 def lnprob_moffat3(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues):#db_m, At, bn, ns, e_t, tht_t, ellip, Re_c, re_int, dxt, dyt, fcenter):
-    lp = lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):#At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
+    lp = lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI)#At1=At, ellip=ellip, fcenter=fcenter, re_int=re_int)
     if not np.isfinite(lp):
         return -np.inf
     else:
