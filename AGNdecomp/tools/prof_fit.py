@@ -191,7 +191,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         if moffat:
             dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,fcenter=fcenter,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsT=valsT)
         else:
-            dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,mc=mc,ncpu=ncpu)
+            dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
         sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
         val1=sky1.to_string('hmsdms')
         if moffat:
