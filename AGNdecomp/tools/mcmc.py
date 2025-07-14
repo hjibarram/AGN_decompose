@@ -185,44 +185,43 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         valsI['Re']=Re_c
         valsI['bn']=bs_c
         valsI['ns']=ns_c 
-        if Re_c > 0:
-            if psft:
-                if ring:
-                    data = (pf_map, pf_mapE, x_t, y_t, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-                if trip:
-                    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
-                elif singlepsf:
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)    
-                else: 
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
-            else:
-                if ring:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-                if trip:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
-                elif singlepsf:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
-                else:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
-        else:
-            if psft:
-                if ring:
-                    data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
-                elif singlepsf:
-                    host=False
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
-                else:
-                    host=True
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
-            else:
-                if ring:
-                    data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])
-                elif singlepsf:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
-                else:
-                    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
+        #if Re_c > 0:
+            #if psft:
+                #if ring:
+                #    data = (pf_map, pf_mapE, x_t, y_t, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
+                #if trip:
+                #    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
+        if singlepsf:
+            host=False
+                    #data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)    
+        else: 
+            host=True
+                    #data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
+            #else:
+                #if ring:
+                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
+                #if trip:
+                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
+                #if singlepsf:
+                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
+                #else:
+                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
+        #else:
+            #if psft:
+        #    if singlepsf:
+        #        host=False
+        #    else:
+        #        host=True
+            #else:
+            #    if singlepsf:
+            #        data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
+            #    else:
+            #        data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
+        data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
         nwalkers=240
         niter=1024
+        initial = np.array([*Inpvalues])
+        '''
         if moffat:
             if Re_c > 0:
                 if psft:
@@ -281,7 +280,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                         initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0])
         else:
             initial = np.array([At, 0.2, 0.0, 1.75])
-        
+        '''
         ndim = len(initial)
         p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
         if moffat:
@@ -289,7 +288,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                 tim=True
             else:
                 tim=False
-            tim=True    
+            tim=True
+            sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)
+            '''
             if Re_c > 0:
                 if psft:
                     if ring:
@@ -328,12 +329,19 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat_s,data,tim=tim,ncpu=ncpu)    
                     else:    
                         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat,data,tim=tim,ncpu=ncpu)
+            '''            
         else:
             sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,ncpu=ncpu)
             
         samples = sampler.flatchain
         theta_max  = samples[np.argmax(sampler.flatlnprobability)]
         pars_max = {}
+        keys=list(valsI.keys())
+        for key in keys:
+            pars_max[key]=valsI[key]
+        for i in range(0, len(Namevalues)):
+            pars_max[Namevalues[i]]=theta_max[i]
+        '''
         if moffat:
             if Re_c > 0:
                 if psft:
@@ -449,21 +457,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                             pars_max[key]=valsI[key]
                         for i in range(0, len(Namevalues)):
                             pars_max[Namevalues[i]]=theta_max[i]
-                        #if beta:
-                        #    if ellip:
-                        #        At0,dx_m,dy_m,ds_m,db_m,e_m,tht_m=theta_max
-                        #    else:
-                        #        At0,dx_m,dy_m,ds_m,db_m=theta_max    
-                        #else:
-                        #    if ellip:
-                        #        At0,dx_m,dy_m,ds_m,e_m,tht_m=theta_max
-                        #    else:
-                        #        At0,dx_m,dy_m,ds_m=theta_max     
                     else:
-                        #if ellip:
-                        #    At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m,e_m,tht_m=theta_max
-                        #else:
-                        #    At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m=theta_max
                         keys=list(valsI.keys())
                         for key in keys:
                             pars_max[key]=valsI[key]
@@ -484,7 +478,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         else:
             At0,dx_m,dy_m,ds_m=theta_max
                
-        
+        '''
     
     if plot_f:
         import matplotlib.pyplot as plt
