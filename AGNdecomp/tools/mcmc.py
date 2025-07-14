@@ -60,7 +60,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],savefig=True,model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
     if len(valsT):
         if 'ds_i' in valsT:
             ds_i=valsT['ds_i']
@@ -101,7 +101,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     else:
         db_m=569.29
         ds_m=72.2
-    if psft == False:#singlepsf and 
+    if psft == False:
         ds_m=psf_coef   
     if ring:
         if ds_i > 0:
@@ -169,12 +169,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         At0=At
     else:
         valsI={}
-        keysI={}
-        keysI['ellip']=ellip
-        keysI['alpha']=True#alpha
-        keysI['beta']=beta
-        keysI['fcenter']=fcenter
-        keysI['re_int']=re_int
         valsI['be_m']=db_m
         valsI['e_t']=e_m
         valsI['th_t']=tht_m
@@ -185,102 +179,14 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         valsI['Re']=Re_c
         valsI['bn']=bs_c
         valsI['ns']=ns_c 
-        #if Re_c > 0:
-            #if psft:
-                #if ring:
-                #    data = (pf_map, pf_mapE, x_t, y_t, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-                #if trip:
-                #    data = (pf_map, pf_mapE, x_t, y_t, db_m, At, bs_c, ns_c, Lt_c)
         if singlepsf:
-            host=False
-                    #data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)    
+            host=False  
         else: 
             host=True
-                    #data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
-            #else:
-                #if ring:
-                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, ro_m, At, bs_c, ns_c, pi_x-min_in[1], pi_y-min_in[0])
-                #if trip:
-                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, Lt_c)
-                #if singlepsf:
-                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, pi_x-min_in[1], pi_y-min_in[0], e_m, tht_m, ellip)
-                #else:
-                #    data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, bs_c, ns_c, e_m, tht_m, ellip, Re_c, re_int, pi_x-min_in[1], pi_y-min_in[0], fcenter)
-        #else:
-            #if psft:
-        #    if singlepsf:
-        #        host=False
-        #    else:
-        #        host=True
-            #else:
-            #    if singlepsf:
-            #        data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At, e_m, tht_m, ellip) 
-            #    else:
-            #        data = (pf_map, pf_mapE, x_t, y_t, ds_m, db_m, At)
         data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
         nwalkers=240
         niter=1024
         initial = np.array([*Inpvalues])
-        '''
-        if moffat:
-            if Re_c > 0:
-                if psft:
-                    if ring:
-                        initial = np.array([At*0.9, At*0.1, 3, 0.5, 2.0])
-                    elif singlepsf:
-                        initial = np.array([*Inpvalues])
-                    else:
-                        initial = np.array([*Inpvalues])
-                else:
-                    if ring:
-                        initial = np.array([At*0.9, At*0.1, 3])  
-                    elif singlepsf:   
-                        initial = np.array([At*0.9])      
-                    else:
-                        if ellip:
-                            if fcenter:
-                                if re_int:
-                                    initial = np.array([At*0.9, At*0.1, 0.0, 0.0])
-                                else:
-                                    initial = np.array([At*0.9, At*0.1, 3, 0.0, 0.0])
-                            else:
-                                if re_int:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.0, 0.0])
-                                else:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3, 0.0, 0.0])
-                        else:
-                            if fcenter:
-                                if re_int:
-                                    initial = np.array([At*0.9, At*0.1])
-                                else:
-                                    initial = np.array([At*0.9, At*0.1, 3])
-                            else:
-                                if re_int:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1])
-                                else:
-                                    initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 3])
-            else:
-                if psft:
-                    if ring:
-                        initial = np.array([At*0.9, At*0.1, 0.5, 3, 1.0, 0.5, 2.0])#, 0.0, 0.0])
-                    elif trip:
-                        initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 14.8, 4.4])
-                    elif singlepsf:
-                        initial = np.array([*Inpvalues])       
-                    else:
-                        initial = np.array([*Inpvalues])
-                else:
-                    if ring:
-                        initial = np.array([At*0.9, At*0.1, 0.5, 3, 1.0])#, 0.0, 0.0])
-                    elif trip:
-                        initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0, 4.4])
-                    elif singlepsf:    
-                        initial = np.array([At*0.9, 0.2, 0.0])    
-                    else:
-                        initial = np.array([At*0.9, 0.2, 0.0, At*0.1, 0.5, 3, 1.0])
-        else:
-            initial = np.array([At, 0.2, 0.0, 1.75])
-        '''
         ndim = len(initial)
         p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
         if moffat:
@@ -290,46 +196,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                 tim=False
             tim=True
             sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)
-            '''
-            if Re_c > 0:
-                if psft:
-                    if ring:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_ring3,data,tim=tim,ncpu=ncpu)
-                    elif trip:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_Dmoffat3,data,tim=tim,ncpu=ncpu)
-                    elif singlepsf:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat3_s,data,tim=tim,ncpu=ncpu)        
-                    else:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat3,data,tim=tim,ncpu=ncpu)
-                else:
-                    if ring:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_ring2,data,tim=tim,ncpu=ncpu)
-                    elif trip:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_Dmoffat2,data,tim=tim,ncpu=ncpu)
-                    elif singlepsf:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat2_s,data,tim=tim,ncpu=ncpu)     
-                    else:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat2,data,tim=tim,ncpu=ncpu)
-            else:
-                if psft:
-                    if ring:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_ring0,data,tim=tim,ncpu=ncpu)
-                    elif trip:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_Dmoffat0,data,tim=tim,ncpu=ncpu)
-                    elif singlepsf:    
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)    
-                    else:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)
-                else:
-                    if ring:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_ring,data,tim=tim,ncpu=ncpu)
-                    elif trip:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_Dmoffat,data,tim=tim,ncpu=ncpu)
-                    elif singlepsf:
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat_s,data,tim=tim,ncpu=ncpu)    
-                    else:    
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat,data,tim=tim,ncpu=ncpu)
-            '''            
         else:
             sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,ncpu=ncpu)
             
@@ -341,145 +207,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             pars_max[key]=valsI[key]
         for i in range(0, len(Namevalues)):
             pars_max[Namevalues[i]]=theta_max[i]
-        '''
-        if moffat:
-            if Re_c > 0:
-                if psft:
-                    if ring:
-                        At0,Io_m,Re_m,ds_m,r0_m=theta_max
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]
-                    elif trip:
-                        At0,dx_m,dy_m,Io_m,Re_m,ds_m=theta_max
-                        Lt_m=Lt_c
-                    elif singlepsf:
-                        if beta:
-                            if ellip:
-                                At0,ds_m,db_m,e_m,tht_m=theta_max
-                            else:    
-                                At0,ds_m,db_m=theta_max
-                        else:
-                            if ellip:
-                                At0,ds_m,e_m,tht_m=theta_max
-                            else:
-                                At0,ds_m=theta_max
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]    
-                    else:
-                        if ellip:
-                            if fcenter:
-                                if re_int:
-                                    At0,Io_m,ds_m,e_m,tht_m=theta_max
-                                    Re_m=Re_c
-                                else:    
-                                    At0,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
-                                dx_m=pi_x-min_in[1]
-                                dy_m=pi_y-min_in[0]  
-                            else:
-                                if re_int:
-                                    At0,dx_m,dy_m,Io_m,ds_m,e_m,tht_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,dx_m,dy_m,Io_m,Re_m,ds_m,e_m,tht_m=theta_max
-                        else:
-                            if fcenter:
-                                if re_int:
-                                    At0,Io_m,ds_m=theta_max
-                                    Re_m=Re_c
-                                else:    
-                                    At0,Io_m,Re_m,ds_m=theta_max
-                                dx_m=pi_x-min_in[1]
-                                dy_m=pi_y-min_in[0]  
-                            else:
-                                if re_int:
-                                    At0,dx_m,dy_m,Io_m,ds_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,dx_m,dy_m,Io_m,Re_m,ds_m=theta_max
-                else:
-                    if ring:
-                        At0,Io_m,Re_m=theta_max
-                        r0_m=ro_m
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]
-                    elif trip:
-                        At0,dx_m,dy_m,Io_m,Re_m=theta_max
-                        Lt_m=Lt_c
-                    elif singlepsf:
-                        At0=theta_max    
-                        At0=At0[0]
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]    
-                    else:
-                        if ellip:
-                            if fcenter:
-                                if re_int:
-                                    At0,Io_m,e_m,tht_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,Io_m,Re_m,e_m,tht_m=theta_max
-                                dx_m=pi_x-min_in[1]
-                                dy_m=pi_y-min_in[0] 
-                            else:
-                                if re_int:
-                                    At0,dx_m,dy_m,Io_m,e_m,tht_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,dx_m,dy_m,Io_m,Re_m,e_m,tht_m=theta_max
-                        else:
-                            if fcenter:
-                                if re_int:
-                                    At0,Io_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,Io_m,Re_m=theta_max
-                                dx_m=pi_x-min_in[1]
-                                dy_m=pi_y-min_in[0] 
-                            else:
-                                if re_int:
-                                    At0,dx_m,dy_m,Io_m=theta_max
-                                    Re_m=Re_c
-                                else:
-                                    At0,dx_m,dy_m,Io_m,Re_m=theta_max
-                bn_m=bs_c
-                ns_m=ns_c
-            else:
-                if psft:
-                    if ring:
-                        At0,Io_m,bn_m,Re_m,ns_m,ds_m,r0_m=theta_max
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]
-                    elif trip:
-                        At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m,Lt_m=theta_max
-                    elif singlepsf:
-                        keys=list(valsI.keys())
-                        for key in keys:
-                            pars_max[key]=valsI[key]
-                        for i in range(0, len(Namevalues)):
-                            pars_max[Namevalues[i]]=theta_max[i]
-                    else:
-                        keys=list(valsI.keys())
-                        for key in keys:
-                            pars_max[key]=valsI[key]
-                        for i in range(0, len(Namevalues)):
-                            pars_max[Namevalues[i]]=theta_max[i]
-                else:
-                    if ring:
-                        At0,Io_m,bn_m,Re_m,ns_m=theta_max
-                        r0_m=ro_m
-                        dx_m=pi_x-min_in[1]
-                        dy_m=pi_y-min_in[0]
-                    elif trip:
-                        At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,Lt_m=theta_max
-                    elif singlepsf:   
-                        At0,dx_m,dy_m=theta_max     
-                    else:
-                        At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m=theta_max
-        else:
-            At0,dx_m,dy_m,ds_m=theta_max
-               
-        '''
-    
+        
     if plot_f:
         import matplotlib.pyplot as plt
         cm=plt.cm.get_cmap('jet')
@@ -490,49 +218,25 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         ics=plt.contour(pf_map,lev,colors='k',linewidths=1)            
         cbar.set_label(r"Relative Density")
         fig.tight_layout()
-        plt.show()
+        if savefig:
+            fig.savefig('Original_NAME.pdf'.replace('NAME',name))
+        else:
+            plt.show()
     
     ft_num=np.nansum(pf_map)
     if moffat:
-        if ring:
-            ft_fit=pars_max['At']*2*np.pi*pars_max['ds_m']*(pars_max['ds_m']*np.exp(-0.5*(r0_m/pars_max['ds_m'])**2.0)+r0_m*np.sqrt(2.*np.pi)/2.0*(1+erf(r0_m/pars_max['ds_m']/np.sqrt(2.0))))
-        elif trip:
-            ft_fit=3*np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
-        else:
-            ft_fit=np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
+        ft_fit=np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
     else:
         ft_fit=2*np.pi*pars_max['ds_m']**2.0*pars_max['At']
     if model:
         if moffat:
-            if ring:
-                theta_t=At0,dx_m,dy_m,ds_m,r0_m
-                spec_t=mod.ring_model_s(theta_t, x_t, y_t)
-            elif trip:
-                theta_t=At0,dx_m,dy_m,ds_m,db_m,Lt_m
-                spec_t=mod.Dmoffat_model_s(theta_t, x_t, y_t)
-            else:
-                spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=host)
-                #if singlepsf:
-                #    if ellip:
-                #        r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
-                #        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
-                #        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
-                #    else:
-                #        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
-                #else:
-                #    if ellip:
-                #        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
-                #        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
-                #    else:
-                #        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
-            #r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
-            #bt=r1#ellipse2(tht,r1,e_m,th0_m)
+            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
             if singlepsf:
                 spec_hst=0.0
             else:
-                spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)#Io_m*np.exp(-bn_m*((bt/Re_m)**(1./ns_m)-1))
+                spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
         else:
-            spec_t=np.exp(-0.5*((((x_t-dx_m)/ds_m)**2.0)+((y_t-dy_m)/ds_m)**2.0))*At0
+            spec_t=mod.gaussian_modelF(pars_max, x_t=x_t, y_t=y_t)
         if plot_f:    
             fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
             ict=plt.imshow(np.log10(spec_t),cmap=cm) 
@@ -541,7 +245,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             ics=plt.contour(pf_map,lev,colors='red',linewidths=1)            
             cbar.set_label(r"Relative Density")
             fig.tight_layout()
-            plt.show()
+            if savefig:
+                fig.savefig('Model_NAME.pdf'.replace('NAME',name))
+            else:
+                plt.show()
             
             fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
             ict=plt.imshow(np.log10(pf_map-spec_t),cmap=cm) #np.log10
@@ -549,7 +256,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             ics=plt.contour((pf_map-spec_t),lev,colors='k',linewidths=1)
             cbar.set_label(r"Relative Density")
             fig.tight_layout()
-            plt.show()
+            if savefig:
+                fig.savefig('Residual1_NAME.pdf'.replace('NAME',name))
+            else:
+                plt.show()
             
             fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
             ict=plt.imshow(np.log10(pf_map-spec_t-spec_hst),cmap=cm) 
@@ -557,109 +267,13 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             ics=plt.contour((pf_map-spec_t-spec_hst),lev,colors='k',linewidths=1)
             cbar.set_label(r"Relative Density")
             fig.tight_layout()
-            plt.show()
+            if savefig:
+                fig.savefig('Residual2_NAME.pdf'.replace('NAME',name))
+            else:
+                plt.show()
             
             if mc:
-                if moffat:
-                    if Re_c > 0:
-                        if psft:
-                            if ring:
-                                labels = ['At','Io','Re','sigma','r0']
-                            elif singlepsf:
-                                if beta:
-                                    if ellip:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
-                                    else:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$\beta$']
-                                else:
-                                    if ellip:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$e$',r'$\theta$']
-                                    else:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$']    
-                            else:
-                                if ellip:
-                                    if fcenter:
-                                        if re_int:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
-                                        else:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
-                                    else:
-                                        if re_int:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
-                                        else:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
-                                else:
-                                    if fcenter:
-                                        if re_int:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$\alpha$']
-                                        else:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$']
-                                    else:
-                                        if re_int:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$']
-                                        else:
-                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$']
-                        else:
-                            if ring:
-                                labels = ['At','Io','Re']
-                            if singlepsf:
-                                labels = [r'$A_t$']    
-                            else:
-                                if ellip:
-                                    if fcenter:
-                                        if re_int:
-                                            labels = [r'$A_t$',r'$I_o$',r'$e$',r'$\theta$']
-                                        else:
-                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
-                                    else:
-                                        if re_int:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$e$',r'$\theta$']
-                                        else:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$e$',r'$\theta$']
-                                else:
-                                    if fcenter:
-                                        if re_int:
-                                            labels = [r'$A_t$',r'$I_o$']
-                                        else:
-                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$']
-                                    else:
-                                        if re_int:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$']
-                                        else:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$']
-                    else:
-                        if psft:
-                            if ring:
-                                labels = ['At','Io','bn','Re','ns','sigma','r0']
-                            elif trip:
-                                labels = ['At','x1','x2','Io','bn','Re','ns','alpha','Lt']
-                            elif singlepsf:
-                                if beta:
-                                    if ellip:
-                                        labels = [*Labelvalues]#r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
-                                    else:
-                                        labels = [*Labelvalues]#r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$']
-                                else:
-                                    if ellip:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$',r'$e$',r'$\theta$']
-                                    else:
-                                        labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$']    
-                            else:
-                                if ellip:
-                                    labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$',r'$e$',r'$\theta$']
-                                else:
-                                    labels = [*Labelvalues]
-                        else:
-                            if ring:
-                                labels = ['At','Io','bn','Re','ns']
-                            elif trip:
-                                labels = ['At','x1','x2','Io','bn','Re','ns','Lt']
-                            elif singlepsf:
-                                labels = [r'$A_t$',r'$x_0$',r'$y_0$']    
-                            else:
-                                labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$']
-                else:
-                    labels = ['At','x1','x2','sigma']
+                labels = [*Labelvalues]
                 import corner  
                 fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
                 fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
@@ -668,40 +282,25 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         dx_m=pars_max['xo']+min_in[1]
         dy_m=pars_max['yo']+min_in[0]
         if moffat:
-            if ring:
-                psf=np.nan
-            else:
-                psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
+            psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
         else:
             psf=pars_max['ds_m']*2.0*np.sqrt(2.0*np.log10(2.0))
         if moffat:
-            if ring:
-                return dx_m,dy_m,ds_m,r0_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
-            elif trip:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,Lt_m
-            elif singlepsf:
+            if singlepsf:
                 return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,spec_t,0,0,0,0,At0,e_m,tht_m
             else:
                 return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,spec_t,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['e_t'],pars_max['th_t']
         else:
             return dx_m,dy_m,ds_m,psf,ft_num,ft_fit,spec_t
     else:
-            
         dx_m=pars_max['xo']+min_in[1]
         dy_m=pars_max['yo']+min_in[0]
         if moffat:
-            if ring:
-                psf=np.nan
-            else:
-                psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
+            psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
         else:
             psf=pars_max['ds_m']*2.0*np.sqrt(2.0*np.log10(2.0))
         if moffat:
-            if ring:
-                return dx_m,dy_m,ds_m,r0_m,psf,ft_num,ft_fit,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
-            elif trip:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,Io_m,bn_m,Re_m,ns_m,At0,e_m,Lt_m
-            elif singlepsf:
+            if singlepsf:
                 return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,0,0,0,0,pars_max['At'],pars_max['e_t'],pars_max['th_t']
             else:
                 return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['e_t'],pars_max['th_t']

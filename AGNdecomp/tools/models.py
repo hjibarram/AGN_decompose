@@ -4,98 +4,6 @@ import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
 
-def moffat_model_s_residual(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,be_t,be_t1,psf=theta
-    alpha=psf/2.0/np.sqrt(2.0**(1/be_t1)-1)
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn_c=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    spec_agn_t=At*(1.0 + (r2/alpha**2.0))**(-be_t1)    
-    spec_agn=spec_agn_t-spec_agn_c
-    spec_t=spec_agn
-    return spec_t
-
-def Dmoffat_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,be_t,Lt=theta
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_t=spec_agn_A+spec_agn_B+spec_agn_C
-    return spec_t
-
-def moffat_model_s(theta, x_t=0, y_t=0, e_m=0.0, tht_m=0.0, ellip=False):
-    if ellip:
-        At,dx,dy,ds_t,be_t,e_t,tht_t=theta
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)  
-        r2=r2**2.0
-    else:
-        At,dx,dy,ds_t,be_t=theta
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_t=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    return spec_t  
-
-def ring_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,r0=theta
-    r=np.sqrt((x_t-dx)**2.0+(y_t-dy)**2.0)
-    spec_t=np.exp(-0.5*(((r-r0)/ds_t)**2.0))*At           
-    return spec_t   
-
-def gaussian_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t=theta
-    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds_t)**2.0))*At           
-    return spec_t   
-
-
-def Dmoffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, Lt=4.4):
-    At,dx,dy,Io,Re,ds_t=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C 
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t       
-
-def Dmoffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0,Lt=4.4):
-    At,dx,dy,Io,Re=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C  
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t        
-
-def Dmoffat_model0(theta, x_t=0, y_t=0, be_t=2.064):
-    At,dx,dy,Io,bn,Re,ns,ds_t,Lt=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t     
-
 def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     At,dx,dy,Io,bn,Re,ns,Lt=theta
     r2=(x_t-dx)**2.0+(y_t-dy)**2.0
@@ -111,88 +19,6 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
     return spec_t
-
-
-def ring_model_residual3(theta, x_t=0, y_t=0, bn=1.0, ns=1.0, dx=0.0, dy=0.0):
-    At,Io,Re,ds_t,r0=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t
-
-def ring_model_residual2(theta, x_t=0, y_t=0, ds_t=3.47, r0=1.0, bn=1.0, ns=1.0, dx=0.0, dy=0.0):
-    At,Io,Re=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t
-
-def ring_model_residual0(theta, x_t=0, y_t=0, dx=0.0, dy=0.0):
-    At,Io,bn,Re,ns,ds_t,r0=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t   
-
-def ring_model_residual(theta, x_t=0, y_t=0, ds_t=3.47, r0=1.0, dx=0.0, dy=0.0):
-    At,Io,bn,Re,ns=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t   
-
-def moffat_model_residual(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, At=1.0, psf=2.4):
-    dx,dy,Io,bn,Re,ns=theta
-    alpha=psf/2.0/np.sqrt(2.0**(1/be_t1)-1)
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn_c=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    spec_agn_t=At*(1.0 + (r2/alpha**2.0))**(-be_t1)    
-    spec_agn=spec_agn_t-spec_agn_c
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t   
-
-def moffat_model3_s(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
-    ellip=keysI['ellip']
-    alpha=keysI['alpha']
-    beta=keysI['beta']
-    be_t=valsI['db_m']
-    e_t=valsI['e_m']
-    tht_t=valsI['tht_m']
-    dx=valsI['dx']
-    dy=valsI['dy']
-    ds_t=valsI['al_m']
-    if ellip:
-        if beta:
-            At,ds_t,be_t,e_t,tht_t=theta
-        else:
-            At,ds_t,e_t,tht_t=theta
-    else:
-        if beta:
-            At,ds_t,be_t=theta
-        else:
-            if alpha:
-                At,ds_t=theta
-            else:
-                At=theta
-    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)    
-    spec_agn=At*(1.0 + (r1**2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
 
 def moffat_model3(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
     ellip=keysI['ellip']
@@ -232,79 +58,7 @@ def moffat_model3(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
     spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)
     spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
-    return spec_t       
-
-def moffat_model2_s(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, ellip=False):
-    At=theta
-    if ellip:
-        e_t=e_m
-        tht_t=tht_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0
-    else:
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
-
-def moffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
-    if ellip:
-        if fcenter:
-            if re_int:
-                At,Io,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,Io,Re,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_t,tht_t)
-        else:
-            if re_int:
-                At,dx,dy,Io,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-    else:
-        if fcenter:
-            if re_int:
-                At,Io=theta
-                Re=Re_c
-            else:
-                At,Io,Re=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_m,tht_m)
-        else:
-            if re_int:
-                At,dx,dy,Io=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-    r2=r2**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t        
-
-def moffat_model0_s(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
-    ellip=keysI['ellip']
-    be_t=valsI['db_m']
-    e_t=valsI['e_m']
-    tht_t=valsI['tht_m']
-    if ellip:
-        if beta:
-            At,dx,dy,ds_t,be_t,e_t,tht_t=theta
-        else:
-            At,dx,dy,ds_t,e_t,tht_t=theta
-    else:
-        if beta:
-            At,dx,dy,ds_t,be_t=theta
-        else:
-            At,dx,dy,ds_t=theta 
-    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)     
-    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
+    return spec_t             
 
 def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
     pars={}
@@ -341,36 +95,25 @@ def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
     spec_t=spec_agn+spec_hst
     return spec_t
 
-def moffat_model_st(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, e_m=0.0, tht_m=0.0, ellip=False):
-    At,dx,dy=theta
-    if ellip:
-        e_t=e_m
-        tht_t=tht_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0
-    else:
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t      
 
-def moffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
-    At,dx,dy,Io,bn,Re,ns=theta
-    #e,th0=0,0
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    #tht=np.arctan2(y_t-dy,x_t-dx)
-    bt=r1#ellipse2(tht,r1,e,th0)
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t          
+def gaussian_model(theta, valsI, Namevalues, x_t=0, y_t=0):
+    pars={}
+    keys=list(valsI.keys())
+    for key in keys:
+        pars[key]=valsI[key]
+    for i in range(0, len(Namevalues)):
+        pars[Namevalues[i]]=theta[i]
+    spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
+    return spec_t  
 
-def gaussian_model(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t=theta
-    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds_t)**2.0))*At           
+def gaussian_modelF(pars, x_t=0, y_t=0,):
+    # This is the function for the basic gaussian model
+    At=pars['At']
+    dx=pars['xo']
+    dy=pars['yo']
+    ds=pars['ds_m']
+    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds)**2.0))*At
     return spec_t   
-
 
 
 def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Name',sig=10,cosmetic=False,moffat=True):

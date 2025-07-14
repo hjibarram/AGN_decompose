@@ -183,8 +183,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                             et_c=0
                             th_c=0    
                 else:
-                    bs_c=p_bs(wave_1)    
-                #bs_c=p_bs(wave_1)
+                    bs_c=p_bs(wave_1) 
                     Re_c=p_Re(wave_1)/dpix
                     ns_c=p_ns(wave_1)
                     if ellip:
