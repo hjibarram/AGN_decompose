@@ -89,9 +89,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             else:
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
-                wave_1=wave_f[i]
-            psf_coef=p_ds(wave_1)
+                wave_1=wave_f[i]  
             if str_p:
+                psf_coef=p_ds(wave_1)
                 pi_x=p_px(wave_1)
                 pi_y=p_py(wave_1)
                 if singlepsf:
@@ -108,6 +108,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1) 
             else:
+                psf_coef=0
                 pi_x=0
                 pi_y=0
                 bs_c=0
@@ -143,14 +144,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             map1=np.nanmean(cube[ntw,:,:],axis=0)
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
-            psf_coef=p_ds(wave_1)
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
-            psf_coef=0
         if str_p:
             pi_x=p_px(wave_1)
             pi_y=p_py(wave_1)
+            psf_coef=p_ds(wave_1)
             if singlepsf: 
                 bs_c=3.0 
                 ns_c=0
@@ -165,6 +165,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1)
         else:
+            psf_coef=0
             pi_x=0
             pi_y=0
             bs_c=0
