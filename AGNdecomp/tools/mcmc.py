@@ -671,45 +671,45 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                 fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
                 fig.savefig('corners_NAME.pdf'.replace('NAME',name))
                             
-        dx_m=dx_m+min_in[1]
-        dy_m=dy_m+min_in[0]
+        dx_m=pars_max['xo']+min_in[1]
+        dy_m=pars_max['yo']+min_in[0]
         if moffat:
             if ring:
                 psf=np.nan
             else:
-                psf=ds_m*2.0*np.sqrt(2.0**(1./db_m)-1)
+                psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
         else:
-            psf=ds_m*2.0*np.sqrt(2.0*np.log10(2.0))
+            psf=pars_max['ds_m']*2.0*np.sqrt(2.0*np.log10(2.0))
         if moffat:
             if ring:
                 return dx_m,dy_m,ds_m,r0_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
             elif trip:
                 return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,Lt_m
             elif singlepsf:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,spec_t,0,0,0,0,At0,e_m,tht_m
+                return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,spec_t,0,0,0,0,At0,e_m,tht_m
             else:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,spec_t,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
+                return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,spec_t,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['e_t'],pars_max['th_t']
         else:
             return dx_m,dy_m,ds_m,psf,ft_num,ft_fit,spec_t
     else:
             
-        dx_m=dx_m+min_in[1]
-        dy_m=dy_m+min_in[0]
+        dx_m=pars_max['xo']+min_in[1]
+        dy_m=pars_max['yo']+min_in[0]
         if moffat:
             if ring:
                 psf=np.nan
             else:
-                psf=ds_m*2.0*np.sqrt(2.0**(1./db_m)-1)
+                psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
         else:
-            psf=ds_m*2.0*np.sqrt(2.0*np.log10(2.0))
+            psf=pars_max['ds_m']*2.0*np.sqrt(2.0*np.log10(2.0))
         if moffat:
             if ring:
                 return dx_m,dy_m,ds_m,r0_m,psf,ft_num,ft_fit,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
             elif trip:
                 return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,Io_m,bn_m,Re_m,ns_m,At0,e_m,Lt_m
             elif singlepsf:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,0,0,0,0,At0,e_m,tht_m
+                return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,0,0,0,0,pars_max['At'],pars_max['e_t'],pars_max['th_t']
             else:
-                return dx_m,dy_m,ds_m,db_m,psf,ft_num,ft_fit,Io_m,bn_m,Re_m,ns_m,At0,e_m,tht_m
+                return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['e_t'],pars_max['th_t']
         else:    
             return dx_m,dy_m,ds_m,psf,ft_num,ft_fit
