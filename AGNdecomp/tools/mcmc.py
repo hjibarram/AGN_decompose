@@ -174,7 +174,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         valsI['al_m']=5.0
         valsI['Re']=Re_c
         valsI['bn']=bs_c
-        valsI['ns']=ns_c 
+        valsI['ns']=ns_c
+        print("Input values: ",valsI)
         if singlepsf:
             host=False  
         else: 
