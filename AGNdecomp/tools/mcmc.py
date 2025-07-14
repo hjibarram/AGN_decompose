@@ -55,12 +55,12 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,moffat=False,ncpu=10,psft=False,valsT={}):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsT={}):
     if len(valsT) > 0:
         if 'db_m' in valsT:
             db_m=valsT['db_m']
-        if 'psf_coef' in valsT:
-            psf_coef=valsT['psf_coef']
+        if 'ds_m' in valsT:
+            ds_m=valsT['ds_m']
         if 'e_m' in valsT:
             e_m=valsT['e_m']
         if 'tht_m' in valsT:
@@ -80,16 +80,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         if 'dyo' in valsT:
             dyo=valsT['dyo']    
     nx,ny=pf_map.shape
-    if db_m > 0 and psf_coef > 0:
-        if moffat:
-            ds_m=psf_coef/(2.0*np.sqrt(2.0**(1./db_m)-1))
-        else:
-            ds_m=2.5/(2.0*np.sqrt(2.0*np.log(2.0)))
-    else:
-        db_m=569.29
-        ds_m=72.2
-    if psft == False:
-        ds_m=psf_coef   
     if autocent:
         if sig == 0:
             pf_map_c=pf_map
@@ -109,16 +99,16 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     y_t=np.array([y_t]*ny).T
     
     valsI={}
+    valsI['At']=At
+    valsI['ds_m']=ds_m
     valsI['be_m']=db_m
-    valsI['e_t']=e_m
-    valsI['th_t']=tht_m
     valsI['xo']=pi_x-min_in[1]
     valsI['yo']=pi_y-min_in[0]
-    valsI['At']=At
-    valsI['al_m']=5.0
     valsI['Re']=Re_c
     valsI['bn']=bs_c
     valsI['ns']=ns_c
+    valsI['e_t']=e_m
+    valsI['th_t']=tht_m
     print("Input values: ",valsI)
     if singlepsf:
         host=False  

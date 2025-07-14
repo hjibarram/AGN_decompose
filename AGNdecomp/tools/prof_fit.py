@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,beta=True,fcenter=False,ellip=False,re_int=False,singlepsf=False,psamp=10,ds_i=0,ro_i=0,Lt_i=0,vas='',dir_o='',name='spectra',psft=False,str_p=False,local=False,moffat=False,ncpu=10,sp=0,bt=0,psf_t=False):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,singlepsf=False,psamp=10,vas='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
@@ -90,15 +90,21 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]  
+            bt=25
+            ds_m=1
+            pi_x=0
+            pi_y=0
+            bs_c=0
+            Re_c=0
+            ns_c=0
+            et_c=0
+            th_c=0      
             if str_p:
-                psf_coef=p_ds(wave_1)
+                ds_m=p_ds(wave_1)
                 pi_x=p_px(wave_1)
                 pi_y=p_py(wave_1)
                 if singlepsf:
-                    bs_c=3.0
-                    ns_c=0
                     bt=p_bts(wave_1)
-                    Re_c=10.
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1)  
                 else:
@@ -107,21 +113,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     ns_c=p_ns(wave_1)
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1) 
-            else:
-                psf_coef=0
-                pi_x=0
-                pi_y=0
-                bs_c=0
-                Re_c=0
-                ns_c=0  
-                Lt_c=0
-                et_c=0
-                th_c=0   
-            if pi_x == 0 and pi_y == 0:
-                fcenter=False 
             valsT={}
             valsT['db_m']=bt
-            valsT['psf_coef']=psf_coef
+            valsT['ds_m']=ds_m
             valsT['e_m']=et_c
             valsT['tht_m']=th_c
             valsT['pi_x']=pi_x
@@ -132,7 +126,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             valsT['dxo']=0
             valsT['dyo']=0      
             if moffat:
-                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,fcenter=fcenter,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,psft=psft,valsT=valsT) 
+                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsT=valsT) 
             else:
                 dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,sig=sig,mc=mc,ncpu=ncpu)
             sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
@@ -159,15 +153,21 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
+        bt=25
+        ds_m=1
+        pi_x=0
+        pi_y=0
+        bs_c=0
+        Re_c=0
+        ns_c=0
+        et_c=0
+        th_c=0       
         if str_p:
             pi_x=p_px(wave_1)
             pi_y=p_py(wave_1)
-            psf_coef=p_ds(wave_1)
+            ds_m=p_ds(wave_1)
             if singlepsf: 
-                bs_c=3.0 
-                ns_c=0
                 bt=p_bts(wave_1)
-                Re_c=10.0
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1)   
             else:          
@@ -175,33 +175,21 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 Re_c=p_Re(wave_1)
                 ns_c=p_ns(wave_1)
                 et_c=p_eli(wave_1)
-                th_c=p_tht(wave_1)
-        else:
-            psf_coef=0
-            pi_x=0
-            pi_y=0
-            bs_c=0
-            Re_c=0
-            ns_c=0
-            Lt_c=0 
-            et_c=0
-            th_c=0    
-        if pi_x == 0 and pi_y == 0:
-            fcenter=False
+                th_c=p_tht(wave_1) 
         valsT={}
         valsT['db_m']=bt
-        valsT['psf_coef']=psf_coef
-        valsT['e_m']=et_c
-        valsT['tht_m']=th_c
+        valsT['ds_m']=ds_m
         valsT['pi_x']=pi_x
         valsT['pi_y']=pi_y
         valsT['bs_c']=bs_c
         valsT['Re_c']=Re_c
         valsT['ns_c']=ns_c
+        valsT['e_m']=et_c
+        valsT['tht_m']=th_c        
         valsT['dxo']=0
         valsT['dyo']=0   
         if moffat:
-            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,fcenter=fcenter,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,psft=psft,valsT=valsT)
+            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsT=valsT)
         else:
             dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
         sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
