@@ -500,13 +500,13 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     ft_num=np.nansum(pf_map)
     if moffat:
         if ring:
-            ft_fit=pars_max['At']*2*np.pi*pars['ds_m']*(pars['ds_m']*np.exp(-0.5*(r0_m/pars['ds_m'])**2.0)+r0_m*np.sqrt(2.*np.pi)/2.0*(1+erf(r0_m/pars['ds_m']/np.sqrt(2.0))))
+            ft_fit=pars_max['At']*2*np.pi*pars_max['ds_m']*(pars_max['ds_m']*np.exp(-0.5*(r0_m/pars_max['ds_m'])**2.0)+r0_m*np.sqrt(2.*np.pi)/2.0*(1+erf(r0_m/pars_max['ds_m']/np.sqrt(2.0))))
         elif trip:
-            ft_fit=3*np.pi*pars['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
+            ft_fit=3*np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
         else:
-            ft_fit=np.pi*pars['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
+            ft_fit=np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
     else:
-        ft_fit=2*np.pi*pars['ds_m']**2.0*pars_max['At']
+        ft_fit=2*np.pi*pars_max['ds_m']**2.0*pars_max['At']
     if model:
         if moffat:
             if ring:
