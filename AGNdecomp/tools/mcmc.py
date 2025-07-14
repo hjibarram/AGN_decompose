@@ -55,14 +55,10 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,model=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,trip=False,ring=False,moffat=False,mc=False,ncpu=10,psft=False,valsT={},ds_i=0,db_m=0,ro_i=0,psf_coef=0,e_m=0.0,tht_m=0.0,pi_x=0,pi_y=0,bs_c=0,Re_c=0,ns_c=0,Lt_c=4.4,dyo=0,dxo=0):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,fcenter=False,sig=2,plot_f=False,beta=True,re_int=False,ellip=False,singlepsf=False,moffat=False,ncpu=10,psft=False,valsT={}):
     if len(valsT) > 0:
-        if 'ds_i' in valsT:
-            ds_i=valsT['ds_i']
         if 'db_m' in valsT:
             db_m=valsT['db_m']
-        if 'ro_i' in valsT:
-            ro_i=valsT['ro_i']
         if 'psf_coef' in valsT:
             psf_coef=valsT['psf_coef']
         if 'e_m' in valsT:
@@ -79,15 +75,11 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             Re_c=valsT['Re_c']
         if 'ns_c' in valsT:
             ns_c=valsT['ns_c']
-        if 'Lt_c' in valsT:
-            Lt_c=valsT['Lt_c']
         if 'dxo' in valsT:
             dxo=valsT['dxo']
         if 'dyo' in valsT:
             dyo=valsT['dyo']    
     nx,ny=pf_map.shape
-    if trip:
-        ring=False
     if db_m > 0 and psf_coef > 0:
         if moffat:
             ds_m=psf_coef/(2.0*np.sqrt(2.0**(1./db_m)-1))
@@ -98,15 +90,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         ds_m=72.2
     if psft == False:
         ds_m=psf_coef   
-    if ring:
-        if ds_i > 0:
-            ds_m = ds_i
-        else:
-            ds_m = 1.0
-        if ro_i > 0:
-            ro_m = ro_i
-        else:
-            ro_m = 2.0
     if autocent:
         if sig == 0:
             pf_map_c=pf_map
