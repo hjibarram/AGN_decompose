@@ -64,14 +64,14 @@ def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,f
     else:
         psft=True
     if nofull or local:
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,moffat=True,mc=True,ncpu=ncpus,
-             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,moffat=True,ncpu=ncpus,
+             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=psft,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter)
     else:
         psamp=sampling
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
-             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=True,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=False,re_int=False)
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
-             sp=1,bt=26.0,psf_t=True,str_p=True,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter,re_int=re_int)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,ncpu=ncpus,
+             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=True,vas='',ellip=ellipse,psamp=psamp,fcenter=False,re_int=False)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,ncpu=ncpus,
+             sp=1,bt=26.0,psf_t=True,str_p=True,psft=psft,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter,re_int=re_int)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,cosmetic=False,vt='_sp1',corr=False)
         plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=1)
 
