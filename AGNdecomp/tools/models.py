@@ -313,7 +313,7 @@ def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
     #e_t=valsI['e_m']
     #tht_t=valsI['tht_m']
     keys=list(valsI.keys())
-    for key in range(0, keys):
+    for key in keys:
         pars[key]=valsI[key]
     for i in range(0, len(Namevalues)):
         pars[Namevalues[i]]=theta[i]
