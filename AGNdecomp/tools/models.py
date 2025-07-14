@@ -321,7 +321,7 @@ def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
     #    At,dx,dy,Io,bn,Re,ns,ds_t,e_t,tht_t=theta
     #else:
     #    At,dx,dy,Io,bn,Re,ns,ds_t=theta
-    moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)    
+    spec_t=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)    
     #r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
     #spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
     #spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
