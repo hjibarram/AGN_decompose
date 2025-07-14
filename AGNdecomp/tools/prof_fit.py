@@ -30,16 +30,14 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
                 p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,20])
             else:
-                if psft == False:
-                    p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
+                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=10,tp=tpt)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=10,tp=tpt)
                 p_bs=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=11,out_p=True,deg=5,tp=tpt)
                 p_Re=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=12,out_p=True,deg=5,tp=tpt)
                 p_ns=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=13,out_p=True,deg=5,tp=tpt)
-                if ellip:
-                    p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
-                    p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,10])
+                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
+                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,10])
             str_p=True
         except:
             str_p=False      
@@ -93,58 +91,26 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]
-            if psf_t:
-                psf_coef=p_ds(wave_1)
-                ro_i=0
-                ds_i=0
-            else:
-                psf_coef=p_ds(wave_1)
-                ro_i=0
-                ds_i=0
+            psf_coef=p_ds(wave_1)
+            ro_i=0
+            ds_i=0
             if str_p:
                 pi_x=p_px(wave_1)
                 pi_y=p_py(wave_1)
                 Lt_c = 0.0
-                if trip:
-                    Lt_c=p_ls(wave_1)
-                    if Lt_c < 0.0:
-                        Lt_c = 0.0
                 if singlepsf:
                     bs_c=3.0
                     ns_c=0
-                    if beta:
-                        bt=p_bts(wave_1)
-                        Re_c=0.
-                    else:
-                        Re_c=100
-                    if ellip:
-                        et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)
-                        ellip=False  
-                        et=1
-                    else:
-                        if et==1:
-                            et_c=p_eli(wave_1)
-                            th_c=p_tht(wave_1)
-                        else:
-                            et_c=0
-                            th_c=0    
+                    bt=p_bts(wave_1)
+                    Re_c=10.
+                    et_c=p_eli(wave_1)
+                    th_c=p_tht(wave_1)  
                 else:
                     bs_c=p_bs(wave_1) 
                     Re_c=p_Re(wave_1)/dpix
                     ns_c=p_ns(wave_1)
-                    if ellip:
-                        et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)
-                        ellip=False
-                        et=1
-                    else: 
-                        if et==1:
-                            et_c=p_eli(wave_1)
-                            th_c=p_tht(wave_1)
-                        else:
-                            et_c=0
-                            th_c=0    
+                    et_c=p_eli(wave_1)
+                    th_c=p_tht(wave_1) 
             else:
                 pi_x=0
                 pi_y=0
@@ -178,21 +144,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
     else:
         et=0
         if sp > 0:
-            map1=np.nanmean(cube[0:sp,:,:],axis=0)
-            map1e=np.nanmean(cubeE[0:sp,:,:],axis=0)
-            wave_1=np.nanmean(wave_f[0:sp])
             ntw=np.where((wave_f > 4850) & (wave_f < 5150))[0]
             map1=np.nanmean(cube[ntw,:,:],axis=0)
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
-            if psf_t: 
-                psf_coef=p_ds(wave_1)
-                ds_i=0
-                ro_i=0
-            else:
-                psf_coef=p_ds(wave_1)
-                ds_i=0
-                ro_i=0
+            psf_coef=p_ds(wave_1)
+            ds_i=0
+            ro_i=0
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
@@ -203,46 +161,19 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             pi_x=p_px(wave_1)
             pi_y=p_py(wave_1)
             Lt_c = 0.0
-            if trip:
-                Lt_c=p_ls(wave_1)
-                if Lt_c < 0.0:
-                    Lt_c = 0.0
             if singlepsf: 
                 bs_c=3.0 
                 ns_c=0
-                if beta:
-                    bt=p_bts(wave_1)
-                    Re_c=0.0
-                else:
-                    Re_c=100.
-                if ellip:
-                    et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1)
-                    ellip=False
-                    et=1
-                else:
-                    if et==1:
-                        et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)
-                    else:
-                        et_c=0
-                        th_c=0   
+                bt=p_bts(wave_1)
+                Re_c=10.0
+                et_c=p_eli(wave_1)
+                th_c=p_tht(wave_1)   
             else:          
                 bs_c=p_bs(wave_1)  
                 Re_c=p_Re(wave_1)
                 ns_c=p_ns(wave_1)
-                if ellip:
-                    et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1)
-                    ellip=False
-                    et=1
-                else: 
-                    if et==1:
-                        et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)
-                    else:
-                        et_c=0
-                        th_c=0 
+                et_c=p_eli(wave_1)
+                th_c=p_tht(wave_1)
         else:
             pi_x=0
             pi_y=0
