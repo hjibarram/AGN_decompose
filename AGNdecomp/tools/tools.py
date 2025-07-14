@@ -190,7 +190,6 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
         spt=''
     file=dir+name+'_moffat'+spt+tp+'.csv'
     f=open(file,'r')
-    #flux=[]
     wave=[]
     val_v=[]
     for line in f:
@@ -198,13 +197,10 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
             data=line.replace('\n','').split(',')
             data=list(filter(None,data))
             wave.extend([float(data[0])])
-            #flux.extend([np.float(data[1])])
             val_v.extend([float(data[val])])
     f.close()
-    #flux=np.array(flux)
     wave=np.array(wave)
     val_v=np.array(val_v)
-    #flux=conv(flux,ke=sigma)
     val_vt=step_vect_Mean(val_v,sp=20,pst=True,mask_val=mask_val)
     if sigma==0:
         val_s=val_vt
@@ -511,3 +507,58 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     fig.write_image(file_f.replace('.html','.pdf'))
 
     return
+
+
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[]):
+    # Plot the original map, model AGN, model HST, residuals and corner plot
+    cm=plt.cm.get_cmap('jet')
+    lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour(inMap,lev,colors='k',linewidths=1)            
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Original_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
+    ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Model_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm) #np.log10
+    cbar=plt.colorbar(ict)
+    ics=plt.contour((inMap-modelAGN),lev,colors='k',linewidths=1)
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Residual1_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour((inMap-modelAGN-modelHST),lev,colors='k',linewidths=1)
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Residual2_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    labels = [*Labelvalues]
+    fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
+    fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
+    fig.savefig(path_out+'corners_NAME.pdf'.replace('NAME',name))

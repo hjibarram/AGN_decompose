@@ -26,11 +26,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tpt+vas)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tpt+vas)
                 p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
-                if beta:
-                    p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tpt+vas)  
-                if ellip:
-                    p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
-                    p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,20])
+                p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tpt+vas)  
+                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
+                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,20])
             else:
                 if psft == False:
                     p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
@@ -63,7 +61,6 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         cdelt=hdr["CDELT3"]
     crval=hdr["CRVAL3"]
     wave_f=crval+cdelt*(np.arange(nz)+1-crpix)
-    pt = np.poly1d(coef)
     wcs = WCS(hdr)
     wcs=wcs.celestial
     if sp > 0:
@@ -97,18 +94,11 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]
             if psf_t:
-                if psft == False:#singlepsf and 
-                    psf_coef=p_ds(wave_1)
-                else: 
-                    psf_coef=pt(wave_1)/dpix
+                psf_coef=p_ds(wave_1)
                 ro_i=0
                 ds_i=0
             else:
-                if psft == False:
-                    psf_coef=p_ds(wave_1)
-                else:
-                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
-                    psf_coef=pt(wave_1)/dpix
+                psf_coef=p_ds(wave_1)
                 ro_i=0
                 ds_i=0
             if str_p:
@@ -196,18 +186,11 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
             if psf_t: 
-                if psft == False:
-                    psf_coef=p_ds(wave_1)
-                else:   
-                    psf_coef=pt(wave_1)/dpix
+                psf_coef=p_ds(wave_1)
                 ds_i=0
                 ro_i=0
             else:
-                if psft == False:#
-                    psf_coef=p_ds(wave_1)
-                else:
-                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
-                    psf_coef=pt(wave_1)/dpix
+                psf_coef=p_ds(wave_1)
                 ds_i=0
                 ro_i=0
         else:
