@@ -11,6 +11,9 @@ from astropy.coordinates import ICRS, Galactic, FK4, FK5
 from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
 from astropy.wcs import WCS
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 def get_priorsvalues(filename,mod_ind=0,verbose=True):
     """
@@ -451,8 +454,7 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     wave2,spec_res,spec_resE=extract_spec(outf2,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
     spec0=spec_res+spec_mod
 
-    import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
+    
     
     fig = make_subplots(rows=1, cols=1, row_heights=(3,))
     

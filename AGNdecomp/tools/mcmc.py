@@ -5,7 +5,6 @@ import numpy as np
 import emcee
 import corner  
 from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel
-import matplotlib.pyplot as plt
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
 from AGNdecomp.tools.priors import lnprob_moffat0
