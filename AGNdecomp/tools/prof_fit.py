@@ -186,9 +186,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         if pi_x == 0 and pi_y == 0:
             fcenter=False                                          
         if moffat:
-            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,mod,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,trip=trip,ring=ring,fcenter=fcenter,beta=beta,ellip=ellip,singlepsf=singlepsf,moffat=moffat,mc=mc,ncpu=ncpu,db_m=bt,psf_coef=psf_coef,pi_x=pi_x,pi_y=pi_y,bs_c=bs_c,Re_c=Re_c,ns_c=ns_c,psft=psft,ro_i=ro_i,ds_i=ds_i,Lt_c=Lt_c,e_m=et_c,tht_m=th_c)
+            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,trip=trip,ring=ring,fcenter=fcenter,beta=beta,ellip=ellip,singlepsf=singlepsf,moffat=moffat,mc=mc,ncpu=ncpu,db_m=bt,psf_coef=psf_coef,pi_x=pi_x,pi_y=pi_y,bs_c=bs_c,Re_c=Re_c,ns_c=ns_c,psft=psft,ro_i=ro_i,ds_i=ds_i,Lt_c=Lt_c,e_m=et_c,tht_m=th_c)
         else:
-            dx_m1,dy_m1,ds_m1,psf1,Ft,FtF,mod=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,mc=mc,ncpu=ncpu)
+            dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,mc=mc,ncpu=ncpu)
         sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
         val1=sky1.to_string('hmsdms')
         if moffat:
