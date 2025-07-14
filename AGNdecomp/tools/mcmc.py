@@ -3,7 +3,6 @@ import glob, os,sys,timeit
 import matplotlib
 import numpy as np
 import emcee
-import corner  
 from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod

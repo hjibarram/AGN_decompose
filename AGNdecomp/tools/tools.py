@@ -5,6 +5,7 @@ from scipy.special import gamma, gammaincinv, gammainc
 from scipy.ndimage.filters import gaussian_filter1d as filt1d
 import os.path as ptt
 import yaml
+import corner  
 from astropy.io import fits
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import ICRS, Galactic, FK4, FK5
