@@ -332,6 +332,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             
         samples = sampler.flatchain
         theta_max  = samples[np.argmax(sampler.flatlnprobability)]
+        pars_max = {}
         if moffat:
             if Re_c > 0:
                 if psft:
@@ -442,21 +443,31 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                     elif trip:
                         At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m,Lt_m=theta_max
                     elif singlepsf:
-                        if beta:
-                            if ellip:
-                                At0,dx_m,dy_m,ds_m,db_m,e_m,tht_m=theta_max
-                            else:
-                                At0,dx_m,dy_m,ds_m,db_m=theta_max    
-                        else:
-                            if ellip:
-                                At0,dx_m,dy_m,ds_m,e_m,tht_m=theta_max
-                            else:
-                                At0,dx_m,dy_m,ds_m=theta_max     
+                        keys=list(valsI.keys())
+                        for key in keys:
+                            pars_max[key]=valsI[key]
+                        for i in range(0, len(Namevalues)):
+                            pars_max[Namevalues[i]]=theta_max[i]
+                        #if beta:
+                        #    if ellip:
+                        #        At0,dx_m,dy_m,ds_m,db_m,e_m,tht_m=theta_max
+                        #    else:
+                        #        At0,dx_m,dy_m,ds_m,db_m=theta_max    
+                        #else:
+                        #    if ellip:
+                        #        At0,dx_m,dy_m,ds_m,e_m,tht_m=theta_max
+                        #    else:
+                        #        At0,dx_m,dy_m,ds_m=theta_max     
                     else:
-                        if ellip:
-                            At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m,e_m,tht_m=theta_max
-                        else:
-                            At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m=theta_max
+                        #if ellip:
+                        #    At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m,e_m,tht_m=theta_max
+                        #else:
+                        #    At0,dx_m,dy_m,Io_m,bn_m,Re_m,ns_m,ds_m=theta_max
+                        keys=list(valsI.keys())
+                        for key in keys:
+                            pars_max[key]=valsI[key]
+                        for i in range(0, len(Namevalues)):
+                            pars_max[Namevalues[i]]=theta_max[i]
                 else:
                     if ring:
                         At0,Io_m,bn_m,Re_m,ns_m=theta_max
@@ -487,17 +498,15 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         plt.show()
     
     ft_num=np.nansum(pf_map)
-    dt=1.0#.7/.5
-    ds_m=ds_m*dt
     if moffat:
         if ring:
-            ft_fit=At0*2*np.pi*ds_m*(ds_m*np.exp(-0.5*(r0_m/ds_m)**2.0)+r0_m*np.sqrt(2.*np.pi)/2.0*(1+erf(r0_m/ds_m/np.sqrt(2.0))))
+            ft_fit=pars_max['At']*2*np.pi*pars['ds_m']*(pars['ds_m']*np.exp(-0.5*(r0_m/pars['ds_m'])**2.0)+r0_m*np.sqrt(2.*np.pi)/2.0*(1+erf(r0_m/pars['ds_m']/np.sqrt(2.0))))
         elif trip:
-            ft_fit=3*np.pi*ds_m**2.0*At0/(db_m-1.0)
+            ft_fit=3*np.pi*pars['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
         else:
-            ft_fit=np.pi*ds_m**2.0*At0/(db_m-1.0)
+            ft_fit=np.pi*pars['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
     else:
-        ft_fit=2*np.pi*ds_m**2.0*At0
+        ft_fit=2*np.pi*pars['ds_m']**2.0*pars_max['At']
     if model:
         if moffat:
             if ring:
@@ -507,25 +516,26 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                 theta_t=At0,dx_m,dy_m,ds_m,db_m,Lt_m
                 spec_t=mod.Dmoffat_model_s(theta_t, x_t, y_t)
             else:
-                if singlepsf:
-                    if ellip:
-                        r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
-                        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
-                        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
-                    else:
-                        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
-                else:
-                    if ellip:
-                        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
-                        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
-                    else:
-                        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
-            r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
-            bt=r1#ellipse2(tht,r1,e_m,th0_m)
+                spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=host)
+                #if singlepsf:
+                #    if ellip:
+                #        r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
+                #        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
+                #        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
+                #    else:
+                #        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
+                #else:
+                #    if ellip:
+                #        rt=tol.radi_ellip(x_t-dx_m,y_t-dy_m,e_m,tht_m)
+                #        spec_t=At0*(1.0+((rt/ds_m)**2.0))**(-db_m)
+                #    else:
+                #        spec_t=At0*(1.0+(((x_t-dx_m)/ds_m)**2.0+((y_t-dy_m)/ds_m)**2.0))**(-db_m)
+            #r1=np.sqrt((x_t-dx_m)**2.0+(y_t-dy_m)**2.0)
+            #bt=r1#ellipse2(tht,r1,e_m,th0_m)
             if singlepsf:
                 spec_hst=0.0
             else:
-                spec_hst=Io_m*np.exp(-bn_m*((bt/Re_m)**(1./ns_m)-1))
+                spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)#Io_m*np.exp(-bn_m*((bt/Re_m)**(1./ns_m)-1))
         else:
             spec_t=np.exp(-0.5*((((x_t-dx_m)/ds_m)**2.0)+((y_t-dy_m)/ds_m)**2.0))*At0
         if plot_f:    
