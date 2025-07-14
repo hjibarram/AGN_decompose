@@ -8,6 +8,8 @@ from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord
 import AGNdecomp.tools.tools as tol
 from AGNdecomp.tools.mcmc import evaluate_2dPSF
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,beta=True,fcenter=False,ellip=False,re_int=False,singlepsf=False,psamp=10,ds_i=0,ro_i=0,Lt_i=0,vas='',dir_o='',name='spectra',trip=False,ring=False,psft=False,str_p=False,local=False,moffat=False,mc=False,ncpu=10,sp=0,coef=[-9.50013525e-21,8.18487432e-16,-1.88951248e-11,1.87198198e-07,-8.58072070e-04,3.90811581e+00],bt=0,psf_t=False):

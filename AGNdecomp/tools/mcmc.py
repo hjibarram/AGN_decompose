@@ -9,9 +9,6 @@ import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
 from AGNdecomp.tools.priors import lnprob_moffat0
 from AGNdecomp.tools.priors import lnprob_gaussian
-import warnings
-warnings.filterwarnings("ignore")
-
 
 def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,ncpu=10):
     if tim:
