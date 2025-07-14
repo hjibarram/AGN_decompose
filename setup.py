@@ -15,6 +15,13 @@ def version(fn):
 #       return f.read()
 
 requirements = [
+    'emcee',
+    'corner',
+    'astropy',
+    'matplotlib',
+    'numpy',
+    'scipy',
+    'plotly',
 #    'astropy>=3.2.1',
 #    'matplotlib>=3.1.1',
 #    'numpy>=1.17.2',
