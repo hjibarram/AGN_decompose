@@ -7,10 +7,7 @@ from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel
 import matplotlib.pyplot as plt
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
-from AGNdecomp.tools.priors import lnprob_Dmoffat3,lnprob_Dmoffat2,lnprob_Dmoffat0,lnprob_Dmoffat
-from AGNdecomp.tools.priors import lnprob_ring3,lnprob_ring2,lnprob_ring0,lnprob_ring
-from AGNdecomp.tools.priors import lnprob_moffat3_s,lnprob_moffat2_s,lnprob_moffat0_s,lnprob_moffat_s
-from AGNdecomp.tools.priors import lnprob_moffat3,lnprob_moffat2,lnprob_moffat0,lnprob_moffat
+from AGNdecomp.tools.priors import lnprob_moffat0
 from AGNdecomp.tools.priors import lnprob_gaussian
 
 
