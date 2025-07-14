@@ -227,7 +227,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         ft_fit=2*np.pi*pars_max['ds_m']**2.0*pars_max['At']
     if model:
         if moffat:
-            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
+            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=host)
             if singlepsf:
                 spec_hst=0.0
             else:
