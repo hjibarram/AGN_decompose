@@ -174,14 +174,14 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         keysI['beta']=beta
         keysI['fcenter']=fcenter
         keysI['re_int']=re_int
-        valsI['db_m']=db_m
-        valsI['e_m']=e_m
-        valsI['tht_m']=tht_m
-        valsI['dx']=pi_x-min_in[1]
-        valsI['dy']=pi_y-min_in[0]
-        valsI['At1']=At
+        valsI['be_m']=db_m
+        valsI['e_t']=e_m
+        valsI['th_t']=tht_m
+        valsI['xo']=pi_x-min_in[1]
+        valsI['yo']=pi_y-min_in[0]
+        valsI['At']=At
         valsI['al_m']=5.0
-        valsI['Re_c']=Re_c
+        valsI['Re']=Re_c
         valsI['bn']=bs_c
         valsI['ns']=ns_c 
         if Re_c > 0:
@@ -208,9 +208,11 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, pi_x-min_in[1], pi_y-min_in[0])
                 elif singlepsf:
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
+                    host=False
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
                 else:
-                    data = (pf_map, pf_mapE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues)
+                    host=True
+                    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
             else:
                 if ring:
                     data = (pf_map, pf_mapE, x_t, y_t, At, ds_m, ro_m, pi_x-min_in[1], pi_y-min_in[0])
@@ -313,7 +315,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                     elif trip:
                         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_Dmoffat0,data,tim=tim,ncpu=ncpu)
                     elif singlepsf:    
-                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0_s,data,tim=tim,ncpu=ncpu)    
+                        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)    
                     else:
                         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)
                 else:
@@ -561,37 +563,37 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                             elif singlepsf:
                                 if beta:
                                     if ellip:
-                                        labels = [r'$A_t$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
+                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$',r'$\alpha$',r'$\beta$']
+                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$\beta$']
                                 else:
                                     if ellip:
-                                        labels = [r'$A_t$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$',r'$\alpha$']    
+                                        labels = [*Labelvalues]#r'$A_t$',r'$\alpha$']    
                             else:
                                 if ellip:
                                     if fcenter:
                                         if re_int:
-                                            labels = [r'$A_t$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
                                         else:
-                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
                                     else:
                                         if re_int:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$',r'$e$',r'$\theta$']
                                         else:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$',r'$e$',r'$\theta$']
                                 else:
                                     if fcenter:
                                         if re_int:
-                                            labels = [r'$A_t$',r'$I_o$',r'$\alpha$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$\alpha$']
                                         else:
-                                            labels = [r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$I_o$',r'$R_e$',r'$\alpha$']
                                     else:
                                         if re_int:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$\alpha$']
                                         else:
-                                            labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$']
+                                            labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$R_e$',r'$\alpha$']
                         else:
                             if ring:
                                 labels = ['At','Io','Re']
@@ -629,19 +631,19 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
                             elif singlepsf:
                                 if beta:
                                     if ellip:
-                                        labels = [r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
+                                        labels = [*Labelvalues]#r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$']
+                                        labels = [*Labelvalues]#r'$A_t$','r$x_0$',r'$y_0$',r'$\alpha$',r'$\beta$']
                                 else:
                                     if ellip:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$',r'$e$',r'$\theta$']
+                                        labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$',r'$e$',r'$\theta$']
                                     else:
-                                        labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$']    
+                                        labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$\alpha$']    
                             else:
                                 if ellip:
-                                    labels = [r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$',r'$e$',r'$\theta$']
+                                    labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$',r'$e$',r'$\theta$']
                                 else:
-                                    labels = [*Labelvalues]#r'$A_t$',r'$x_0$',r'$y_0$',r'$I_o$',r'$b_n$',r'$R_e$',r'$n_s$',r'$\alpha$']
+                                    labels = [*Labelvalues]
                         else:
                             if ring:
                                 labels = ['At','Io','bn','Re','ns']

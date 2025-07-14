@@ -306,20 +306,49 @@ def moffat_model0_s(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
     spec_t=spec_agn
     return spec_t    
 
-def moffat_model0(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
-    ellip=keysI['ellip']
-    be_t=valsI['db_m']
-    e_t=valsI['e_m']
-    tht_t=valsI['tht_m']
-    if ellip:
-        At,dx,dy,Io,bn,Re,ns,ds_t,e_t,tht_t=theta
+def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
+    pars={}
+    #ellip=keysI['ellip']
+    #be_t=valsI['db_m']
+    #e_t=valsI['e_m']
+    #tht_t=valsI['tht_m']
+    keys=list(valsI.keys())
+    for key in range(0, keys):
+        pars[key]=valsI[key]
+    for i in range(0, len(Namevalues)):
+        pars[Namevalues[i]]=theta[i]
+    #if ellip:
+    #    At,dx,dy,Io,bn,Re,ns,ds_t,e_t,tht_t=theta
+    #else:
+    #    At,dx,dy,Io,bn,Re,ns,ds_t=theta
+    moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)    
+    #r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
+    #spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
+    #spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
+    #spec_t=spec_agn+spec_hst
+    return spec_t
+
+def moffat_modelF(pars, x_t=0, y_t=0, host=True):
+    # This is the function for the Full Moffat model
+    At=pars['At']
+    dx=pars['xo']
+    dy=pars['yo']
+    Io=pars['Io']
+    bn=pars['bn']
+    Re=pars['Re']
+    ns=pars['ns']
+    ds=pars['ds_m']
+    es=pars['e_t']
+    th=pars['th_t']
+    be=pars['be_m']
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,es,th)
+    spec_agn=At*(1.0 + (r1**2.0/ds**2.0))**(-be) 
+    if host:   
+        spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     else:
-        At,dx,dy,Io,bn,Re,ns,ds_t=theta
-    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)    
-    spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
+        spec_hst=0.0
     spec_t=spec_agn+spec_hst
-    return spec_t     
+    return spec_t
 
 def moffat_model_st(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, e_m=0.0, tht_m=0.0, ellip=False):
     At,dx,dy=theta

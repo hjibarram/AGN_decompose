@@ -73,9 +73,9 @@ def lnlike_moffat0_s(theta, spec, specE, x_t, y_t, db_m, e_m, tht_m, beta, ellip
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
     return LnLike
                    
-def lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues):#db_m, e_m, tht_m, ellip):
-    model=mod.moffat_model0(theta, valsI, keysI, Namevalues, x_t=x_t, y_t=y_t)#, be_t=db_m, e_m=e_m, tht_m=tht_m, ellip=ellip)
-    LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)#/np.float(len(theta))
+def lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, Namevalues, host):
+    model=mod.moffat_model0(theta, valsI, Namevalues, x_t=x_t, y_t=y_t, host=host)
+    LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)
     return LnLike
                     
 def lnlike_moffat_s(theta, spec, specE, x_t, y_t, ds_m, db_m, e_m, tht_m, ellip):
@@ -149,32 +149,7 @@ def lnprior_ring(theta, At1=20):
     if ((At >= 0) and (At < At1)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):    
         return 0.0
     else:
-        return -np.inf
-
-def lnprior_mofft3_s(theta, Infvalues, Supvalues, valsI, keysI):
-    boolf=True 
-    f_param=theta
-    for i in range(0, len(f_parm)):
-        bool1=(f_parm[i] <= Supvalues[i])
-        bool2=(f_parm[i] >= Infvalues[i])
-        boolf=(bool1 & bool2) & boolf
-    if boolf:
-        return 0.0
-    else:
-        return -np.inf 
-
-def lnprior_mofft3(theta, Infvalues, Supvalues, valsI, keysI):
-    boolf=True 
-    f_param=theta
-    for i in range(0, len(f_parm)):
-        bool1=(f_parm[i] <= Supvalues[i])
-        bool2=(f_parm[i] >= Infvalues[i])
-        boolf=(bool1 & bool2) & boolf
-    if boolf:
-        return 0.0
-    else:
-        return -np.inf            
-                                     
+        return -np.inf                     
     
 def lnprior_mofft2_s(theta, At1=20):
     At=theta#,e,th0
@@ -238,19 +213,7 @@ def lnprior_mofft2(theta, At1=20, ellip=False, fcenter=False, re_int=False):
                 if ((At >= 0) and (At < At1)) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((Re >= 0.5) and (Re <= 50.0)):               
                     return 0.0
                 else:
-                    return -np.inf
-    
-#def lnprior_mofft0_s(theta,  Infvalues, Supvalues, valsI, keysI):
-#    boolf=True 
-#    f_param=theta
-#    for i in range(0, len(f_param)):
-#        bool1=(f_param[i] <= Supvalues[i])
-#        bool2=(f_param[i] >= Infvalues[i])
-#        boolf=(bool1 & bool2) & boolf
-#    if boolf:
-#        return 0.0
-#    else:
-#        return -np.inf          
+                    return -np.inf 
 
 def lnprior_mod(theta, Infvalues, Supvalues):
     boolf=True 
@@ -266,17 +229,13 @@ def lnprior_mod(theta, Infvalues, Supvalues):
 
 def lnprior_mofft_s(theta, At1=20):
     At,dx,dy=theta#,e,th0
-    #Ao=Io*np.exp(bn)
-    #if (At >= 0) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and ((ds_t >= 1) and (ds_t <= 10)) and ((be_t >= 0.5) and (be_t <= 10)):
-    if ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)):# and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 5.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
+    if ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)):
         return 0.0
     else:
         return -np.inf
 
 def lnprior_mofft(theta, At1=20):
     At,dx,dy,Io,bn,Re,ns=theta#,e,th0
-    #Ao=Io*np.exp(bn)
-    #if (At >= 0) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and ((ds_t >= 1) and (ds_t <= 10)) and ((be_t >= 0.5) and (be_t <= 10)):
     if ((At >= 0) and (At < (At1))) and ((dx >= -5) and (dx <= 5)) and ((dy >= -5) and (dy <= 5)) and (Io >= 0) and ((bn >= 0.5) and (bn <= 50.0)) and ((Re >= 0.5) and (Re <= 50.0)) and ((ns >= 0.5) and (ns <= 2.0)):#10.0# and ((e >= 0.0) and (e <= 10.0)) and ((th0 >= 0) and (th0 <= 2.0*np.pi)):                 
         return 0.0
     else:
@@ -381,12 +340,12 @@ def lnprob_moffat0_s(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supv
     else:
         return lp + lnlike_moffat0_s(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues)
 
-def lnprob_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Infvalues, Supvalues, Namevalues):
+def lnprob_moffat0(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host):
     lp = lnprior_mod(theta, Infvalues, Supvalues)
     if not np.isfinite(lp):
         return -np.inf
     else:
-        return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, keysI, Namevalues)
+        return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, Namevalues, host)
     
 def lnprob_moffat_s(theta, spec, specE, x_t, y_t, ds_m, db_m, At, e_t, tht_t, ellip):
     lp = lnprior_mofft_s(theta, At1=At)
