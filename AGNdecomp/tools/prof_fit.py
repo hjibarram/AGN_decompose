@@ -19,19 +19,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
     nz,nx,ny=cube.shape
     et_c=0
     th_c=0
-    if trip:
-        ring=False
-    if ring:
-        pia_x=tol.get_somoth_val(name.replace('_res',''),dir=dir_o,sigma=0,sp=1,val=5,out_p=False,deg=10)
-        pia_y=tol.get_somoth_val(name.replace('_res',''),dir=dir_o,sigma=0,sp=1,val=6,out_p=False,deg=10)
-        tpt='_ring'
-    elif trip:
-        tpt='_trip'
-    else:
-        tpt=''
+    tpt=''
     if str_p:
-        #try:
-        if True:
+        try:
             if singlepsf:
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tpt+vas)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tpt+vas)
@@ -52,14 +42,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 if ellip:
                     p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
                     p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,10])
-            if ring:
-                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp='_ring')
-                p_ro=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp='_ring')
-            if trip:
-                p_ls=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=15,tp='_trip',convt=True)#sigma=20
             str_p=True
-        #except:
-        #    str_p=False      
+        except:
+            str_p=False      
     try:
         dx=np.sqrt((hdr['CD1_1'])**2.0+(hdr['CD1_2'])**2.0)*3600.0
         dy=np.sqrt((hdr['CD2_1'])**2.0+(hdr['CD2_2'])**2.0)*3600.0
@@ -90,15 +75,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
 
     if local == False:
         if moffat:
-            if ring:
-                ft=open(dir_o+name+'_moffat'+spt+vas+'_ring.csv','w')
-                ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , sigma , r0 , PSF ,Io , bs , Re , ns , At , e , th0\n')
-            if trip:
-                ft=open(dir_o+name+'_moffat'+spt+vas+'_trip.csv','w')
-                ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , alpha , beta , PSF ,Io , bs , Re , ns , At , e , Lt\n')                
-            else:
-                ft=open(dir_o+name+'_moffat'+spt+vas+'.csv','w')
-                ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , alpha , beta , PSF ,Io , bs , Re , ns , At , e , th0\n')
+            ft=open(dir_o+name+'_moffat'+spt+vas+'.csv','w')
+            ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , alpha , beta , PSF ,Io , bs , Re , ns , At , e , th0\n')
         else:
             ft=open(dir_o+name+'_gaussian'+spt+vas+'.csv','w')
             ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , Sigma , PSF \n')
@@ -111,60 +89,36 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     i1=nz
                 if i0 > nz:
                     i0=int(nz-sp)    
-                map1=np.nanmean(cube[i0:i1,:,:],axis=0)#mean
+                map1=np.nanmean(cube[i0:i1,:,:],axis=0)
                 map1e=np.nanmean(cubeE[i0:i1,:,:],axis=0)
                 wave_1=np.nanmean(wave_f[i0:i1])
-                if ring:
-                    pi_x=np.nanmean(pia_x[i0:i1])
-                    pi_y=np.nanmean(pia_y[i0:i1])
             else:
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]
-                if ring:
-                    pi_x=pi_x[i]
-                    pi_y=pi_y[i]
             if psf_t:
-                if ring:
-                    if ds_i == 0:
-                        ds_i=0.5 
-                        ro_i=2.0
-                    psf_coef=0
-                else:
-                    if psft == False:#singlepsf and 
-                        psf_coef=p_ds(wave_1)
-                    else: 
-                        psf_coef=pt(wave_1)/dpix
-                    ro_i=0
-                    ds_i=0
+                if psft == False:#singlepsf and 
+                    psf_coef=p_ds(wave_1)
+                else: 
+                    psf_coef=pt(wave_1)/dpix
+                ro_i=0
+                ds_i=0
             else:
-                if ring:
-                    if i == 0:
-                        p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=7,out_p=False,deg=5,tp='_ring')
-                        p_ro=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=8,out_p=False,deg=5,tp='_ring')
-                    ds_i=p_ds(wave_1)
-                    ro_i=p_ro(wave_1)  
-                    psf_coef=0
+                if psft == False:
+                    psf_coef=p_ds(wave_1)
                 else:
-                    if psft == False:
-                        psf_coef=p_ds(wave_1)
-                    else:
-                        pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
-                        psf_coef=pt(wave_1)/dpix
-                    ro_i=0
-                    ds_i=0
+                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
+                    psf_coef=pt(wave_1)/dpix
+                ro_i=0
+                ds_i=0
             if str_p:
-                if not ring:
-                    pi_x=p_px(wave_1)
-                    pi_y=p_py(wave_1)
-                    Lt_c = 0.0
-                    if trip:
-                        Lt_c=p_ls(wave_1)
-                        if Lt_c < 0.0:
-                            Lt_c = 0.0
-                else:
-                    ds_i=p_ds(wave_1)
-                    ro_i=p_ro(wave_1)
+                pi_x=p_px(wave_1)
+                pi_y=p_py(wave_1)
+                Lt_c = 0.0
+                if trip:
+                    Lt_c=p_ls(wave_1)
+                    if Lt_c < 0.0:
+                        Lt_c = 0.0
                 if singlepsf:
                     bs_c=3.0
                     ns_c=0
@@ -202,9 +156,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                             et_c=0
                             th_c=0    
             else:
-                if not ring:
-                    pi_x=0
-                    pi_y=0
+                pi_x=0
+                pi_y=0
                 bs_c=0
                 Re_c=0
                 ns_c=0  
@@ -221,11 +174,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             val1=sky1.to_string('hmsdms')
             if verbose:
                 if moffat:
-                    if ring:
-                        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"r0_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
-                    elif trip:
-                        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"Lt=",th0_m)
-                    elif singlepsf:
+                    if singlepsf:
                         print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"At0=",At0,"e=",e0_m,"th0=",th0_m)
                     else:
                         print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
@@ -246,55 +195,35 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             map1=np.nanmean(cube[ntw,:,:],axis=0)
             map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
             wave_1=np.nanmean(wave_f[ntw])
-            if ring:
-                pi_x=np.nanmean(pia_x[ntw])
-                pi_y=np.nanmean(pia_y[ntw])
-            if psf_t:
-                if ring:
-                    psf_coef=0
-                    if ds_i == 0:
-                        ds_i=0.5
-                        ro_i=2.0
-                else: 
-                    if psft == False:#singlepsf and 
-                        psf_coef=p_ds(wave_1)
-                    else:   
-                        psf_coef=pt(wave_1)/dpix
-                    ds_i=0
-                    ro_i=0
+            if psf_t: 
+                if psft == False:
+                    psf_coef=p_ds(wave_1)
+                else:   
+                    psf_coef=pt(wave_1)/dpix
+                ds_i=0
+                ro_i=0
             else:
-                if ring:
-                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=7,out_p=False,deg=5,tp='_ring')
-                    ds_i=pt(wave_1)
-                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=8,out_p=False,deg=5,tp='_ring')
-                    ro_i=pt(wave_1)  
-                    psf_coef=0
+                if psft == False:#
+                    psf_coef=p_ds(wave_1)
                 else:
-                    if psft == False:#singlepsf and 
-                        psf_coef=p_ds(wave_1)
-                    else:
-                        pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
-                        psf_coef=pt(wave_1)/dpix
-                    ds_i=0
-                    ro_i=0
+                    pt=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=10,val=9,out_p=True,deg=5)    
+                    psf_coef=pt(wave_1)/dpix
+                ds_i=0
+                ro_i=0
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
             ds_i=0
             ro_i=0
             psf_coef=0
-            if ring:
-                pi_x=np.nanmean(pia_x)
-                pi_y=np.nanmean(pia_y)
         if str_p:
-            if not ring:
-                pi_x=p_px(wave_1)
-                pi_y=p_py(wave_1)
-                Lt_c = 0.0
-                if trip:
-                    Lt_c=p_ls(wave_1)
-                    if Lt_c < 0.0:
-                        Lt_c = 0.0
+            pi_x=p_px(wave_1)
+            pi_y=p_py(wave_1)
+            Lt_c = 0.0
+            if trip:
+                Lt_c=p_ls(wave_1)
+                if Lt_c < 0.0:
+                    Lt_c = 0.0
             if singlepsf: 
                 bs_c=3.0 
                 ns_c=0
@@ -305,37 +234,35 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     Re_c=100.
                 if ellip:
                     et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1)#147   
+                    th_c=p_tht(wave_1)
                     ellip=False
                     et=1
                 else:
                     if et==1:
                         et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)#147 
+                        th_c=p_tht(wave_1)
                     else:
                         et_c=0
                         th_c=0   
             else:          
-                bs_c=p_bs(wave_1)            
-                #bs_c=p_bs(wave_1)
+                bs_c=p_bs(wave_1)  
                 Re_c=p_Re(wave_1)
                 ns_c=p_ns(wave_1)
                 if ellip:
                     et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1)#147 
+                    th_c=p_tht(wave_1)
                     ellip=False
                     et=1
                 else: 
                     if et==1:
                         et_c=p_eli(wave_1)
-                        th_c=p_tht(wave_1)#147 
+                        th_c=p_tht(wave_1)
                     else:
                         et_c=0
                         th_c=0 
         else:
-            if not ring:
-                pi_x=0
-                pi_y=0
+            pi_x=0
+            pi_y=0
             bs_c=0
             Re_c=0
             ns_c=0
@@ -351,14 +278,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
         val1=sky1.to_string('hmsdms')
         if moffat:
-            if ring:
-                print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"r0_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
-            elif trip:
-                print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"Lt=",th0_m)
-            elif singlepsf:
+            if singlepsf:
                 print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"At0=",At0,"e=",e0_m,"th0=",th0_m)
             else:
                 print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
         else:
             print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"psf_1=",psf1*dpix)
-
