@@ -81,7 +81,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                     p_val=p_vals[i]
                     val_t=p_val(wave_1)
                     valsI[Namevalues0[i]]=val_t
-                    Inpvalues[i]= val_t
+                    for j in range(0, len(Namevalues)):
+                        if Namevalues0[i] == Namevalues[j]:
+                            Inpvalues[j]= val_t
                 else:
                     valsI[Namevalues0[i]]=Inpvalues[i]
             if moffat:
@@ -117,7 +119,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 p_val=p_vals[i]
                 val_t=p_val(wave_1)
                 valsI[Namevalues0[i]]=val_t
-                Inpvalues[i]= val_t
+                for j in range(0, len(Namevalues)):
+                    if Namevalues0[i] == Namevalues[j]:
+                        Inpvalues[j]= val_t
             else:
                 valsI[Namevalues0[i]]=Inpvalues[i]
         valsI['dxo']=0
