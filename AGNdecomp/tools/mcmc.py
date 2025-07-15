@@ -4,7 +4,7 @@ import emcee
 from astropy.convolution import convolve, Gaussian2DKernel
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
-from AGNdecomp.tools.priors import lnprob_moffat0
+from AGNdecomp.tools.priors import lnprob_moffat
 from AGNdecomp.tools.priors import lnprob_gaussian
 
 def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,ncpu=10):
