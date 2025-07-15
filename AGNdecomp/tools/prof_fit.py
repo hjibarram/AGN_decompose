@@ -12,34 +12,33 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,singlepsf=False,psamp=10,vas='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbose=False,singlepsf=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
-    et_c=0
-    th_c=0
-    tpt=''
     if str_p:
         try:
             if singlepsf:
-                p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tpt+vas)
-                p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tpt+vas)
-                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
-                p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tpt+vas)  
-                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
-                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,20])
+                p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tp)
+                p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tp)
+                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tp)
+                p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tp)
+                p_At=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=14,out_p=True,deg=5,tp=tp)  
+                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tp,mask_val=[1.0,0.05])
+                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tp,mask_val=[180.0,20])
             else:
-                p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=10,tp=tpt+vas)
-                p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=10,tp=tpt+vas)
-                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
-                p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tpt+vas)  
-                p_is=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=10,out_p=True,deg=5,tp=tpt+vas)
-                p_bs=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=11,out_p=True,deg=5,tp=tpt+vas)
-                p_Re=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=12,out_p=True,deg=5,tp=tpt+vas)
-                p_ns=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=13,out_p=True,deg=5,tp=tpt+vas)
-                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tpt+vas,mask_val=[1.0,0.05])
-                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tpt+vas,mask_val=[180.0,10])
+                p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tp)
+                p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tp)
+                p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tp)
+                p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tp)  
+                p_is=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=10,out_p=True,deg=5,tp=tp)
+                p_bs=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=11,out_p=True,deg=5,tp=tp)
+                p_Re=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=12,out_p=True,deg=5,tp=tp)
+                p_ns=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=13,out_p=True,deg=5,tp=tp)
+                p_At=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=14,out_p=True,deg=5,tp=tp)
+                p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tp,mask_val=[1.0,0.05])
+                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tp,mask_val=[180.0,10])
             str_p=True
         except:
             str_p=False      
@@ -72,10 +71,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
 
     if local == False:
         if moffat:
-            ft=open(dir_o+name+'_moffat'+spt+vas+'.csv','w')
+            ft=open(dir_o+name+'_moffat'+spt+tp+'.csv','w')
             ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , alpha , beta , PSF ,Io , bs , Re , ns , At , e , th0\n')
         else:
-            ft=open(dir_o+name+'_gaussian'+spt+vas+'.csv','w')
+            ft=open(dir_o+name+'_gaussian'+spt+tp+'.csv','w')
             ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , Sigma , PSF \n')   
         for i in range(0, nz_t):
             if sp > 0:
@@ -108,16 +107,14 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 pi_x=p_px(wave_1)
                 pi_y=p_py(wave_1)
                 bt=p_bts(wave_1)
-                if singlepsf:
-                    et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1)  
-                else:
+                At=p_At(wave_1)
+                et_c=p_eli(wave_1)
+                th_c=p_tht(wave_1)
+                if singlepsf == False:
                     Io_c=p_is(wave_1)
                     bs_c=p_bs(wave_1) 
                     Re_c=p_Re(wave_1)/dpix
-                    ns_c=p_ns(wave_1)
-                    et_c=p_eli(wave_1)
-                    th_c=p_tht(wave_1) 
+                    ns_c=p_ns(wave_1) 
             valsI={}
             valsI['At']=At
             valsI['alpha']=ds_m
@@ -176,16 +173,14 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             pi_y=p_py(wave_1)
             ds_m=p_ds(wave_1)
             bt=p_bts(wave_1)
-            if singlepsf: 
-                et_c=p_eli(wave_1)
-                th_c=p_tht(wave_1)   
-            else:
+            At=p_At(wave_1)
+            et_c=p_eli(wave_1)
+            th_c=p_tht(wave_1)
+            if singlepsf == False:
                 Io_c=p_is(wave_1)
                 bs_c=p_bs(wave_1)  
                 Re_c=p_Re(wave_1)
                 ns_c=p_ns(wave_1)
-                et_c=p_eli(wave_1)
-                th_c=p_tht(wave_1) 
         valsI={}
         valsI['At']=At
         valsI['alpha']=ds_m

@@ -71,12 +71,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
     else:
         min_in=[dxo,dyo]
-    At=np.nanmax(pf_map)
     x_t=np.arange(ny)-min_in[1]
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
-    valsI['At']=At
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     print("Input values: ",valsI)
