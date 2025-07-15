@@ -197,7 +197,7 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
     wave=[]
     val_v=[]
     for line in f:
-        if not 'WAVE' in line:
+        if not 'wave' in line:
             data=line.replace('\n','').split(',')
             data=list(filter(None,data))
             wave.extend([float(data[0])])
