@@ -37,7 +37,6 @@ def lnprob_moffat0(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Na
     else:
         return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, Namevalues, host)
 
-
 def lnprob_gaussian(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host):
     lp = lnprior_mod(theta, Infvalues, Supvalues)
     if not np.isfinite(lp):

@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def get_priorsvalues(filename,mod_ind=0,verbose=True):
+def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
     """
     Reads the priors values from a YAML file.
     """
@@ -72,26 +72,13 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
             except:
                 print('The keyword sup_value is missing for the parameter '+par['name']+' in the line config file')
                 sys.exit()
-        return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
+        if onlynames:
+            return Namevalues
+        else:
+            return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
         print('No configuration line model file')
         sys.exit()
-
-
-
-    data_lines = read_config_file(filename)
-    if data is None:
-        return None
-    if 'priors' in data:
-        priors = data['priors']
-        if 'values' in priors:
-            return priors['values']
-        else:
-            print('No values found in priors')
-            return None
-    else:
-        print('No priors found in the configuration file')
-        return None
 
 def read_config_file(file):
     try:

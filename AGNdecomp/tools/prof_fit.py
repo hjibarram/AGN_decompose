@@ -11,13 +11,19 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,verbose=False,singlepsf=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,singlepsf=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
     if str_p:
         try:
+        if true:
+            Namevalues0=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
+            p_val=[]
+            for i in range(0, len(Namevalues0)):
+                p_vals.extend([tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=i+5,out_p=True,deg=5,tp=tp)])
+            '''
             if singlepsf:
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tp)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tp)
@@ -26,7 +32,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 p_At=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=14,out_p=True,deg=5,tp=tp)  
                 p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tp,mask_val=[1.0,0.05])
                 p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tp,mask_val=[180.0,20])
-            else:
+            #else:
                 p_px=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=5,out_p=True,deg=5,tp=tp)
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=5,tp=tp)
                 p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tp)
@@ -37,10 +43,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 p_ns=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=13,out_p=True,deg=5,tp=tp)
                 p_At=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=14,out_p=True,deg=5,tp=tp)
                 p_eli=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=15,out_p=True,deg=5,tp=tp,mask_val=[1.0,0.05])
-                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tp,mask_val=[180.0,10])
-            str_p=True
-        except:
-            str_p=False      
+                p_tht=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=16,out_p=True,deg=5,tp=tp,mask_val=[180.0,10])'''
+        #    str_p=True
+        #except:
+        #    str_p=False
+        else:
+            Namevalues0=Namevalues      
     try:
         dx=np.sqrt((hdr['CD1_1'])**2.0+(hdr['CD1_2'])**2.0)*3600.0
         dy=np.sqrt((hdr['CD2_1'])**2.0+(hdr['CD2_2'])**2.0)*3600.0
@@ -154,42 +162,37 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
-        At=0
-        bt=25
-        ds_m=1
-        pi_x=0
-        pi_y=0
-        Io_c=0
-        bs_c=0
-        Re_c=0
-        ns_c=0
-        et_c=0
-        th_c=0       
-        if str_p:
-            pi_x=p_px(wave_1)
-            pi_y=p_py(wave_1)
-            ds_m=p_ds(wave_1)
-            bt=p_bts(wave_1)
-            At=p_At(wave_1)
-            et_c=p_eli(wave_1)
-            th_c=p_tht(wave_1)
-            if singlepsf == False:
-                Io_c=p_is(wave_1)
-                bs_c=p_bs(wave_1)  
-                Re_c=p_Re(wave_1)
-                ns_c=p_ns(wave_1)
+        #At=0
+        #bt=25
+        #ds_m=1
+        #pi_x=0
+        #pi_y=0
+        #Io_c=0
+        #bs_c=0
+        #Re_c=0
+        #ns_c=0
+        #et_c=0
+        #th_c=0
         valsI={}
-        valsI['At']=At
-        valsI['alpha']=ds_m
-        valsI['beta']=bt
-        valsI['xo']=pi_x
-        valsI['yo']=pi_y
-        valsI['Io']=Io_c
-        valsI['bs']=bs_c
-        valsI['Re']=Re_c
-        valsI['ns']=ns_c
-        valsI['ellip']=et_c
-        valsI['theta']=th_c        
+        for i in range(0, len(Namevalues0)):
+            if str_p:
+                p_val=p_vals[i]
+                val_t=p_val(wave_1)
+                valsI[Namevalues0[i]]=val_t
+            else:
+                valsI[Namevalues0[i]]=Inpvalues[i]
+        valsI={}
+        #valsI['At']=At
+        #valsI['alpha']=ds_m
+        #valsI['beta']=bt
+        #valsI['xo']=pi_x
+        #valsI['yo']=pi_y
+        #valsI['Io']=Io_c
+        #valsI['bs']=bs_c
+        #valsI['Re']=Re_c
+        #valsI['ns']=ns_c
+        #valsI['ellip']=et_c
+        #valsI['theta']=th_c        
         valsI['dxo']=0
         valsI['dyo']=0   
         if moffat:
