@@ -73,7 +73,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     y_t=np.array([y_t]*ny).T
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
-    print("Input values: ",valsI)
+    #print("Input values: ",valsI)
     if singlepsf:
         host=False  
     else: 
