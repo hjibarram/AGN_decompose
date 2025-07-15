@@ -132,3 +132,4 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         for val in Namevalues:
             linev=linev+' '+val+'='+str(pars_max[val])
         print(linet+linev)
+        print(pars_max)
