@@ -11,7 +11,7 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,singlepsf=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
@@ -48,8 +48,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     wave_f=crval+cdelt*(np.arange(nz)+1-crpix)
     wcs = WCS(hdr)
     wcs=wcs.celestial
+    if sp/cdelt < 1:
+        sptt=1
+    else:
+        sptt=sp/cdelt
     if sp > 0:
-        nz_t=int(nz/(sp/cdelt))
+        nz_t=int(nz/sptt)
         spt='_sp'+str(int(sp))
     else:
         nz_t=nz
@@ -62,12 +66,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         ft.write('wave , flux , fluxN , ra , dec , psf'+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
-                i0=int(i*sp/cdelt)
-                i1=int((i+1)*sp/cdelt)
+                i0=int(i*sptt)
+                i1=int((i+1)*sptt)
                 if i1 > nz:
                     i1=nz
                 if i0 > nz:
-                    i0=int(nz-sp/cdelt)    
+                    i0=int(nz-sptt)    
                 map1=np.nanmean(cube[i0:i1,:,:],axis=0)
                 map1e=np.nanmean(cubeE[i0:i1,:,:],axis=0)
                 wave_1=np.nanmean(wave_f[i0:i1])
@@ -87,7 +91,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 else:
                     valsI[Namevalues0[i]]=Inpvalues[i]
             if moffat:
-                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI) 
+                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,moffat=moffat,ncpu=ncpu,valsI=valsI) 
             else:
                 pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu)
             sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
@@ -128,7 +132,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         #valsI['dxo']=0
         #valsI['dyo']=0   
         if moffat:
-            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI)
+            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,moffat=moffat,ncpu=ncpu,valsI=valsI)
         else:
             pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
         sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
