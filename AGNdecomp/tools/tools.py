@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,str_p=False,dyo=0,dxo=0):
+def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,dyo=0,dxo=0):
     """
     Defines the initial values for the parameters.
     """
