@@ -104,8 +104,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 ds_m=p_ds(wave_1)
                 pi_x=p_px(wave_1)
                 pi_y=p_py(wave_1)
+                bt=p_bts(wave_1)
                 if singlepsf:
-                    bt=p_bts(wave_1)
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1)  
                 else:
@@ -169,8 +169,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             pi_x=p_px(wave_1)
             pi_y=p_py(wave_1)
             ds_m=p_ds(wave_1)
+            bt=p_bts(wave_1)
             if singlepsf: 
-                bt=p_bts(wave_1)
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1)   
             else:          
