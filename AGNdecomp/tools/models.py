@@ -87,11 +87,11 @@ def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
     if agn:
         spec_agn=At*(1.0 + (r1**2.0/ds**2.0))**(-be)
     else:
-        spec_agn=0.0
+        spec_agn=r1*0.0
     if host:   
         spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
     else:
-        spec_hst=0.0
+        spec_hst=r1*0.0
     spec_t=spec_agn+spec_hst
     return spec_t
 

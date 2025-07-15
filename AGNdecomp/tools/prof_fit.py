@@ -75,7 +75,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         for namev in Namevalues:
             head_vals=head_vals+' , '+namev
         ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
-        ft.write('wave , flux , fluxN , ra , dec , psf , '+head_vals+'\n') 
+        ft.write('wave , flux , fluxN , ra , dec , psf'+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
                 i0=int(i*sp)
@@ -141,11 +141,11 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 for val in Namevalues:
                     linev=linev+' '+val+'='+str(pars_max[val])
                 print(linet+linev)
-            linet=str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(psf1*dpix)+' , '
+            linet=str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(psf1*dpix)
             linev=''
             for val in Namevalues:
                 linev=linev+' , '+str(pars_max[val])
-            ft.write(linev+' \n')
+            ft.write(linet+linev+' \n')
         ft.close()
     else:
         if sp > 0:
