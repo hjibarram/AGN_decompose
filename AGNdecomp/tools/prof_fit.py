@@ -20,7 +20,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         #try:
         if True:
             Namevalues0=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
-            p_val=[]
+            p_vals=[]
             for i in range(0, len(Namevalues0)):
                 p_vals.extend([tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=i+5,out_p=True,deg=5,tp=tp)])
             '''
