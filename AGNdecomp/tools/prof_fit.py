@@ -34,6 +34,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 p_py=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=6,out_p=True,deg=10,tp=tpt)
                 p_ds=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=7,out_p=True,deg=5,tp=tpt+vas)
                 p_bts=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=8,out_p=True,deg=5,tp=tpt+vas)  
+                p_is=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=10,out_p=True,deg=5,tp=tpt)
                 p_bs=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=11,out_p=True,deg=5,tp=tpt)
                 p_Re=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=12,out_p=True,deg=5,tp=tpt)
                 p_ns=tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=13,out_p=True,deg=5,tp=tpt)
@@ -110,6 +111,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1)  
                 else:
+                    Io_c=p_is(wave_1)
                     bs_c=p_bs(wave_1) 
                     Re_c=p_Re(wave_1)/dpix
                     ns_c=p_ns(wave_1)
@@ -121,6 +123,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             valsI['beta']=bt
             valsI['xo']=pi_x
             valsI['yo']=pi_y
+            valsI['Io']=Io_c
             valsI['bs']=bs_c
             valsI['Re']=Re_c
             valsI['ns']=ns_c
@@ -174,7 +177,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             if singlepsf: 
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1)   
-            else:          
+            else:
+                Io_c=p_is(wave_1)
                 bs_c=p_bs(wave_1)  
                 Re_c=p_Re(wave_1)
                 ns_c=p_ns(wave_1)
@@ -186,6 +190,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         valsI['beta']=bt
         valsI['xo']=pi_x
         valsI['yo']=pi_y
+        valsI['Io']=Io_c
         valsI['bs']=bs_c
         valsI['Re']=Re_c
         valsI['ns']=ns_c
