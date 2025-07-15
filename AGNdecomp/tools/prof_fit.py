@@ -17,7 +17,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
     if str_p:
-        try:
+        #try:
         if True:
             Namevalues0=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
             p_val=[]
