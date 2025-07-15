@@ -18,7 +18,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     nz,nx,ny=cube.shape
     if str_p:
         try:
-        if true:
+        if True:
             Namevalues0=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
             p_val=[]
             for i in range(0, len(Namevalues0)):
