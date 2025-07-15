@@ -68,7 +68,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
     else:
         nz_t=nz
         spt=''    
-
+    
+    valt=Namevalues
+    head=''
+    for name in Namevalues:
+        head=head+' , '+name
+    print(head)
     if local == False:
         if moffat:
             ft=open(dir_o+name+'_moffat'+spt+tp+'.csv','w')
