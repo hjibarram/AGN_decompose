@@ -121,16 +121,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
   
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
                             
-    dx_m=pars_max['xo']+min_in[1]
-    dy_m=pars_max['yo']+min_in[0]
+    pars_max['xo']=pars_max['xo']+min_in[1]
+    pars_max['yo']=pars_max['yo']+min_in[0]
     if moffat:
         psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
     else:
         psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
-    if moffat:
-        if singlepsf:
-            return dx_m,dy_m,pars_max['alpha'],pars_max['beta'],psf,ft_num,ft_fit,0,0,0,0,pars_max['At'],pars_max['ellip'],pars_max['theta']
-        else:
-            return dx_m,dy_m,pars_max['alpha'],pars_max['beta'],psf,ft_num,ft_fit,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['ellip'],pars_max['theta']
-    else:
-        return dx_m,dy_m,ds_m,psf,ft_num,ft_fit
+    return pars_max,psf,ft_num,ft_fit

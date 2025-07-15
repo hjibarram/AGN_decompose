@@ -70,17 +70,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         spt=''    
     
     valt=Namevalues
-    head=''
+    head_vals=''
     for name in Namevalues:
-        head=head+' , '+name
-    print(head)
+        head_vals=head_vals+' , '+name
     if local == False:
-        if moffat:
-            ft=open(dir_o+name+'_moffat'+spt+tp+'.csv','w')
-            ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , alpha , beta , PSF ,Io , bs , Re , ns , At , e , th0\n')
-        else:
-            ft=open(dir_o+name+'_gaussian'+spt+tp+'.csv','w')
-            ft.write('WAVE , FLUX , FLUXN , RA , DEC , pix_X , pix_Y , Sigma , PSF \n')   
+        #if moffat:
+        ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
+        ft.write('WAVE , FLUX , FLUXN , RA , DEC'+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
                 i0=int(i*sp)
@@ -135,19 +131,28 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             valsI['dxo']=0
             valsI['dyo']=0    
             if moffat:
-                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI) 
+                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI) 
             else:
-                dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,sig=sig,mc=mc,ncpu=ncpu)
-            sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
+                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu)
+            sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
             val1=sky1.to_string('hmsdms')
             if verbose:
-                if moffat:
-                    if singlepsf:
-                        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"At0=",At0,"e=",e0_m,"th0=",th0_m)
+                linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)+' '
+                keys=list(valsI.keys())
+                linev=''
+                for val in Namevalues:
+                    if val in pars_max:
+                        linev=' '+linev+val+'='+str(pars_max[val])
                     else:
-                        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
-                else:
-                    print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"psf_1=",psf1*dpix)
+                        linev=linev+val+'=NaN '
+                #if moffat:
+                print(linet+linev)
+                #    if singlepsf:
+                #        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"At0=",At0,"e=",e0_m,"th0=",th0_m)
+                #    else:
+                #        print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
+                #else:
+                #    print("wave=",wave_1,'FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"psf_1=",psf1*dpix)
             if moffat:
                 ft.write(str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(dx_m1)+' , '+str(dy_m1)+' , '+str(ds_m1)+' , '+str(db_m1)+' , '+str(psf1*dpix)+' , '+str(Io_m)+' , '+str(bn_m)+' , '+str(Re_m*dpix)+' , '+str(ns_m)+' , '+str(At0)+' , '+str(e0_m)+' , '+str(th0_m)+' \n')
             else:
@@ -201,15 +206,13 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         valsI['dxo']=0
         valsI['dyo']=0   
         if moffat:
-            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI)
+            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI)
         else:
-            dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
-        sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
+            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
+        sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
         val1=sky1.to_string('hmsdms')
-        if moffat:
-            if singlepsf:
-                print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"At0=",At0,"e=",e0_m,"th0=",th0_m)
-            else:
-                print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"alpha_1=",ds_m1*dpix,"beta_1=",db_m1,"psf_1=",psf1*dpix,"Io=",Io_m,"bn=",bn_m,"Re=",Re_m,"ns=",ns_m,"At0=",At0,"e=",e0_m,"th0=",th0_m)
-        else:
-            print('FLUX=',FtF,'FLUXN=',Ft,'RADEC=',val1,"x_1=",dx_m1,"y_1=",dy_m1,"sigma_1=",ds_m1*dpix,"psf_1=",psf1*dpix)
+        linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
+        linev=''
+        for val in Namevalues:
+            linev=' '+linev+val+'='+str(pars_max[val])
+        print(linet+linev)
