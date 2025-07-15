@@ -97,6 +97,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
             ds_m=1
             pi_x=0
             pi_y=0
+            Io_c=0
             bs_c=0
             Re_c=0
             ns_c=0
@@ -164,6 +165,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         ds_m=1
         pi_x=0
         pi_y=0
+        Io_c=0
         bs_c=0
         Re_c=0
         ns_c=0
