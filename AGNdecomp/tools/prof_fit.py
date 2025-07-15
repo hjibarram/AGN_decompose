@@ -76,7 +76,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     if local == False:
         #if moffat:
         ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
-        ft.write('WAVE , FLUX , FLUXN , RA , DEC'+head_vals+'\n') 
+        ft.write('WAVE , FLUX , FLUXN , RA , DEC , PSF , '+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
                 i0=int(i*sp)
@@ -138,15 +138,15 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
             val1=sky1.to_string('hmsdms')
             if verbose:
                 linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)+' '
-                keys=list(valsI.keys())
                 linev=''
                 for val in Namevalues:
-                    linev=' '+linev+' '+val+'='+str(pars_max[val])
+                    linev=linev+' '+val+'='+str(pars_max[val])
                 print(linet+linev)
-            if moffat:
-                ft.write(str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(dx_m1)+' , '+str(dy_m1)+' , '+str(ds_m1)+' , '+str(db_m1)+' , '+str(psf1*dpix)+' , '+str(Io_m)+' , '+str(bn_m)+' , '+str(Re_m*dpix)+' , '+str(ns_m)+' , '+str(At0)+' , '+str(e0_m)+' , '+str(th0_m)+' \n')
-            else:
-                ft.write(str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(dx_m1)+' , '+str(dy_m1)+' , '+str(ds_m1)+' , '+str(psf1*dpix)+' \n')
+            linet=str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(psf1*dpix)+' , '
+            linev=''
+            for val in Namevalues:
+                linev=linev+' , '+str(pars_max[val])
+            ft.write(linev+' \n')
         ft.close()
     else:
         if sp > 0:
