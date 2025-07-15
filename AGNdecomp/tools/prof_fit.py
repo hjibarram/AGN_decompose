@@ -113,20 +113,20 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     ns_c=p_ns(wave_1)
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1) 
-            valsT={}
-            valsT['db_m']=bt
-            valsT['ds_m']=ds_m
-            valsT['e_m']=et_c
-            valsT['tht_m']=th_c
-            valsT['pi_x']=pi_x
-            valsT['pi_y']=pi_y
-            valsT['bs_c']=bs_c
-            valsT['Re_c']=Re_c
-            valsT['ns_c']=ns_c
-            valsT['dxo']=0
-            valsT['dyo']=0      
+            valsI={}
+            valsI['alpha']=ds_m
+            valsI['beta']=bt
+            valsI['xo']=pi_x
+            valsI['yo']=pi_y
+            valsI['bs']=bs_c
+            valsI['Re']=Re_c
+            valsI['ns']=ns_c
+            valsI['ellip']=et_c
+            valsI['theta']=th_c        
+            valsI['dxo']=0
+            valsI['dyo']=0    
             if moffat:
-                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsT=valsT) 
+                dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI) 
             else:
                 dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,model=False,sig=sig,mc=mc,ncpu=ncpu)
             sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
@@ -176,20 +176,20 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 ns_c=p_ns(wave_1)
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1) 
-        valsT={}
-        valsT['alpha']=ds_m
-        valsT['beta']=bt
-        valsT['xo']=pi_x
-        valsT['yo']=pi_y
-        valsT['bs']=bs_c
-        valsT['Re']=Re_c
-        valsT['ns']=ns_c
-        valsT['ellip']=et_c
-        valsT['theta']=th_c        
-        valsT['dxo']=0
-        valsT['dyo']=0   
+        valsI={}
+        valsI['alpha']=ds_m
+        valsI['beta']=bt
+        valsI['xo']=pi_x
+        valsI['yo']=pi_y
+        valsI['bs']=bs_c
+        valsI['Re']=Re_c
+        valsI['ns']=ns_c
+        valsI['ellip']=et_c
+        valsI['theta']=th_c        
+        valsI['dxo']=0
+        valsI['dyo']=0   
         if moffat:
-            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsT=valsT)
+            dx_m1,dy_m1,ds_m1,db_m1,psf1,Ft,FtF,Io_m,bn_m,Re_m,ns_m,At0,e0_m,th0_m=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI)
         else:
             dx_m1,dy_m1,ds_m1,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
         sky1=pixel_to_skycoord(dx_m1,dy_m1,wcs)
