@@ -41,7 +41,7 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
             mpars=model_pars[mod_ind]
         except:
             print('Model index out of range. Available models: '+model_name)
-            return
+            sys.exit()
         parameters=mpars['parameters'] 
         npar=len(parameters)   
         if verbose:
@@ -52,7 +52,7 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
                 Namevalues.extend([par['name']])
             except:
                 print('The keyword name is missing for the parameter '+par['name']+' in the line config file')
-                return
+                sys.exit()
             try:
                 Labelvalues.extend([par['name_plot']])
             except:
@@ -61,21 +61,21 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True):
                 Inpvalues.extend([par['ini_value']])
             except:
                 print('The keyword ini_value is missing for the parameter '+par['name']+' in the line config file')
-                return
+                sys.exit()
             try:
                 Infvalues.extend([par['inf_value']])
             except:
                 print('The keyword inf_value is missing for the parameter '+par['name']+' in the line config file')
-                return
+                sys.exit()
             try:
                 Supvalues.extend([par['sup_value']])
             except:
                 print('The keyword sup_value is missing for the parameter '+par['name']+' in the line config file')
-                return
+                sys.exit()
         return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
         print('No configuration line model file')
-        return
+        sys.exit()
 
 
 
