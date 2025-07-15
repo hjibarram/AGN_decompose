@@ -56,28 +56,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
 
 
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsI={}):
-    #if len(valsT) > 0:
-    #    if 'alpha' in valsT:
-    #        ds_m=valsT['alpha']
-    #    if 'beta' in valsT:
-    #        db_m=valsT['beta']
-    #    if 'xo' in valsT:
-    #        pi_x=valsI['xo']
-    #    if 'yo' in valsT:
-    #        pi_y=valsT['yo']
-    #    if 'bn' in valsT:
-    #        bs_c=valsT['bn']
-    #    if 'Re' in valsT:
-    #        Re_c=valsT['Re']
-    #    if 'ns' in valsT:
-    #        ns_c=valsT['ns']
-    #    if 'ellip' in valsT:
-    #        e_m=valsT['ellip']
-    #    if 'theta' in valsT:
-    #        tht_m=valsT['theta']    
-    #    if 'dxo' in valsT:
     dxo=valsI['dxo']
-    #    if 'dyo' in valsT:
     dyo=valsI['dyo']    
     nx,ny=pf_map.shape
     if autocent:
@@ -98,17 +77,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
     
-    #valsI={}
     valsI['At']=At
-    #valsI['alpha']=ds_m
-    #valsI['beta']=db_m
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
-    #valsI['Re']=Re_c
-    #valsI['bn']=bs_c
-    #valsI['ns']=ns_c
-    #valsI['ellip']=e_m
-    #valsI['theta']=tht_m
     print("Input values: ",valsI)
     if singlepsf:
         host=False  

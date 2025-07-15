@@ -90,6 +90,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]  
+            At=0
             bt=25
             ds_m=1
             pi_x=0
@@ -114,6 +115,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                     et_c=p_eli(wave_1)
                     th_c=p_tht(wave_1) 
             valsI={}
+            valsI['At']=At
             valsI['alpha']=ds_m
             valsI['beta']=bt
             valsI['xo']=pi_x
@@ -153,6 +155,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
+        At=0
         bt=25
         ds_m=1
         pi_x=0
@@ -177,6 +180,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1) 
         valsI={}
+        valsI['At']=At
         valsI['alpha']=ds_m
         valsI['beta']=bt
         valsI['xo']=pi_x
