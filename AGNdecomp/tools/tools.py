@@ -16,6 +16,25 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,str_p=False,dyo=0,dxo=0):
+    """
+    Defines the initial values for the parameters.
+    """
+    valsI={}
+    for i in range(0, len(Namevalues0)):
+        if str_p:
+            p_val=p_vals[i]
+            val_t=p_val(wave_1)
+            valsI[Namevalues0[i]]=val_t
+            for j in range(0, len(Namevalues)):
+                if Namevalues0[i] == Namevalues[j]:
+                    Inpvalues[j]= val_t
+        else:
+            valsI[Namevalues0[i]]=Inpvalues[i]
+    valsI['dxo']=dxo
+    valsI['dyo']=dyo
+    return valsI, Inpvalues
+
 def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
     """
     Reads the priors values from a YAML file.

@@ -8,8 +8,8 @@ def lnlike_Multmodel():
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)
     return LnLike
                    
-def lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, Namevalues, host):
-    model=mod.moffat_model0(theta, valsI, Namevalues, x_t=x_t, y_t=y_t, host=host)
+def lnlike_moffat(theta, spec, specE, x_t, y_t, valsI, Namevalues):
+    model=mod.moffat_model(theta, valsI, Namevalues, x_t=x_t, y_t=y_t)
     LnLike = -0.5*np.nansum(((spec-model)/specE)**2.0)
     return LnLike
                     
@@ -30,16 +30,16 @@ def lnprior_mod(theta, Infvalues, Supvalues):
     else:
         return -np.inf    
 
-def lnprob_moffat0(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host):
+def lnprob_moffat(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues):
     lp = lnprior_mod(theta, Infvalues, Supvalues)
     if not np.isfinite(lp):
         return -np.inf
     else:
-        return lp + lnlike_moffat0(theta, spec, specE, x_t, y_t, valsI, Namevalues, host)
+        return lp + lnlike_moffat(theta, spec, specE, x_t, y_t, valsI, Namevalues)
 
-def lnprob_gaussian(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host):
+def lnprob_gaussian(theta, spec, specE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues):
     lp = lnprior_mod(theta, Infvalues, Supvalues)
     if not np.isfinite(lp):
         return -np.inf
     else:
-        return lp + lnlike_gaussian(theta, spec, specE, x_t, y_t, valsI, Namevalues, host)  
+        return lp + lnlike_gaussian(theta, spec, specE, x_t, y_t, valsI, Namevalues)  

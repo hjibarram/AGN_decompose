@@ -26,7 +26,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
                 start = time.time()
             if verbose:
                 print("Running burn-in...")
-            p0, _, _ = sampler.run_mcmc(p0, 1000)#1000
+            p0, _, _ = sampler.run_mcmc(p0, 1000)
             sampler.reset()
             if verbose:
                 print("Running production...")
@@ -54,6 +54,10 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
 
 
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsI={}):
+    if plot_f:
+        tim=True
+    else:
+        tim=False
     nx,ny=pf_map.shape
     if autocent:
         if sig == 0:
@@ -74,24 +78,16 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
-    if singlepsf:
-        host=False  
-    else: 
-        host=True
-    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, host)
+    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues)
     nwalkers=240
     niter=1024
     initial = np.array([*Inpvalues])
     ndim = len(initial)
     p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
     if moffat:
-        if plot_f:
-            tim=True
-        else:
-            tim=False
-        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat0,data,tim=tim,ncpu=ncpu)
+        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat,data,tim=tim,ncpu=ncpu)
     else:
-        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,ncpu=ncpu) 
+        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,tim=tim,ncpu=ncpu) 
     samples = sampler.flatchain
     theta_max  = samples[np.argmax(sampler.flatlnprobability)]
     pars_max = {}
@@ -108,12 +104,10 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     if plot_f:
         if moffat:
             spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
-            #if singlepsf:
-            #    spec_hst=0.0
-            #else:
             spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
         else:
             spec_t=mod.gaussian_modelF(pars_max, x_t=x_t, y_t=y_t)
+            spec_hst=spec_t*0
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]

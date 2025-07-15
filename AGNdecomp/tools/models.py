@@ -18,49 +18,9 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     bt=r1
     spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
-    return spec_t
+    return spec_t  
 
-def moffat_model3(theta, valsI, keysI, Namevalues, x_t=0, y_t=0):
-    ellip=keysI['ellip']
-    re_int=keysI['re_int']
-    fcenter=keysI['fcenter']
-    be_t=valsI['db_m']
-    bn=valsI['bn']
-    ns=valsI['ns']
-    e_t=valsI['e_m']
-    tht_t=valsI['tht_m']
-    Re=valsI['Re_c']
-    dx=valsI['dx']
-    dy=valsI['dy']
-    if ellip:
-        if fcenter:
-            if re_int:
-                At,Io,ds_t,e_t,tht_t=theta
-            else:
-                At,Io,Re,ds_t,e_t,tht_t=theta
-        else:
-            if re_int:
-                At,dx,dy,Io,ds_t,e_t,tht_t=theta
-            else:
-                At,dx,dy,Io,Re,ds_t,e_t,tht_t=theta
-    else:
-        if fcenter:
-            if re_int:
-                At,Io,ds_t=theta
-            else:
-                At,Io,Re,ds_t=theta
-        else:
-            if re_int:
-                At,dx,dy,Io,ds_t=theta
-            else:
-                At,dx,dy,Io,Re,ds_t=theta
-    r1=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-    spec_agn=At*(1.0 + (r1**2.0/ds_t**2.0))**(-be_t)
-    spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t             
-
-def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
+def moffat_model(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
     pars={}
     keys=list(valsI.keys())
     for key in keys:

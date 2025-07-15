@@ -16,10 +16,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
+    p_vals=[]
     if str_p:
         try:
             Namevalues0=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
-            p_vals=[]
             for i in range(0, len(Namevalues0)):
                 p_vals.extend([tol.get_somoth_val(name,dir=dir_o,sigma=5,sp=psamp,val=i+6,out_p=True,deg=5,tp=tp)])
             str_p=True
@@ -49,7 +49,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     wcs = WCS(hdr)
     wcs=wcs.celestial
     if sp > 0:
-        nz_t=int(nz/sp)
+        nz_t=int(nz/(sp/cdelt))
         spt='_sp'+str(int(sp))
     else:
         nz_t=nz
@@ -62,12 +62,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         ft.write('wave , flux , fluxN , ra , dec , psf'+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
-                i0=int(i*sp)
-                i1=int((i+1)*sp)
+                i0=int(i*sp/cdelt)
+                i1=int((i+1)*sp/cdelt)
                 if i1 > nz:
                     i1=nz
                 if i0 > nz:
-                    i0=int(nz-sp)    
+                    i0=int(nz-sp/cdelt)    
                 map1=np.nanmean(cube[i0:i1,:,:],axis=0)
                 map1e=np.nanmean(cubeE[i0:i1,:,:],axis=0)
                 wave_1=np.nanmean(wave_f[i0:i1])
@@ -93,7 +93,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
             sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
             val1=sky1.to_string('hmsdms')
             if verbose:
-                linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)+' '
+                linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
                 linev=''
                 for val in Namevalues0:
                     linev=linev+' '+val+'='+str(pars_max[val])
@@ -113,19 +113,20 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         else:
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
-        valsI={}
-        for i in range(0, len(Namevalues0)):
-            if str_p:
-                p_val=p_vals[i]
-                val_t=p_val(wave_1)
-                valsI[Namevalues0[i]]=val_t
-                for j in range(0, len(Namevalues)):
-                    if Namevalues0[i] == Namevalues[j]:
-                        Inpvalues[j]= val_t
-            else:
-                valsI[Namevalues0[i]]=Inpvalues[i]
-        valsI['dxo']=0
-        valsI['dyo']=0   
+        valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,str_p=str_p)
+        #valsI={}
+        #for i in range(0, len(Namevalues0)):
+        #    if str_p:
+        #        p_val=p_vals[i]
+        #        val_t=p_val(wave_1)
+        #        valsI[Namevalues0[i]]=val_t
+        #        for j in range(0, len(Namevalues)):
+        #            if Namevalues0[i] == Namevalues[j]:
+        #                Inpvalues[j]= val_t
+        #    else:
+        #        valsI[Namevalues0[i]]=Inpvalues[i]
+        #valsI['dxo']=0
+        #valsI['dyo']=0   
         if moffat:
             pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,singlepsf=singlepsf,moffat=moffat,ncpu=ncpu,valsI=valsI)
         else:
