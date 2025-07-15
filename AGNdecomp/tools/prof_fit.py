@@ -1,18 +1,12 @@
 #!/usr/bin/env python
-import glob, os,sys,timeit
-import matplotlib
 import numpy as np
-import matplotlib.pyplot as plt
-from astropy.io import fits
 from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord
 import AGNdecomp.tools.tools as tol
 from AGNdecomp.tools.mcmc import evaluate_2dPSF
-import warnings
-warnings.filterwarnings("ignore")
 
 def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
-    Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
+    Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
     nz,nx,ny=cube.shape
@@ -62,7 +56,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         head_vals=''
         for namev in Namevalues0:
             head_vals=head_vals+' , '+namev
-        ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
+        ft=open(dir_o+name+'_'+Model_name+spt+tp+'.csv','w')
         ft.write('wave , flux , fluxN , ra , dec , psf'+head_vals+'\n') 
         for i in range(0, nz_t):
             if sp > 0:
@@ -79,21 +73,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]  
-            valsI={}
-            for i in range(0, len(Namevalues0)):
-                if str_p:
-                    p_val=p_vals[i]
-                    val_t=p_val(wave_1)
-                    valsI[Namevalues0[i]]=val_t
-                    for j in range(0, len(Namevalues)):
-                        if Namevalues0[i] == Namevalues[j]:
-                            Inpvalues[j]= val_t
-                else:
-                    valsI[Namevalues0[i]]=Inpvalues[i]
-            if moffat:
-                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,moffat=moffat,ncpu=ncpu,valsI=valsI) 
-            else:
-                pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu)
+            valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)    
+            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu,valsI=valsI)
             sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
             val1=sky1.to_string('hmsdms')
             if verbose:
@@ -118,23 +99,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
             map1=np.nanmean(cube,axis=0)
             map1e=np.nanmean(cubeE,axis=0)
         valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)
-        #valsI={}
-        #for i in range(0, len(Namevalues0)):
-        #    if str_p:
-        #        p_val=p_vals[i]
-        #        val_t=p_val(wave_1)
-        #        valsI[Namevalues0[i]]=val_t
-        #        for j in range(0, len(Namevalues)):
-        #            if Namevalues0[i] == Namevalues[j]:
-        #                Inpvalues[j]= val_t
-        #    else:
-        #        valsI[Namevalues0[i]]=Inpvalues[i]
-        #valsI['dxo']=0
-        #valsI['dyo']=0   
-        if moffat:
-            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,moffat=moffat,ncpu=ncpu,valsI=valsI)
-        else:
-            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsT=valsT)
+        pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI)
         sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
         val1=sky1.to_string('hmsdms')
         linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)

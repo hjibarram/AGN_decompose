@@ -53,7 +53,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,moffat=False,ncpu=10,valsI={}):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,ncpu=10,valsI={}):
     if plot_f:
         tim=True
     else:
@@ -84,7 +84,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     initial = np.array([*Inpvalues])
     ndim = len(initial)
     p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
-    if moffat:
+    if Model_name=='moffat':
         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat,data,tim=tim,ncpu=ncpu)
     else:
         sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,tim=tim,ncpu=ncpu) 
@@ -97,12 +97,12 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     for i in range(0, len(Namevalues)):
         pars_max[Namevalues[i]]=theta_max[i]
     ft_num=np.nansum(pf_map)
-    if moffat:
+    if Model_name=='moffat':
         ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
     else:
         ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
     if plot_f:
-        if moffat:
+        if Model_name=='moffat':
             spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
         else:
@@ -111,7 +111,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
-    if moffat:
+    if Model_name=='moffat':
         psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
     else:
         psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
