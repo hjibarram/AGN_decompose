@@ -181,7 +181,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
                 valsI[Namevalues0[i]]=val_t
             else:
                 valsI[Namevalues0[i]]=Inpvalues[i]
-        valsI={}
+        #valsI={}
         #valsI['At']=At
         #valsI['alpha']=ds_m
         #valsI['beta']=bt
