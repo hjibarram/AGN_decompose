@@ -11,7 +11,6 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-
 def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,verbose=False,singlepsf=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
@@ -68,7 +67,6 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
     else:
         nz_t=nz
         spt=''    
-    
     if local == False:
         valt=Namevalues
         head_vals=''
