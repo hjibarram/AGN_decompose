@@ -8,12 +8,12 @@ models:
         ini_value: 0.22  #central wavelenght
         inf_value: 0.1  #central wavelenght 
         sup_value: 0.5
-      - name: ds_m
+      - name: alpha
         name_plot: $\alpha$
         ini_value: 2  #central wavelenght
         inf_value: 0  #central wavelenght 
         sup_value: 10    
-      - name: be_m
+      - name: beta
         name_plot: $\beta$
         ini_value: 2  #central wavelenght
         inf_value: 0  #central wavelenght 
@@ -48,12 +48,12 @@ models:
         ini_value: 2  #central wavelenght
         inf_value: 0  #central wavelenght 
         sup_value: 15  
-      - name: e_t
+      - name: ellip
         name_plot: $e_s$
         ini_value: 0  #central wavelenght
         inf_value: 0  #central wavelenght 
         sup_value: 10  
-      - name: th_t
+      - name: theta
         name_plot: $\theta_s$
         ini_value: 0  #central wavelenght
         inf_value: 0  #central wavelenght 

@@ -177,15 +177,15 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',mod_ind=0,verbo
                 et_c=p_eli(wave_1)
                 th_c=p_tht(wave_1) 
         valsT={}
-        valsT['db_m']=bt
-        valsT['ds_m']=ds_m
-        valsT['pi_x']=pi_x
-        valsT['pi_y']=pi_y
-        valsT['bs_c']=bs_c
-        valsT['Re_c']=Re_c
-        valsT['ns_c']=ns_c
-        valsT['e_m']=et_c
-        valsT['tht_m']=th_c        
+        valsT['alpha']=ds_m
+        valsT['beta']=bt
+        valsT['xo']=pi_x
+        valsT['yo']=pi_y
+        valsT['bs']=bs_c
+        valsT['Re']=Re_c
+        valsT['ns']=ns_c
+        valsT['ellip']=et_c
+        valsT['theta']=th_c        
         valsT['dxo']=0
         valsT['dyo']=0   
         if moffat:

@@ -55,30 +55,30 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsT={}):
-    if len(valsT) > 0:
-        if 'db_m' in valsT:
-            db_m=valsT['db_m']
-        if 'ds_m' in valsT:
-            ds_m=valsT['ds_m']
-        if 'e_m' in valsT:
-            e_m=valsT['e_m']
-        if 'tht_m' in valsT:
-            tht_m=valsT['tht_m']
-        if 'pi_x' in valsT:
-            pi_x=valsT['pi_x']
-        if 'pi_y' in valsT:
-            pi_y=valsT['pi_y']
-        if 'bs_c' in valsT:
-            bs_c=valsT['bs_c']
-        if 'Re_c' in valsT:
-            Re_c=valsT['Re_c']
-        if 'ns_c' in valsT:
-            ns_c=valsT['ns_c']
-        if 'dxo' in valsT:
-            dxo=valsT['dxo']
-        if 'dyo' in valsT:
-            dyo=valsT['dyo']    
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsI={}):
+    #if len(valsT) > 0:
+    #    if 'alpha' in valsT:
+    #        ds_m=valsT['alpha']
+    #    if 'beta' in valsT:
+    #        db_m=valsT['beta']
+    #    if 'xo' in valsT:
+    #        pi_x=valsI['xo']
+    #    if 'yo' in valsT:
+    #        pi_y=valsT['yo']
+    #    if 'bn' in valsT:
+    #        bs_c=valsT['bn']
+    #    if 'Re' in valsT:
+    #        Re_c=valsT['Re']
+    #    if 'ns' in valsT:
+    #        ns_c=valsT['ns']
+    #    if 'ellip' in valsT:
+    #        e_m=valsT['ellip']
+    #    if 'theta' in valsT:
+    #        tht_m=valsT['theta']    
+    #    if 'dxo' in valsT:
+    dxo=valsI['dxo']
+    #    if 'dyo' in valsT:
+    dyo=valsI['dyo']    
     nx,ny=pf_map.shape
     if autocent:
         if sig == 0:
@@ -98,17 +98,17 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
     
-    valsI={}
+    #valsI={}
     valsI['At']=At
-    valsI['ds_m']=ds_m
-    valsI['be_m']=db_m
-    valsI['xo']=pi_x-min_in[1]
-    valsI['yo']=pi_y-min_in[0]
-    valsI['Re']=Re_c
-    valsI['bn']=bs_c
-    valsI['ns']=ns_c
-    valsI['e_t']=e_m
-    valsI['th_t']=tht_m
+    #valsI['alpha']=ds_m
+    #valsI['beta']=db_m
+    valsI['xo']=valsI['xo']-min_in[1]
+    valsI['yo']=valsI['yo']-min_in[0]
+    #valsI['Re']=Re_c
+    #valsI['bn']=bs_c
+    #valsI['ns']=ns_c
+    #valsI['ellip']=e_m
+    #valsI['theta']=tht_m
     print("Input values: ",valsI)
     if singlepsf:
         host=False  
@@ -138,9 +138,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         pars_max[Namevalues[i]]=theta_max[i]
     ft_num=np.nansum(pf_map)
     if moffat:
-        ft_fit=np.pi*pars_max['ds_m']**2.0*pars_max['At']/(pars_max['be_m']-1.0)
+        ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
     else:
-        ft_fit=2*np.pi*pars_max['ds_m']**2.0*pars_max['At']
+        ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
     if plot_f:
         if moffat:
             spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=host)
@@ -156,13 +156,13 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
     dx_m=pars_max['xo']+min_in[1]
     dy_m=pars_max['yo']+min_in[0]
     if moffat:
-        psf=pars_max['ds_m']*2.0*np.sqrt(2.0**(1./pars_max['be_m'])-1)
+        psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
     else:
-        psf=pars_max['ds_m']*2.0*np.sqrt(2.0*np.log10(2.0))
+        psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     if moffat:
         if singlepsf:
-            return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,0,0,0,0,At0,e_m,tht_m
+            return dx_m,dy_m,pars_max['alpha'],pars_max['beta'],psf,ft_num,ft_fit,0,0,0,0,pars_max['At'],pars_max['ellip'],pars_max['theta']
         else:
-            return dx_m,dy_m,pars_max['ds_m'],pars_max['be_m'],psf,ft_num,ft_fit,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['e_t'],pars_max['th_t']
+            return dx_m,dy_m,pars_max['alpha'],pars_max['beta'],psf,ft_num,ft_fit,pars_max['Io'],pars_max['bn'],pars_max['Re'],pars_max['ns'],pars_max['At'],pars_max['ellip'],pars_max['theta']
     else:
         return dx_m,dy_m,ds_m,psf,ft_num,ft_fit

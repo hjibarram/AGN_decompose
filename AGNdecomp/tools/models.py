@@ -73,16 +73,16 @@ def moffat_model0(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
 def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
     # This is the function for the Full Moffat model
     At=pars['At']
+    ds=pars['alpha']
+    be=pars['beta']
     dx=pars['xo']
     dy=pars['yo']
     Io=pars['Io']
     bn=pars['bn']
     Re=pars['Re']
     ns=pars['ns']
-    ds=pars['ds_m']
-    es=pars['e_t']
-    th=pars['th_t']
-    be=pars['be_m']
+    es=pars['ellip']
+    th=pars['theta']
     r1=tol.radi_ellip(x_t-dx,y_t-dy,es,th)
     if agn:
         spec_agn=At*(1.0 + (r1**2.0/ds**2.0))**(-be)
@@ -111,8 +111,8 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     At=pars['At']
     dx=pars['xo']
     dy=pars['yo']
-    ds=pars['ds_m']
-    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds)**2.0))*At
+    ds=pars['sigma']
+    spec_t=np.exp(-0.5*((((x_t-dx)/ds)**2.0)+((y_t-dy)/ds)**2.0))*At
     return spec_t   
 
 
