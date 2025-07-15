@@ -55,9 +55,8 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         nz_t=nz
         spt=''    
     if local == False:
-        valt=Namevalues
         head_vals=''
-        for namev in Namevalues:
+        for namev in Namevalues0:
             head_vals=head_vals+' , '+namev
         ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
         ft.write('wave , flux , fluxN , ra , dec , psf'+head_vals+'\n') 
@@ -93,12 +92,12 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
             if verbose:
                 linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)+' '
                 linev=''
-                for val in Namevalues:
+                for val in Namevalues0:
                     linev=linev+' '+val+'='+str(pars_max[val])
                 print(linet+linev)
             linet=str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(psf1*dpix)
             linev=''
-            for val in Namevalues:
+            for val in Namevalues0:
                 linev=linev+' , '+str(pars_max[val])
             ft.write(linet+linev+' \n')
         ft.close()
@@ -129,7 +128,6 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         val1=sky1.to_string('hmsdms')
         linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
         linev=''
-        for val in Namevalues:
+        for val in Namevalues0:
             linev=linev+' '+val+'='+str(pars_max[val])
         print(linet+linev)
-        print(pars_max)
