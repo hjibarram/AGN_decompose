@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-import glob, os,sys,timeit
-import matplotlib
 import numpy as np
 import emcee
-from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel
+from astropy.convolution import convolve, Gaussian2DKernel
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
 from AGNdecomp.tools.priors import lnprob_moffat0
@@ -56,8 +54,6 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
 
 
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,singlepsf=False,moffat=False,ncpu=10,valsI={}):
-    dxo=valsI['dxo']
-    dyo=valsI['dyo']    
     nx,ny=pf_map.shape
     if autocent:
         if sig == 0:
@@ -70,7 +66,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
             pf_map_c=convolve(pf_map, PSF)
         min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
     else:
-        min_in=[dxo,dyo]
+        min_in=[valsI['dyo'],valsI['dxo']]
     x_t=np.arange(ny)-min_in[1]
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
@@ -111,16 +107,14 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Labelvalues=[],Namevalues=[],Inpva
         ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
     if plot_f:
         if moffat:
-            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=host)
-            if singlepsf:
-                spec_hst=0.0
-            else:
-                spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
+            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
+            #if singlepsf:
+            #    spec_hst=0.0
+            #else:
+            spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
         else:
             spec_t=mod.gaussian_modelF(pars_max, x_t=x_t, y_t=y_t)
-  
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
-                            
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
     if moffat:

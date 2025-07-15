@@ -69,12 +69,11 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         nz_t=nz
         spt=''    
     
-    valt=Namevalues
-    head_vals=''
-    for name in Namevalues:
-        head_vals=head_vals+' , '+name
     if local == False:
-        #if moffat:
+        valt=Namevalues
+        head_vals=''
+        for namev in Namevalues:
+            head_vals=head_vals+' , '+namev
         ft=open(dir_o+name+'_'+model_name+spt+tp+'.csv','w')
         ft.write('WAVE , FLUX , FLUXN , RA , DEC , PSF , '+head_vals+'\n') 
         for i in range(0, nz_t):
