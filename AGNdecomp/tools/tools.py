@@ -34,11 +34,11 @@ def read_cvsfile(name,path='',hid='wave'):
     for line in f:
         ct+=1
         if hid in line:
-            data=line.replace('\n','').split(',')
+            data=line.replace('\n','').replace(' ','').split(',')
             data=list(filter(None, data)) # Remove empty strings
             nh=len(data)
             for it in range(0, nh):
-                dic.update({data[it].replace(' ',''):[]})
+                dic.update({data[it]:[]})
             head=data
         else:
             data=line.replace('\n','').split(',')
