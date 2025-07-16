@@ -1,0 +1,7 @@
+--- 
+# config file to run the AGN decomposition pipeline
+config:
+  # Run AGNdecomp
+  - run_type: FULL #Pipeline Type
+    name: NAMEcube #name of the IFS cube
+    path: '' #path to the data cubes
