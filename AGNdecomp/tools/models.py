@@ -86,6 +86,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
+    print(outf1)
     [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
     [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
     try:
