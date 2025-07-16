@@ -83,7 +83,6 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./
         psf_file='NAME'.replace('NAME',name)
     valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
     keys=list(valsT.keys())
-    print(keys)
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
@@ -102,7 +101,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./
             pars[key]=valsT[key][k]
         for i in range(0, nx):
             for j in range(0, ny):
-                valt1=moffat_modelF(valsT, x_t=j, y_t=i, host=True, agn=True)
+                valt1=moffat_modelF(pars, x_t=j, y_t=i, host=True, agn=True)
                 if cube0[k,i,j] != 0:    
                     cube_mod[k,i,j]=valt1
     h1=fits.PrimaryHDU(cube_mod)
