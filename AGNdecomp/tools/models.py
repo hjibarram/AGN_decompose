@@ -132,7 +132,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
                 h_k[keys[i]]=hdr0[keys[i]]
                 h_k.comments[keys[i]]=hdr0.comments[keys[i]]
         except:
-            print('Error in copying header key: ', keys[i])    
+            continue
     h_k.update()
     h_t=h2.header
     keys=list(hdr1.keys())
@@ -142,7 +142,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
                 h_t[keys[i]]=hdr1[keys[i]]
                 h_t.comments[keys[i]]=hdr1.comments[keys[i]]
         except:
-            print('Error in copying header key: ', keys[i])
+            continue
     h_t['EXTNAME'] ='Error_cube'
     h_t.update()
     h_r=h3.header
@@ -152,7 +152,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
             h_r[keys[i]]=hdr2[keys[i]]
             h_r.comments[keys[i]]=hdr2.comments[keys[i]]
         except:
-            print('Error in copying header key: ', keys[i])
+            continue
     h_r['EXTNAME'] ='BADPIXELMASK'
     h_r.update()    
     hlist=fits.HDUList([h1,h2,h3])
