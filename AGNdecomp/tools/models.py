@@ -108,9 +108,12 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     h=h1.header
     keys=list(hdr0.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h[keys[i]]=hdr0[keys[i]]
-            h.comments[keys[i]]=hdr0.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h[keys[i]]=hdr0[keys[i]]
+                h.comments[keys[i]]=hdr0.comments[keys[i]]
+        except:
+            print('Error in copying header key: ', keys[i])
     hlist=fits.HDUList([h1])
     hlist.update_extend()
     out_fit=dir_cube_m+outf1+'.fits'
@@ -124,23 +127,32 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     h_k=h1.header
     keys=list(hdr0.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h_k[keys[i]]=hdr0[keys[i]]
-            h_k.comments[keys[i]]=hdr0.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h_k[keys[i]]=hdr0[keys[i]]
+                h_k.comments[keys[i]]=hdr0.comments[keys[i]]
+        except:
+            print('Error in copying header key: ', keys[i])    
     h_k.update()
     h_t=h2.header
     keys=list(hdr1.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h_t[keys[i]]=hdr1[keys[i]]
-            h_t.comments[keys[i]]=hdr1.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h_t[keys[i]]=hdr1[keys[i]]
+                h_t.comments[keys[i]]=hdr1.comments[keys[i]]
+        except:
+            print('Error in copying header key: ', keys[i])
     h_t['EXTNAME'] ='Error_cube'
     h_t.update()
     h_r=h3.header
     keys=list(hdr2.keys())
     for i in range(0, len(keys)):
-        h_r[keys[i]]=hdr2[keys[i]]
-        h_r.comments[keys[i]]=hdr2.comments[keys[i]]
+        try:
+            h_r[keys[i]]=hdr2[keys[i]]
+            h_r.comments[keys[i]]=hdr2.comments[keys[i]]
+        except:
+            print('Error in copying header key: ', keys[i])
     h_r['EXTNAME'] ='BADPIXELMASK'
     h_r.update()    
     hlist=fits.HDUList([h1,h2,h3])
