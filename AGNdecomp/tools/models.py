@@ -76,7 +76,7 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     return spec_t   
 
 
-def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
     if moffat:
         psf_file='NAME_moffat'.replace('NAME',name)
     else:
@@ -86,10 +86,10 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
-    [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdr0, header=True)
-    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdr1, header=True)
+    [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
+    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
     try:
-        [cube2, hdr2]=fits.getdata(dir_cube+cube_file, hdr2, header=True)
+        [cube2, hdr2]=fits.getdata(dir_cube+cube_file, hdri2, header=True)
     except:
         [cube2, hdr2]=[cube1, hdr1]
     nz,nx,ny=cube0.shape
