@@ -83,7 +83,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./
         psf_file='NAME'.replace('NAME',name)
     valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
     keys=list(valsT.keys())
-    
+    print(keys)
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
