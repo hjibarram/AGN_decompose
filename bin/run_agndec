@@ -61,7 +61,7 @@ def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,psamp,path_out,
         #     sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0)
         #prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
         #     sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0)
-        get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',hdr0=head_dat,hdr1=head_err) 
+        get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',hdr0=head_dat,hdr1=head_err,basename=nameb) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1)
 
 # register full fit command
