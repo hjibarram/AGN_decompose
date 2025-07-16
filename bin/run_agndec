@@ -21,7 +21,7 @@ def cli():
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
 @click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis')
 @click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis in AA')
-@click.option('-f', '--nofull',is_flag=True, default=False, help='only run a single run')
+@click.option('-f', '--pipeline',is_flag=True, default=False, help='run in pipeline mode')
 @click.option('-r', '--clean',is_flag=True, default=False, help='generate a clean run')
 @click.option('-a', '--psamp',type=int, default=10, help='spectral sampling of the previus phase, default 10 AA')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
@@ -30,7 +30,7 @@ def cli():
 @click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
 @click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
 
-def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0):
+def run(name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0):
     dir_cube=path[0]
     dir_out=path_out#[0]
     if nameb == '':
@@ -52,7 +52,7 @@ def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,psamp,path_out,
         local=True
     else:
         local=False
-    if nofull or local:
+    if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,
              sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0)
     else:
