@@ -491,9 +491,9 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
     
     return wave_f,single_T,single_ET
 
-def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec=''):
-    outf1='Model_NAME.cube.fits.gz'.replace('NAME',name+vt)
-    outf2='Residual_NAME.cube.fits.gz'.replace('NAME',name+vt)
+def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='',basename='NAME.cube.fits.gz'):
+    outf1='Model_'+basename.replace('NAME',name+vt)
+    outf2='Residual_'+basename.replace('NAME',name+vt)
     wave1,spec_mod,spec_modE=extract_spec(outf1,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
     wave2,spec_res,spec_resE=extract_spec(outf2,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
     spec0=spec_res+spec_mod
