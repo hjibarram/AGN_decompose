@@ -23,6 +23,7 @@ requirements = [
     'scipy',
     'plotly',
     'kaleido',
+    'plotly_get_chrome'
 #    'astropy>=3.2.1',
 #    'matplotlib>=3.1.1',
 #    'numpy>=1.17.2',
