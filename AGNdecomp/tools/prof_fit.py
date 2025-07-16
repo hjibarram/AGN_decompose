@@ -4,6 +4,8 @@ from astropy.wcs import WCS
 from astropy.wcs.utils import pixel_to_skycoord
 import AGNdecomp.tools.tools as tol
 from AGNdecomp.tools.mcmc import evaluate_2dPSF
+import warnings
+warnings.filterwarnings("ignore")
 
 def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
