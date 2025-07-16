@@ -16,6 +16,43 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+def read_cvsfile(name,path='',hid='wave'):
+    """
+    Reads a cvs file and returns the data as a dictionary.
+    Parameters:
+    name (str): The name of the file to read.
+    path (str): The directory path where the file is located.
+
+    Returns:
+    dic array: The data read from the file.
+    """
+    file=path+name
+    f=open(file,'r')
+    dic={}
+    ct=0
+    img=1000
+    for line in f:
+        ct+=1
+        if hid in line:
+            data=line.replace('\n','').split(',')
+            data=list(filter(None, data)) # Remove empty strings
+            nh=len(data)
+            for it in range(0, nh):
+                dic.update({data[it]:[]})
+            head=data
+        else:
+            data=line.replace('\n','').split(',')
+            data=list(filter(None,data))
+            if len(data) == nh:
+                for it in range(0, nh):
+                    try:
+                        val=float(data[it])
+                    except:
+                        val=data[it].replace(' ','')
+                    dic[head[it]].extend([val])
+    f.close()
+    return dic
+
 def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,dyo=0,dxo=0):
     """
     Defines the initial values for the parameters.
@@ -570,4 +607,4 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     labels = [*Labelvalues]
     fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
     fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
-    fig.savefig(path_out+'corners_NAME.pdf'.replace('NAME',name))
+    fig.savefig(path_out+'corners_NAME.pdf'.replace('NAME',name))    

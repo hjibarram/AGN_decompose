@@ -5,7 +5,7 @@ from astropy.wcs.utils import pixel_to_skycoord
 import AGNdecomp.tools.tools as tol
 from AGNdecomp.tools.mcmc import evaluate_2dPSF
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,moffat=False,ncpu=10,sp=0):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,sp=0):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
@@ -48,10 +48,9 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
         sptt=sp/cdelt
     if sp > 0:
         nz_t=int(nz/sptt)
-        spt='_sp'+str(int(sp))
     else:
         nz_t=nz
-        spt=''    
+    spt='_sp'+str(int(sp))
     if local == False:
         head_vals=''
         for namev in Namevalues0:
@@ -90,14 +89,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yml',wavew1=4850,wav
             ft.write(linet+linev+' \n')
         ft.close()
     else:
-        if sp > 0:
-            ntw=np.where((wave_f > wavew1) & (wave_f < wavew2))[0]
-            map1=np.nanmean(cube[ntw,:,:],axis=0)
-            map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
-            wave_1=np.nanmean(wave_f[ntw])
-        else:
-            map1=np.nanmean(cube,axis=0)
-            map1e=np.nanmean(cubeE,axis=0)
+        ntw=np.where((wave_f > wavew1) & (wave_f < wavew2))[0]
+        map1=np.nanmean(cube[ntw,:,:],axis=0)
+        map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
+        wave_1=np.nanmean(wave_f[ntw])
         valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)
         pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI)
         sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)

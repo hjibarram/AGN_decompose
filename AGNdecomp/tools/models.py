@@ -76,80 +76,35 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     return spec_t   
 
 
-def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Name',sig=10,cosmetic=False,moffat=True):
+def get_model(dir_o='./',dir_cube='./',vt='',hdr0=0,hdr1=1,hdr2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
     if moffat:
         psf_file='NAME_moffat'.replace('NAME',name)
     else:
         psf_file='NAME'.replace('NAME',name)
-    wave=[]
-    FtF=[]
-    Ft=[]
-    psf=[]
-    dx=[]
-    dy=[]
-    alpha=[]
-    beta=[]
-    At=[]
-    et=[]
-    th0=[]
-    ft=open(dir_o+psf_file+vt+'.csv','r')
-    for line in ft:
-        if not 'WAVE' in line:
-            data=line.replace('\n','')
-            data=data.split(',')
-            data=list(filter(None,data))
-            wave.extend([float(data[0])])
-            FtF.extend([float(data[1])])
-            Ft.extend([float(data[2])])
-            dx.extend([float(data[5])])
-            dy.extend([float(data[6])])
-            alpha.extend([float(data[7])])
-            beta.extend([float(data[8])])
-            psf.extend([float(data[9])])
-            At.extend([float(data[14])])
-            et.extend([float(data[15])])
-            th0.extend([float(data[16])])
-    ft.close()
-    wave=np.array(wave)
-    FtF=np.array(FtF)
-    psf=np.array(psf)
-    dx=np.array(dx)
-    dy=np.array(dy)
-    alpha=np.array(alpha)
-    beta=np.array(beta)
-    At=np.array(At)
-    et=np.array(et)
-    th0=np.array(th0)
+    valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
+    keys=list(valsT.keys())
     
- 
-    if corr:
-        dxt=np.nanmean(dx[4450:4470])
-        dyt=np.nanmean(dy[4450:4470])  
-        dx[4479:len(dx)]=dxt
-        dy[4479:len(dy)]=dyt
-    if cosmetic:
-        At=tol.conv(At,ke=sig)
-        dx=tol.conv(dx,ke=sig)
-        dy=tol.conv(dy,ke=sig)   
-    
-    cube_file='NAME.cube.fits.gz'.replace('NAME',name)
-    outf1='Model_NAME.cube'.replace('NAME',name+vt)
-    outf3='Residual_NAME.cube'.replace('NAME',name+vt)
-    [cube, hdr0]=fits.getdata(dir_cube+cube_file, 0, header=True)
-    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, 1, header=True)
-    [cube2, hdr2]=fits.getdata(dir_cube+cube_file, 2, header=True)
-    nz,nx,ny=cube.shape
-    cube_mod=np.copy(cube)
+    cube_file=basename.replace('NAME',name)
+    outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
+    outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
+    [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdr0, header=True)
+    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdr1, header=True)
+    try:
+        [cube2, hdr2]=fits.getdata(dir_cube+cube_file, hdr2, header=True)
+    except:
+        [cube2, hdr2]=[cube1, hdr1]
+    nz,nx,ny=cube0.shape
+    cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
     for k in range(0, nz):
-        if k < len(At):
-            theta=At[k],dx[k],dy[k],alpha[k],beta[k],et[k],th0[k]
-            for i in range(0, nx):
-                for j in range(0, ny):
-                    valt1=moffat_model_s(theta, x_t=j, y_t=i, ellip=True)       
-                    if cube[k,i,j] != 0:    
-                        cube_mod[k,i,j]=valt1
-                
+        pars={}
+        for key in keys:
+            pars[key]=valsT[key][k]
+        for i in range(0, nx):
+            for j in range(0, ny):
+                valt1=moffat_modelF(valsT, x_t=j, y_t=i, host=True, agn=True)
+                if cube0[k,i,j] != 0:    
+                    cube_mod[k,i,j]=valt1
     h1=fits.PrimaryHDU(cube_mod)
     h=h1.header
     keys=list(hdr0.keys())
@@ -163,7 +118,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Na
     hlist.writeto(out_fit, overwrite=True)
     tol.sycall('gzip  '+out_fit)
     
-    res=cube-cube_mod
+    res=cube0-cube_mod
     h1=fits.PrimaryHDU(res)
     h2=fits.ImageHDU(cube1)
     h3=fits.ImageHDU(cube2)
