@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import glob, os,sys,timeit
+import sys
+import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
@@ -19,6 +20,21 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
     return spec_t  
+
+def get_extern_function(name='moffat',path='./',namef='extern_function.py',verbose=False):
+    # This function returns the external function for the costum user model
+    # The name of the model must be defined in the file AGNdecomp/tools/models.py
+    # The path is the path to the AGNdecomp package
+    if verbose:
+        print('Loading external function for',name)
+    try:
+        spec = importlib.util.spec_from_file_location(name, path + namef)
+        extmod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(extmod)
+        return getattr(extmod, name + '_modelF')
+    except Exception as e:
+        print('Error loading external function:', e)
+        sys.exit()
 
 def multi_model(theta, valsI, Namevalues, Namemodel, x_t=0, y_t=0, host=True):
     pars={}
