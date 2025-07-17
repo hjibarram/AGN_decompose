@@ -19,7 +19,7 @@ def cli():
 @click.option('-p', '--path', type=str, help='path to the data cubes')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
 @click.option('-u', '--ncpus', type=int, default=10, help='number of CPUs')
-@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
+@click.option('-m', '--nameb', type=str, default='NAME.cube.fits.gz' ,help='naming format base of the IFS files')
 @click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis in test mode')
 @click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis in AA')
 @click.option('-f', '--pipeline',is_flag=True, default=False, help='run in pipeline mode')
@@ -55,7 +55,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if nameb == '':
         cube_file='NAME'.replace('NAME',name)
     else:
-        cube_file=nameb.replace('NAME',name)#'NAME.cube.fits.gz'
+        cube_file=nameb.replace('NAME',name)
     [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, head_dat, header=True)
     try:
         cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
