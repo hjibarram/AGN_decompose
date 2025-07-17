@@ -16,7 +16,7 @@ def cli():
 @cloup.command(short_help='Run the AGN decomposition')
 @click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
-@click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
+@click.option('-p', '--path', type=str, help='path to the data cubes')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
 @click.option('-u', '--ncpus', type=int, default=10, help='number of CPUs')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
