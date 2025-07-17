@@ -20,14 +20,20 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     spec_t=spec_agn+spec_hst
     return spec_t  
 
-def moffat_model(theta, valsI, Namevalues, x_t=0, y_t=0, host=True):
+def multi_model(theta, valsI, Namevalues, Namemodel, x_t=0, y_t=0, host=True):
     pars={}
     keys=list(valsI.keys())
     for key in keys:
         pars[key]=valsI[key]
     for i in range(0, len(Namevalues)):
         pars[Namevalues[i]]=theta[i]
-    spec_t=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)    
+    if Namemodel == 'moffat':
+        spec_t=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)
+    elif Namemodel == 'gaussian':
+        spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
+    else:
+        print('Error, the model '+Namemodel+' is not implemented, available models are',Namemodel)
+        sys.exit()
     return spec_t
 
 def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
@@ -54,17 +60,6 @@ def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
         spec_hst=r1*0.0
     spec_t=spec_agn+spec_hst
     return spec_t
-
-
-def gaussian_model(theta, valsI, Namevalues, x_t=0, y_t=0):
-    pars={}
-    keys=list(valsI.keys())
-    for key in keys:
-        pars[key]=valsI[key]
-    for i in range(0, len(Namevalues)):
-        pars[Namevalues[i]]=theta[i]
-    spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
-    return spec_t  
 
 def gaussian_modelF(pars, x_t=0, y_t=0,):
     # This is the function for the basic gaussian model
@@ -101,7 +96,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
             pars[key]=valsT[key][k]
         for i in range(0, nx):
             for j in range(0, ny):
-                valt1=moffat_modelF(pars, x_t=j, y_t=i, host=True, agn=True)
+                valt1=moffat_modelF(pars, x_t=j, y_t=i)
                 if cube0[k,i,j] != 0:    
                     cube_mod[k,i,j]=valt1
     h1=fits.PrimaryHDU(cube_mod)

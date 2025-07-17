@@ -4,8 +4,7 @@ import emcee
 from astropy.convolution import convolve, Gaussian2DKernel
 import AGNdecomp.tools.tools as tol
 import AGNdecomp.tools.models as mod
-from AGNdecomp.tools.priors import lnprob_moffat
-from AGNdecomp.tools.priors import lnprob_gaussian
+from AGNdecomp.tools.priors import lnprob_multmodel
 
 def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,ncpu=10):
     if tim:
@@ -78,16 +77,13 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Labelvalues=[]
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
-    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues)
+    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name)
     nwalkers=240
     niter=1024
     initial = np.array([*Inpvalues])
     ndim = len(initial)
     p0 = [np.array(initial) + 1e-5 * np.random.randn(ndim) for i in range(nwalkers)]
-    if Model_name=='moffat':
-        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_moffat,data,tim=tim,ncpu=ncpu)
-    else:
-        sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_gaussian,data,tim=tim,ncpu=ncpu) 
+    sampler, pos, prob, state = mcmc(p0,nwalkers,niter,ndim,lnprob_multmodel,data,tim=tim,ncpu=ncpu)
     samples = sampler.flatchain
     theta_max  = samples[np.argmax(sampler.flatlnprobability)]
     pars_max = {}
