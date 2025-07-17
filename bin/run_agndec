@@ -20,7 +20,7 @@ def cli():
 @click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
 @click.option('-u', '--ncpus', type=int, default=10, help='number of CPUs')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
-@click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis')
+@click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis in test mode')
 @click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis in AA')
 @click.option('-f', '--pipeline',is_flag=True, default=False, help='run in pipeline mode')
 @click.option('-r', '--clean',is_flag=True, default=False, help='generate a clean run')
@@ -34,9 +34,24 @@ def cli():
 def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0):
     data=tol.read_config_file(config_file)
      if data:
-        typeF=data['config'][0]['run_type']
-    dir_cube=path[0]
-    dir_out=path_out#[0]
+        name=data['config'][0]['name']
+        path=data['config'][0]['path']
+        verbose=data['config'][0]['verbose']
+        ncpus=data['config'][0]['ncpus']
+        nameb=data['config'][0]['nameb']
+        test=data['config'][0]['test']
+        sampling=data['config'][0]['sampling']
+        pipeline=data['config'][0]['pipeline']
+        clean=data['config'][0]['clean']
+        psamp=data['config'][0]['psamp']
+        path_out=data['config'][0]['path_out']
+        head_dat=data['config'][0]['head_dat']
+        head_err=data['config'][0]['head_err']
+        mod_ind=data['config'][0]['mod_ind']
+        mod_ind0=data['config'][0]['mod_ind0']
+
+    dir_cube=path
+    dir_out=path_out
     if nameb == '':
         cube_file='NAME'.replace('NAME',name)
     else:

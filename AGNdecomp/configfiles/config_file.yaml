@@ -3,5 +3,18 @@
 config:
   # Run AGNdecomp
   - run_type: FULL #Pipeline Type
-    name: NAMEcube #name of the IFS cube
+    name: NAME #name of the IFS cube
     path: '' #path to the data cubes
+    verbose: False #Flag to activate verbosity
+    ncpus: 10 #number of CPUs
+    nameb: NAME.cube.fits.gz # base format naming of the IFS files
+    test: True #flag to run the full analysis in test mode
+    sampling: 1 #spectral sampling for the analysis in AA
+    pipeline: False #run in pipeline mode
+    clean: True #generate a full clean run
+    psamp: 10 #spectral sampling of the previus phase, default 10 AA
+    path_out: 'outputs/' #path of the output files
+    head_dat: 0 #header data extension, default 0
+    head_err: 1 #header error data extension, default 1
+    mod_ind: 0 #model index for the run, default 0
+    mod_ind0: 0 #model index for the initial run, default 0
