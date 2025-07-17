@@ -33,7 +33,7 @@ def cli():
 
 def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0):
     data=tol.read_config_file(config_file)
-     if data:
+    if data:
         name=data['config'][0]['name']
         path=data['config'][0]['path']
         verbose=data['config'][0]['verbose']
