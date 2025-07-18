@@ -95,20 +95,27 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     ft_num=np.nansum(pf_map)
     if Model_name=='moffat':
         ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
-    else:
+    elif Model_name=='gaussian':
         ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
+    else:
+        ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
     if plot_f:
         if Model_name=='moffat':
             spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
-        else:
+        elif Model_name=='gaussian':
             spec_t=mod.gaussian_modelF(pars_max, x_t=x_t, y_t=y_t)
+            spec_hst=spec_t*0
+        else:
+            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=spec_t*0
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
     if Model_name=='moffat':
         psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
-    else:
+    elif Model_name=='gaussian':
         psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
+    else:
+        psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
     return pars_max,psf,ft_num,ft_fit
