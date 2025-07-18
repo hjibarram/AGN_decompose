@@ -23,7 +23,7 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
 
 def get_extern_function(name='moffat',path='./',namef='extern_function.py',verbose=False):
     # This function returns the external function for the costum user model
-    # The name of the model must be defined in the file AGNdecomp/tools/models.py
+    # The name of the model must be defined in the file extern_function.py
     # The path is the path to the AGNdecomp package
     if verbose:
         print('Loading external function for',name)
@@ -36,7 +36,7 @@ def get_extern_function(name='moffat',path='./',namef='extern_function.py',verbo
         print('Error loading external function:', e)
         sys.exit()
 
-def multi_model(theta, valsI, Namevalues, Namemodel, x_t=0, y_t=0, host=True):
+def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True):
     pars={}
     keys=list(valsI.keys())
     for key in keys:
@@ -47,6 +47,9 @@ def multi_model(theta, valsI, Namevalues, Namemodel, x_t=0, y_t=0, host=True):
         spec_t=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)
     elif Namemodel == 'gaussian':
         spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
+    elif Namemodel == Usermods[0]:
+        extern_func=get_extern_function(name=Usermods[0],path=Usermods[1],namef=Usermods[2],verbose=False)
+        spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
     else:
         print('Error, the model '+Namemodel+' is not implemented, available models are',Namemodel)
         sys.exit()
