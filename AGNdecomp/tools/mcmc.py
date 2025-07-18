@@ -100,11 +100,12 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     else:
         ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
     if plot_f:
-        modelD=getattr(mod, Model_name + '_modelF')
         if Model_name=='moffat':
+            modelD=getattr(mod, Model_name + '_modelF')
             spec_t=modelD(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=modelD(pars_max, x_t=x_t, y_t=y_t, agn=False)
         elif Model_name=='gaussian':
+            modelD=getattr(mod, Model_name + '_modelF')
             spec_t=modelD(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0
         else:
