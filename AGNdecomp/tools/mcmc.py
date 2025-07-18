@@ -100,14 +100,16 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     else:
         ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
     if plot_f:
+        modelD=getattr(mod, Model_name + '_modelF')
         if Model_name=='moffat':
-            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
-            spec_hst=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, agn=False)
+            spec_t=modelD(pars_max, x_t=x_t, y_t=y_t, host=False)
+            spec_hst=modelD(pars_max, x_t=x_t, y_t=y_t, agn=False)
         elif Model_name=='gaussian':
-            spec_t=mod.gaussian_modelF(pars_max, x_t=x_t, y_t=y_t)
+            spec_t=modelD(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0
         else:
-            spec_t=mod.moffat_modelF(pars_max, x_t=x_t, y_t=y_t, host=False)
+            extern_func=mod.get_extern_function(name=Usermods[0],path=Usermods[1],namef=Usermods[2],verbose=False)
+            spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
