@@ -52,7 +52,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
     return sampler, pos, prob, state
 
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,ncpu=10,valsI={}):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,ncpu=10,valsI={}):
     if plot_f:
         tim=True
     else:
@@ -77,7 +77,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Labelvalues=[]
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
-    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name)
+    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods)
     nwalkers=240
     niter=1024
     initial = np.array([*Inpvalues])

@@ -30,8 +30,11 @@ def cli():
 @click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
 @click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
 @click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0):
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
     data=tol.read_config_file(config_file)
     if data:
         name=data['config'][0]['name']
@@ -49,7 +52,11 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         head_err=data['config'][0]['head_err']
         mod_ind=data['config'][0]['mod_ind']
         mod_ind0=data['config'][0]['mod_ind0']
-
+        ext_name=data['config'][0]['ext_name']
+        ext_path=data['config'][0]['ext_path']
+        ext_file=data['config'][0]['ext_file']
+    prior_config='priors_prop.yml'        
+    Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
     dir_out=path_out
     if nameb == '':
@@ -73,13 +80,13 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         local=False
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,
-             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0)
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0)
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config)
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0)
+             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
              hdri0=head_dat,hdri1=head_err,basename=nameb) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)

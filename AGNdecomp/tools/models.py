@@ -51,7 +51,7 @@ def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, hos
         extern_func=get_extern_function(name=Usermods[0],path=Usermods[1],namef=Usermods[2],verbose=False)
         spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
     else:
-        print('Error, the model '+Namemodel+' is not implemented, available models are',Namemodel)
+        print('Error, the model '+Namemodel+' is not implemented, available models are moffat gaussian or '+Usermods[0])
         sys.exit()
     return spec_t
 
