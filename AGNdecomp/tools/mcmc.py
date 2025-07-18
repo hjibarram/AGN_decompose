@@ -110,7 +110,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
             spec_hst=spec_t*0
         else:
             extern_func=mod.get_extern_function(name=Usermods[0],path=Usermods[1],namef=Usermods[2],verbose=False)
-            spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
+            spec_t=extern_func(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
