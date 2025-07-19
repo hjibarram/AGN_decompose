@@ -4,6 +4,8 @@ import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
+import warnings
+warnings.filterwarnings("ignore")
 
 def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     At,dx,dy,Io,bn,Re,ns,Lt=theta
