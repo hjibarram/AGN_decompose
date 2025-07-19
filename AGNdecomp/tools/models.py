@@ -1,100 +1,9 @@
 #!/usr/bin/env python
-import glob, os,sys,timeit
+import sys
+import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
-
-def moffat_model_s_residual(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,be_t,be_t1,psf=theta
-    alpha=psf/2.0/np.sqrt(2.0**(1/be_t1)-1)
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn_c=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    spec_agn_t=At*(1.0 + (r2/alpha**2.0))**(-be_t1)    
-    spec_agn=spec_agn_t-spec_agn_c
-    spec_t=spec_agn
-    return spec_t
-
-def Dmoffat_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,be_t,Lt=theta
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_t=spec_agn_A+spec_agn_B+spec_agn_C
-    return spec_t
-
-def moffat_model_s(theta, x_t=0, y_t=0, e_m=0.0, tht_m=0.0, ellip=False):
-    if ellip:
-        At,dx,dy,ds_t,be_t,e_t,tht_t=theta
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)  
-        r2=r2**2.0
-    else:
-        At,dx,dy,ds_t,be_t=theta
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_t=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    return spec_t  
-
-def ring_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t,r0=theta
-    r=np.sqrt((x_t-dx)**2.0+(y_t-dy)**2.0)
-    spec_t=np.exp(-0.5*(((r-r0)/ds_t)**2.0))*At           
-    return spec_t   
-
-def gaussian_model_s(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t=theta
-    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds_t)**2.0))*At           
-    return spec_t   
-
-
-def Dmoffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, Lt=4.4):
-    At,dx,dy,Io,Re,ds_t=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C 
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t       
-
-def Dmoffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0,Lt=4.4):
-    At,dx,dy,Io,Re=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C  
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t        
-
-def Dmoffat_model0(theta, x_t=0, y_t=0, be_t=2.064):
-    At,dx,dy,Io,bn,Re,ns,ds_t,Lt=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r2_A=(x_t-(dx-Lt/(1.*np.sqrt(3.0))))**2.0+(y_t-(dy+0.0/2.0))**2.0
-    r2_B=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy+Lt/2.0))**2.0
-    r2_C=(x_t-(dx+Lt/(2.*np.sqrt(3.0))))**2.0+(y_t-(dy-Lt/2.0))**2.0
-    spec_agn_A=At*(1.0 + (r2_A/ds_t**2.0))**(-be_t)
-    spec_agn_B=At*(1.0 + (r2_B/ds_t**2.0))**(-be_t)
-    spec_agn_C=At*(1.0 + (r2_C/ds_t**2.0))**(-be_t)
-    spec_agn=spec_agn_A+spec_agn_B+spec_agn_C    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t     
 
 def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     At,dx,dy,Io,bn,Re,ns,Lt=theta
@@ -110,367 +19,170 @@ def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     bt=r1
     spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
     spec_t=spec_agn+spec_hst
+    return spec_t  
+
+def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=False):
+    # This function returns the external function for the costum user model
+    # The name of the model must be defined in the file extern_function.py
+    # The path is the path to the AGNdecomp package
+    name=Usermods[0]
+    path=Usermods[1]
+    namef=Usermods[2]
+    if verbose:
+        print('Loading external function for',name)
+    try:
+        spec = importlib.util.spec_from_file_location(name, path + namef)
+        extmod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(extmod)
+        return getattr(extmod, name )
+    except Exception as e:
+        print('Error loading external function:', e)
+        sys.exit()
+
+def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True):
+    pars={}
+    keys=list(valsI.keys())
+    for key in keys:
+        pars[key]=valsI[key]
+    for i in range(0, len(Namevalues)):
+        pars[Namevalues[i]]=theta[i]
+    if Namemodel == 'moffat':
+        spec_t=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=host)
+    elif Namemodel == 'gaussian':
+        spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
+    elif Namemodel == Usermods[0]:
+        extern_func=get_extern_function(Usermods=Usermods,verbose=False)
+        spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
+    else:
+        print('Error, the model '+Namemodel+' is not implemented, available models are moffat gaussian or '+Usermods[0])
+        sys.exit()
     return spec_t
 
-
-def ring_model_residual3(theta, x_t=0, y_t=0, bn=1.0, ns=1.0, dx=0.0, dy=0.0):
-    At,Io,Re,ds_t,r0=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
+def moffat_modelF(pars, x_t=0, y_t=0, host=True, agn=True):
+    # This is the function for the Full Moffat model
+    At=pars['At']
+    ds=pars['alpha']
+    be=pars['beta']
+    dx=pars['xo']
+    dy=pars['yo']
+    Io=pars['Io']
+    bn=pars['bn']
+    Re=pars['Re']
+    ns=pars['ns']
+    es=pars['ellip']
+    th=pars['theta']
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,es,th)
+    if agn:
+        spec_agn=At*(1.0 + (r1**2.0/ds**2.0))**(-be)
+    else:
+        spec_agn=r1*0.0
+    if host:   
+        spec_hst=Io*np.exp(-bn*((r1/Re)**(1./ns)-1))
+    else:
+        spec_hst=r1*0.0
     spec_t=spec_agn+spec_hst
     return spec_t
 
-def ring_model_residual2(theta, x_t=0, y_t=0, ds_t=3.47, r0=1.0, bn=1.0, ns=1.0, dx=0.0, dy=0.0):
-    At,Io,Re=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t
-
-def ring_model_residual0(theta, x_t=0, y_t=0, dx=0.0, dy=0.0):
-    At,Io,bn,Re,ns,ds_t,r0=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
+def gaussian_modelF(pars, x_t=0, y_t=0,):
+    # This is the function for the basic gaussian model
+    At=pars['At']
+    dx=pars['xo']
+    dy=pars['yo']
+    ds=pars['sigma']
+    spec_t=np.exp(-0.5*((((x_t-dx)/ds)**2.0)+((y_t-dy)/ds)**2.0))*At
     return spec_t   
 
-def ring_model_residual(theta, x_t=0, y_t=0, ds_t=3.47, r0=1.0, dx=0.0, dy=0.0):
-    At,Io,bn,Re,ns=theta
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    r1=np.sqrt(r2)
-    spec_agn=np.exp(-0.5*(((r1-r0)/ds_t)**2.0))*At
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t   
+def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
+    psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
+    ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    return psf, ft_fit
 
-def moffat_model_residual(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, At=1.0, psf=2.4):
-    dx,dy,Io,bn,Re,ns=theta
-    alpha=psf/2.0/np.sqrt(2.0**(1/be_t1)-1)
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn_c=At*(1.0 + (r2/ds_t**2.0))**(-be_t)
-    spec_agn_t=At*(1.0 + (r2/alpha**2.0))**(-be_t1)    
-    spec_agn=spec_agn_t-spec_agn_c
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t   
+def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
+    ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
+    psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
+    return psf, ft_fit
 
-def moffat_model3_s(theta, x_t=0, y_t=0, db_m=2.06, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, al_m=5.0, beta=True, ellip=False, alpha=True):
-    if ellip:
-        if beta:
-            At,ds_t,be_t,e_t,tht_t=theta
-        else:
-            At,ds_t,e_t,tht_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0  
-    else:
-        if beta:
-            At,ds_t,be_t=theta
-        else:
-            if alpha:
-                At,ds_t=theta
-                be_t=db_m
-            else:
-                At=theta
-                be_t=db_m
-                ds_t=al_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
-        r2=r2**2.0      
-        #r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
-
-def moffat_model3(theta, x_t=0, y_t=0, be_t=2.064, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
-    if ellip:
-        if fcenter:
-            if re_int:
-                At,Io,ds_t,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,Io,Re,ds_t,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_t,tht_t) 
-        else:
-            if re_int:
-                At,dx,dy,Io,ds_t,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re,ds_t,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-    else:
-        if fcenter:
-            if re_int:
-                At,Io,ds_t=theta
-                Re=Re_c
-            else:
-                At,Io,Re,ds_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_m,tht_m)
-        else:
-            if re_int:
-                At,dx,dy,Io,ds_t=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re,ds_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m) 
-    r2=r2**2.0  
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t       
-
-def moffat_model2_s(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, dx=0.0, dy=0.0, e_m=0.0, tht_m=0.0, ellip=False):
-    At=theta
-    if ellip:
-        e_t=e_m
-        tht_t=tht_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0
-    else:
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
-
-def moffat_model2(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, bn=1.0, ns=1.0, e_m=0.0, tht_m=0.0, ellip=False, dxt=0.0, dyt=0.0, fcenter=False, re_int=False, Re_c=1.0):
-    if ellip:
-        if fcenter:
-            if re_int:
-                At,Io,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,Io,Re,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_t,tht_t)
-        else:
-            if re_int:
-                At,dx,dy,Io,e_t,tht_t=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re,e_t,tht_t=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-    else:
-        if fcenter:
-            if re_int:
-                At,Io=theta
-                Re=Re_c
-            else:
-                At,Io,Re=theta
-            r2=tol.radi_ellip(x_t-dxt,y_t-dyt,e_m,tht_m)
-        else:
-            if re_int:
-                At,dx,dy,Io=theta
-                Re=Re_c
-            else:
-                At,dx,dy,Io,Re=theta
-            r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-    r2=r2**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    bt=r1
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t        
-
-def moffat_model0_s(theta, x_t=0, y_t=0, db_m=2.06, e_m=0.0, tht_m=0.0, beta=True, ellip=False):
-    if ellip:
-        if beta:
-            At,dx,dy,ds_t,be_t,e_t,tht_t=theta
-        else:
-            At,dx,dy,ds_t,e_t,tht_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-        r2=r2**2.0 
-    else:
-        if beta:
-            At,dx,dy,ds_t,be_t=theta
-        else:
-            At,dx,dy,ds_t=theta
-            be_t=db_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-        r2=r2**2.0     
-        #r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t    
-
-def moffat_model0(theta, x_t=0, y_t=0, be_t=2.064, e_m=0.0, tht_m=0.0, ellip=False):
-    if ellip:
-        At,dx,dy,Io,bn,Re,ns,ds_t,e_t,tht_t=theta
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t)
-        r2=r2**2.0 
-    else:
-        At,dx,dy,Io,bn,Re,ns,ds_t=theta
-        #e,th0=0,0
-        #r2=tol.radi_ellip(x_t-dx,y_t-dy,e_m,tht_m)
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    #tht=np.arctan2(y_t-dy,x_t-dx)
-    bt=r1#ellipse2(tht,r1,e,th0)
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t     
-
-def moffat_model_st(theta, x_t=0, y_t=0, be_t=2.064, ds_t=3.47, e_m=0.0, tht_m=0.0, ellip=False):
-    At,dx,dy=theta
-    if ellip:
-        e_t=e_m
-        tht_t=tht_m
-        r2=tol.radi_ellip(x_t-dx,y_t-dy,e_t,tht_t) 
-        r2=r2**2.0
-    else:
-        r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    spec_t=spec_agn
-    return spec_t      
-
-def moffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
-    At,dx,dy,Io,bn,Re,ns=theta
-    #e,th0=0,0
-    r2=(x_t-dx)**2.0+(y_t-dy)**2.0
-    spec_agn=At*(1.0 + (r2/ds_t**2.0))**(-be_t)    
-    r1=np.sqrt(r2)
-    #tht=np.arctan2(y_t-dy,x_t-dx)
-    bt=r1#ellipse2(tht,r1,e,th0)
-    spec_hst=Io*np.exp(-bn*((bt/Re)**(1./ns)-1))
-    spec_t=spec_agn+spec_hst
-    return spec_t          
-
-def gaussian_model(theta, x_t=0, y_t=0):
-    At,dx,dy,ds_t=theta
-    spec_t=np.exp(-0.5*((((x_t-dx)/ds_t)**2.0)+((y_t-dy)/ds_t)**2.0))*At           
-    return spec_t   
-
-
-
-def get_model(dir_o='./',dir_cube='./',vt='',dir_cube_m='./',corr=False,name='Name',sig=10,cosmetic=False,moffat=True):
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
     if moffat:
         psf_file='NAME_moffat'.replace('NAME',name)
     else:
         psf_file='NAME'.replace('NAME',name)
-    wave=[]
-    FtF=[]
-    Ft=[]
-    psf=[]
-    dx=[]
-    dy=[]
-    alpha=[]
-    beta=[]
-    At=[]
-    et=[]
-    th0=[]
-    ft=open(dir_o+psf_file+vt+'.csv','r')
-    for line in ft:
-        if not 'WAVE' in line:
-            data=line.replace('\n','')
-            data=data.split(',')
-            data=list(filter(None,data))
-            wave.extend([float(data[0])])
-            FtF.extend([float(data[1])])
-            Ft.extend([float(data[2])])
-            dx.extend([float(data[5])])
-            dy.extend([float(data[6])])
-            alpha.extend([float(data[7])])
-            beta.extend([float(data[8])])
-            psf.extend([float(data[9])])
-            At.extend([float(data[14])])
-            et.extend([float(data[15])])
-            th0.extend([float(data[16])])
-    ft.close()
-    wave=np.array(wave)
-    FtF=np.array(FtF)
-    psf=np.array(psf)
-    dx=np.array(dx)
-    dy=np.array(dy)
-    alpha=np.array(alpha)
-    beta=np.array(beta)
-    At=np.array(At)
-    et=np.array(et)
-    th0=np.array(th0)
-    
- 
-    if corr:
-        dxt=np.nanmean(dx[4450:4470])
-        dyt=np.nanmean(dy[4450:4470])  
-        dx[4479:len(dx)]=dxt
-        dy[4479:len(dy)]=dyt
-    if cosmetic:
-        At=tol.conv(At,ke=sig)
-        dx=tol.conv(dx,ke=sig)
-        dy=tol.conv(dy,ke=sig)   
-    
-    cube_file='NAME.cube.fits.gz'.replace('NAME',name)
-    outf1='Model_NAME.cube'.replace('NAME',name+vt)
-    outf3='Residual_NAME.cube'.replace('NAME',name+vt)
-    [cube, hdr0]=fits.getdata(dir_cube+cube_file, 0, header=True)
-    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, 1, header=True)
-    [cube2, hdr2]=fits.getdata(dir_cube+cube_file, 2, header=True)
-    nz,nx,ny=cube.shape
-    cube_mod=np.copy(cube)
+    valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
+    keys=list(valsT.keys())
+    cube_file=basename.replace('NAME',name)
+    outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
+    outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
+    [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
+    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
+    try:
+        [cube2, hdr2]=fits.getdata(dir_cube+cube_file, hdri2, header=True)
+    except:
+        [cube2, hdr2]=[cube1, hdr1]
+    nz,nx,ny=cube0.shape
+    cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
     for k in range(0, nz):
-        if k < len(At):
-            theta=At[k],dx[k],dy[k],alpha[k],beta[k],et[k],th0[k]
-            for i in range(0, nx):
-                for j in range(0, ny):
-                    valt1=moffat_model_s(theta, x_t=j, y_t=i, ellip=True)       
-                    if cube[k,i,j] != 0:    
-                        cube_mod[k,i,j]=valt1
-                
+        pars={}
+        for key in keys:
+            pars[key]=valsT[key][k]
+        for i in range(0, nx):
+            for j in range(0, ny):
+                valt1=moffat_modelF(pars, x_t=j, y_t=i)
+                if cube0[k,i,j] != 0:    
+                    cube_mod[k,i,j]=valt1
     h1=fits.PrimaryHDU(cube_mod)
     h=h1.header
     keys=list(hdr0.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h[keys[i]]=hdr0[keys[i]]
-            h.comments[keys[i]]=hdr0.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h[keys[i]]=hdr0[keys[i]]
+                h.comments[keys[i]]=hdr0.comments[keys[i]]
+        except:
+            continue
     hlist=fits.HDUList([h1])
     hlist.update_extend()
     out_fit=dir_cube_m+outf1+'.fits'
-    tol.wfits_ext(out_fit,hlist)
-    tol.sycall('gzip  '+out_fit)
+    hlist.writeto(out_fit, overwrite=True)
+    tol.sycall('gzip -f '+out_fit)
     
-    res=cube-cube_mod
+    res=cube0-cube_mod
     h1=fits.PrimaryHDU(res)
     h2=fits.ImageHDU(cube1)
     h3=fits.ImageHDU(cube2)
     h_k=h1.header
     keys=list(hdr0.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h_k[keys[i]]=hdr0[keys[i]]
-            h_k.comments[keys[i]]=hdr0.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h_k[keys[i]]=hdr0[keys[i]]
+                h_k.comments[keys[i]]=hdr0.comments[keys[i]]
+        except:
+            continue
     h_k.update()
     h_t=h2.header
     keys=list(hdr1.keys())
     for i in range(0, len(keys)):
-        if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-            h_t[keys[i]]=hdr1[keys[i]]
-            h_t.comments[keys[i]]=hdr1.comments[keys[i]]
+        try:
+            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                h_t[keys[i]]=hdr1[keys[i]]
+                h_t.comments[keys[i]]=hdr1.comments[keys[i]]
+        except:
+            continue
     h_t['EXTNAME'] ='Error_cube'
     h_t.update()
     h_r=h3.header
     keys=list(hdr2.keys())
     for i in range(0, len(keys)):
-        h_r[keys[i]]=hdr2[keys[i]]
-        h_r.comments[keys[i]]=hdr2.comments[keys[i]]
+        try:
+            h_r[keys[i]]=hdr2[keys[i]]
+            h_r.comments[keys[i]]=hdr2.comments[keys[i]]
+        except:
+            continue
     h_r['EXTNAME'] ='BADPIXELMASK'
     h_r.update()    
     hlist=fits.HDUList([h1,h2,h3])
     hlist.update_extend()
     out_fit=dir_cube_m+outf3+'.fits'
-    tol.wfits_ext(out_fit,hlist)
+    hlist.writeto(out_fit, overwrite=True)
     tol.sycall('gzip -f '+out_fit)         
