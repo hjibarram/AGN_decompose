@@ -93,7 +93,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         pars_max[Namevalues[i]]=theta_max[i]
     ft_num=np.nansum(pf_map)
     try:
-        print('Use external function for the model '+Model_name)
         model=mod.get_extern_function(Usermods=Usermods,verbose=False)
         flux_psf=mod.get_extern_function(Usermods=[Usermods[0]+'_flux_psf',*Usermods[1:3]],verbose=False)
     except:
@@ -107,7 +106,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         except:
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0
-        print(pars_max)
         tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
