@@ -38,6 +38,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     data=tol.read_config_file(config_file)
     if data:
         name=data['config'][0]['name']
+        print(name)
         path=data['config'][0]['path']
         verbose=data['config'][0]['verbose']
         ncpus=data['config'][0]['ncpus']
