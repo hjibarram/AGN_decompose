@@ -101,12 +101,12 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     psf,ft_fit=flux_psf(pars_max, x_t=x_t, y_t=y_t)    
     if plot_f:
         try:
-            spec_t=model(pars_max, x_t=x_t, y_t=y_t, host=False)
+            spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False)
         except:
-            spec_t=model(pars_max, x_t=x_t, y_t=y_t)
+            spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_t*0    
-        tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
+        tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
     return pars_max,psf,ft_num,ft_fit
