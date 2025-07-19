@@ -96,13 +96,13 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     return spec_t   
 
 def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
-    psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
-    ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    psf=pars['alpha']*2.0*np.sqrt(2.0**(1./pars['beta'])-1)
+    ft_fit=np.pi*pars['alpha']**2.0*pars['At']/(pars['beta']-1.0)
     return psf, ft_fit
 
 def gaussian_flux_psf_modelF(pars, x_t=0, y_t=0,):
-    ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
-    psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
+    ft_fit=2*np.pi*pars['sigma']**2.0*pars['At']
+    psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
 def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
