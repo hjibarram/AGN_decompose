@@ -94,10 +94,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     ft_num=np.nansum(pf_map)
     try:    
         model=mod.get_extern_function(Usermods=Usermods,verbose=False)
-        flux_psf=mod.get_extern_function(Usermods=[Usermods[0]+'_flux_psf',*Usermods[1:2]],verbose=False)
-    except:    
-        print(Usermods[0:1],Usermods)
-        print(Usermods[1:3])
+        flux_psf=mod.get_extern_function(Usermods=[Usermods[0]+'_flux_psf',*Usermods[1:3]],verbose=False)
+    except:
         model=mod.get_extern_function(Usermods=Usermods,verbose=False)
         flux_psf=mod.get_extern_function(Usermods=[Usermods[0]+'_flux_psf',*Usermods[1:3]],verbose=False)
         model=getattr(mod, Model_name + '_modelF')
