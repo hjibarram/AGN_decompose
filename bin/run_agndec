@@ -52,9 +52,12 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         head_err=data['config'][0]['head_err']
         mod_ind=data['config'][0]['mod_ind']
         mod_ind0=data['config'][0]['mod_ind0']
-        ext_name=data['config'][0]['ext_name']
-        ext_path=data['config'][0]['ext_path']
-        ext_file=data['config'][0]['ext_file']
+        try:
+            ext_name=data['config'][0]['ext_name']
+            ext_path=data['config'][0]['ext_path']
+            ext_file=data['config'][0]['ext_file']
+        except:
+            continue
     prior_config='priors_prop.yml'        
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
