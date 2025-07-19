@@ -4,12 +4,149 @@ import numpy as np
 from scipy.special import gamma, gammaincinv, gammainc
 from scipy.ndimage.filters import gaussian_filter1d as filt1d
 import os.path as ptt
+import yaml
+import corner  
 from astropy.io import fits
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import ICRS, Galactic, FK4, FK5
 from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
 from astropy.wcs import WCS
+import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+def read_cvsfile(name,path='',hid='wave'):
+    """
+    Reads a cvs file and returns the data as a dictionary.
+    Parameters:
+    name (str): The name of the file to read.
+    path (str): The directory path where the file is located.
+
+    Returns:
+    dic array: The data read from the file.
+    """
+    file=path+name
+    f=open(file,'r')
+    dic={}
+    ct=0
+    img=1000
+    for line in f:
+        ct+=1
+        if hid in line:
+            data=line.replace('\n','').replace(' ','').split(',')
+            data=list(filter(None, data)) # Remove empty strings
+            nh=len(data)
+            for it in range(0, nh):
+                dic.update({data[it]:[]})
+            head=data
+        else:
+            data=line.replace('\n','').split(',')
+            data=list(filter(None,data))
+            if len(data) == nh:
+                for it in range(0, nh):
+                    try:
+                        val=float(data[it])
+                    except:
+                        val=data[it].replace(' ','')
+                    dic[head[it]].extend([val])
+    f.close()
+    return dic
+
+def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,dyo=0,dxo=0):
+    """
+    Defines the initial values for the parameters.
+    """
+    valsI={}
+    for i in range(0, len(Namevalues0)):
+        if str_p:
+            p_val=p_vals[i]
+            val_t=p_val(wave_1)
+            valsI[Namevalues0[i]]=val_t
+            for j in range(0, len(Namevalues)):
+                if Namevalues0[i] == Namevalues[j]:
+                    Inpvalues[j]= val_t
+        else:
+            valsI[Namevalues0[i]]=Inpvalues[i]
+    valsI['dxo']=dxo
+    valsI['dyo']=dyo
+    return valsI, Inpvalues
+
+def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
+    """
+    Reads the priors values from a YAML file.
+    """
+    data_lines=read_config_file(filename)
+    if data_lines:
+        n_models=len(data_lines['models'])
+        model_name=[]
+        model_pars=[]
+        Labelvalues=[]
+        Namevalues=[]
+        Inpvalues=[]
+        Infvalues=[]
+        Supvalues=[]
+        for i in range(0, n_models):
+            mpars={}
+            modpars=data_lines['models'][i]
+            mpars['modelname']=modpars['name']
+            mpars['parameters']=modpars['parameters']
+            model_pars.extend([mpars])
+            model_name.extend([modpars['name']])
+        try:    
+            mpars=model_pars[mod_ind]
+        except:
+            print('Model index out of range. Available models: '+model_name)
+            sys.exit()
+        parameters=mpars['parameters'] 
+        npar=len(parameters)   
+        if verbose:
+            print('Get info for model '+model_name[mod_ind]+' with '+str(npar)+' parameters')
+        for i in range(0, npar):
+            par=parameters[i]
+            try:
+                Namevalues.extend([par['name']])
+            except:
+                print('The keyword name is missing for the parameter '+par['name']+' in the line config file')
+                sys.exit()
+            try:
+                Labelvalues.extend([par['name_plot']])
+            except:
+                Labelvalues.extend([par['name']])
+            try:
+                Inpvalues.extend([par['ini_value']])
+            except:
+                print('The keyword ini_value is missing for the parameter '+par['name']+' in the line config file')
+                sys.exit()
+            try:
+                Infvalues.extend([par['inf_value']])
+            except:
+                print('The keyword inf_value is missing for the parameter '+par['name']+' in the line config file')
+                sys.exit()
+            try:
+                Supvalues.extend([par['sup_value']])
+            except:
+                print('The keyword sup_value is missing for the parameter '+par['name']+' in the line config file')
+                sys.exit()
+        if onlynames:
+            return Namevalues
+        else:
+            return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
+    else:
+        print('No configuration line model file')
+        sys.exit()
+
+def read_config_file(file):
+    try:
+        with open(file, 'r') as stream:
+            try:
+                data = yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+        return data
+    except:
+        print('Config File not found')
+        return None
 
 def get_spectra(vect_pyqsfit,wave):
     ct=299792.458
@@ -67,16 +204,6 @@ def sersic_enc_lum(r, Ie, re, n):
     x = b_s(n) * (r/re)**(1.0/n)
     return sersic_lum(Ie, re, n) * gammainc(2*n, x)
 
-def wfits_ext(name,hlist):
-    sycall("rm "+name+'.gz')
-    if ptt.exists(name) == False:
-        hlist.writeto(name)
-    else:
-        name1=name.replace("\ "," ")
-        name1=name1.replace(" ","\ ")
-        sycall("rm "+name1)
-        hlist.writeto(name)
-
 def sycall(comand):
     import os
     linp=comand
@@ -110,21 +237,17 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
         spt=''
     file=dir+name+'_moffat'+spt+tp+'.csv'
     f=open(file,'r')
-    #flux=[]
     wave=[]
     val_v=[]
     for line in f:
-        if not 'WAVE' in line:
+        if not 'wave' in line:
             data=line.replace('\n','').split(',')
             data=list(filter(None,data))
             wave.extend([float(data[0])])
-            #flux.extend([np.float(data[1])])
             val_v.extend([float(data[val])])
     f.close()
-    #flux=np.array(flux)
     wave=np.array(wave)
     val_v=np.array(val_v)
-    #flux=conv(flux,ke=sigma)
     val_vt=step_vect_Mean(val_v,sp=20,pst=True,mask_val=mask_val)
     if sigma==0:
         val_s=val_vt
@@ -368,15 +491,14 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
     
     return wave_f,single_T,single_ET
 
-def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec=''):
-    outf1='Model_NAME.cube.fits.gz'.replace('NAME',name+vt)
-    outf2='Residual_NAME.cube.fits.gz'.replace('NAME',name+vt)
+def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='',basename='NAME.cube.fits.gz'):
+    outf1='Model_'+basename.replace('NAME',name+vt)
+    outf2='Residual_'+basename.replace('NAME',name+vt)
     wave1,spec_mod,spec_modE=extract_spec(outf1,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
     wave2,spec_res,spec_resE=extract_spec(outf2,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
     spec0=spec_res+spec_mod
 
-    import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
+    
     
     fig = make_subplots(rows=1, cols=1, row_heights=(3,))
     
@@ -431,3 +553,58 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     fig.write_image(file_f.replace('.html','.pdf'))
 
     return
+
+
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[]):
+    # Plot the original map, model AGN, model HST, residuals and corner plot
+    cm=plt.cm.get_cmap('jet')
+    lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour(inMap,lev,colors='k',linewidths=1)            
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Original_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
+    ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Model_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm) #np.log10
+    cbar=plt.colorbar(ict)
+    ics=plt.contour((inMap-modelAGN),lev,colors='k',linewidths=1)
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Residual1_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
+    ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    cbar=plt.colorbar(ict)
+    ics=plt.contour((inMap-modelAGN-modelHST),lev,colors='k',linewidths=1)
+    cbar.set_label(r"Relative Density")
+    fig.tight_layout()
+    if savefig:
+        fig.savefig(path_out+'Residual2_NAME.pdf'.replace('NAME',name))
+    else:
+        plt.show()
+            
+    labels = [*Labelvalues]
+    fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
+    fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
+    fig.savefig(path_out+'corners_NAME.pdf'.replace('NAME',name))    

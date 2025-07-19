@@ -1,47 +1,74 @@
 #!/usr/bin/env python3
-
 import click
 import cloup
 from cloup.constraints import mutually_exclusive, RequireExactly, IsSet, If
 import numpy as np
 from astropy.io import fits
-import warnings
-warnings.filterwarnings("ignore")
 from AGNdecomp.tools.prof_fit import prof_ana
 from AGNdecomp.tools.models import get_model
 from AGNdecomp.tools.tools import plot_outputs
-
+import AGNdecomp.tools.tools as tol
 
 @click.group('run_agndec', short_help='CLI for the AGN spectra decomposition')
 def cli():
     pass
 
-
 @cloup.command(short_help='Run the AGN decomposition')
+@click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
-@click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
+@click.option('-p', '--path', type=str, help='path to the data cubes')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
-@click.option('-c', '--ncpus', type=int, default=10, help='number of CPUs')
-@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
-@click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis')
-@click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis')
-@click.option('-f', '--nofull',is_flag=True, default=False, help='only run a single run')
+@click.option('-u', '--ncpus', type=int, default=10, help='number of CPUs')
+@click.option('-m', '--nameb', type=str, default='NAME.cube.fits.gz' ,help='naming format base of the IFS files')
+@click.option('-t', '--test', is_flag=True, default=False,help='flag to run the full analysis in test mode')
+@click.option('-s', '--sampling',type=int, default=1, help='spectral sampling for the analysis in AA')
+@click.option('-f', '--pipeline',is_flag=True, default=False, help='run in pipeline mode')
 @click.option('-r', '--clean',is_flag=True, default=False, help='generate a clean run')
-@click.option('-e', '--ellipse',is_flag=True, default=False, help='fit the geometry of the psf')
-@click.option('-a', '--psamp',type=int, default=10, help='spectral sampling of the previus phase, default 10')
-@click.option('-i', '--fcenter',is_flag=True, default=False, help='interpolate the centroid')
-@click.option('-u', '--psf_int',is_flag=True, default=False, help='interpolate the psf value')
-@click.option('-b', '--re_int',is_flag=True, default=False, help='interpolate the Re value')
+@click.option('-a', '--psamp',type=int, default=10, help='spectral sampling of the previus phase, default 10 AA')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
-def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,fcenter,psf_int,path_out,re_int):
-    dir_cube=path[0]
-    dir_out=path_out#[0]
+@click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
+@click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
+@click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
+@click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
+
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
+    data=tol.read_config_file(config_file)
+    if data:
+        name=data['config'][0]['name']
+        path=data['config'][0]['path']
+        verbose=data['config'][0]['verbose']
+        ncpus=data['config'][0]['ncpus']
+        nameb=data['config'][0]['nameb']
+        test=data['config'][0]['test']
+        sampling=data['config'][0]['sampling']
+        pipeline=data['config'][0]['pipeline']
+        clean=data['config'][0]['clean']
+        psamp=data['config'][0]['psamp']
+        path_out=data['config'][0]['path_out']
+        head_dat=data['config'][0]['head_dat']
+        head_err=data['config'][0]['head_err']
+        mod_ind=data['config'][0]['mod_ind']
+        mod_ind0=data['config'][0]['mod_ind0']
+        ext_name=data['config'][0]['ext_name']
+        ext_path=data['config'][0]['ext_path']
+        ext_file=data['config'][0]['ext_file']
+    prior_config='priors_prop.yml'        
+    Usermods=[ext_name,ext_path,ext_file]
+    dir_cube=path
+    dir_out=path_out
     if nameb == '':
         cube_file='NAME'.replace('NAME',name)
     else:
-        cube_file=nameb.replace('NAME',name)#'NAME.cube.fits.gz'
-    [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, 0, header=True)
-    cube_dataE=fits.getdata(dir_cube+cube_file, 1, header=False)
+        cube_file=nameb.replace('NAME',name)
+    [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, head_dat, header=True)
+    try:
+        cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
+    except:
+        print('Warrning, No error extension found, using the scaled data as error')
+        cube_dataE=cube_data*0.1
     cube_dataE[np.where(cube_dataE == 1)]=np.nan
     if clean:
         str_p=False
@@ -51,21 +78,18 @@ def run(name,path,verbose,ncpus,nameb,test,sampling,nofull,clean,ellipse,psamp,f
         local=True
     else:
         local=False
-    if psf_int:
-        psft=False
-    else:
-        psft=True
-    if nofull or local:
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,moffat=True,mc=True,ncpu=ncpus,
-             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter)
+    if (pipeline == False) or local:
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
     else:
         psamp=sampling
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
-             sp=sampling,bt=26.0,psf_t=True,str_p=str_p,psft=True,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=False,re_int=False)
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,moffat=True,mc=True,ncpu=ncpus,
-             sp=1,bt=26.0,psf_t=True,str_p=True,psft=psft,trip=False,vas='',ellip=ellipse,psamp=psamp,fcenter=fcenter,re_int=re_int)
-        get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,cosmetic=False,vt='_sp1',corr=False)
-        plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=1)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
+             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+        get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
+             hdri0=head_dat,hdri1=head_err,basename=nameb) 
+        plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
 cli.add_command(run)
