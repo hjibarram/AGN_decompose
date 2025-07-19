@@ -19,6 +19,6 @@ def ExternFunctionName(pars, x_t=0, y_t=0):
     return spec_t
 
 def ExternFunctionName_flux_psf(pars, x_t=0, y_t=0,):
-    psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
-    ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    psf=pars['alpha']*2.0*np.sqrt(2.0**(1./pars['beta'])-1)
+    ft_fit=np.pi*pars['alpha']**2.0*pars['At']/(pars['beta']-1.0)
     return psf, ft_fit
