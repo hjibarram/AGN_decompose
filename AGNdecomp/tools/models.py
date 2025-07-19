@@ -4,8 +4,8 @@ import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
-import warnings
-warnings.filterwarnings("ignore")
+#import warnings
+#warnings.filterwarnings("ignore")
 
 def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     At,dx,dy,Io,bn,Re,ns,Lt=theta
@@ -30,15 +30,16 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
     name=Usermods[0]
     path=Usermods[1]
     namef=Usermods[2]
-    if verbose:
-        print('Loading external function for',name)
+    #if verbose:
+    print('Loading external function for',name)
     try:
         spec = importlib.util.spec_from_file_location(name, path + namef)
         extmod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(extmod)
         return getattr(extmod, name )
     except Exception as e:
-        print('Error loading external function:', e)
+        if verbose:
+            print('Error loading external function:', e)
         sys.exit()
 
 def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True):
