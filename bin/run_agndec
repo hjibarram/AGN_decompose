@@ -57,7 +57,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             ext_path=data['config'][0]['ext_path']
             ext_file=data['config'][0]['ext_file']
         except:
-            continue
+            pass
     prior_config='priors_prop.yml'        
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
