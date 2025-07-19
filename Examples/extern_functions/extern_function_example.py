@@ -5,7 +5,7 @@ from astropy.io import fits
 #Usefull predefined function:
 #radi_ellip(x,y,e,th) --> this function returns the radial distance from the center of an ellipse with eccentricity e and PA angle th, values of e=0, th=0 returns a circle
 
-def moffat_single(pars, x_t=0, y_t=0):
+def ExternFunctionName(pars, x_t=0, y_t=0):
     # This is an example of a single Moffat model
     At=pars['At']
     ds=pars['alpha']
@@ -17,3 +17,8 @@ def moffat_single(pars, x_t=0, y_t=0):
     r1=tol.radi_ellip(x_t-dx,y_t-dy,es,th)
     spec_t=At*(1.0 + (r1**2.0/ds**2.0))**(-be)
     return spec_t
+
+def ExternFunctionName_flux_psf(pars, x_t=0, y_t=0,):
+    psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
+    ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    return psf, ft_fit

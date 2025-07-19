@@ -51,7 +51,6 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
             print("Serial took {0:.1f} seconds".format(serial_time))
     return sampler, pos, prob, state
 
-
 def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,sig=2,plot_f=False,ncpu=10,valsI={}):
     if plot_f:
         tim=True
@@ -93,32 +92,21 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     for i in range(0, len(Namevalues)):
         pars_max[Namevalues[i]]=theta_max[i]
     ft_num=np.nansum(pf_map)
-    if Model_name=='moffat':
-        ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
-    elif Model_name=='gaussian':
-        ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
-    else:
-        ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    try:    
+        model=mod.get_extern_function(Usermods=Usermods,verbose=False)
+        flux_psf=mod.get_extern_function(Usermods=[Usermods[0]+'_flux_psf',*Usermods[1:2]],verbose=False)
+    except:    
+        model=getattr(mod, Model_name + '_modelF')
+        flux_psf=getattr(mod, Model_name + '_flux_psf_modelF')
+    psf,ft_fit=flux_psf(pars_max, x_t=x_t, y_t=y_t)    
     if plot_f:
-        if Model_name=='moffat':
-            modelD=getattr(mod, Model_name + '_modelF')
-            spec_t=modelD(pars_max, x_t=x_t, y_t=y_t, host=False)
-            spec_hst=modelD(pars_max, x_t=x_t, y_t=y_t, agn=False)
-        elif Model_name=='gaussian':
-            modelD=getattr(mod, Model_name + '_modelF')
-            spec_t=modelD(pars_max, x_t=x_t, y_t=y_t)
-            spec_hst=spec_t*0
-        else:
-            extern_func=mod.get_extern_function(name=Usermods[0],path=Usermods[1],namef=Usermods[2],verbose=False)
-            spec_t=extern_func(pars_max, x_t=x_t, y_t=y_t)
-            spec_hst=spec_t*0
+        try:
+            spec_t=model(pars_max, x_t=x_t, y_t=y_t, host=False)
+            spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False)
+        except:
+            spec_t=model(pars_max, x_t=x_t, y_t=y_t)
+            spec_hst=spec_t*0    
         tol.plot_models_maps(pf_map,spec_t,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
-    if Model_name=='moffat':
-        psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
-    elif Model_name=='gaussian':
-        psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
-    else:
-        psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
     return pars_max,psf,ft_num,ft_fit
