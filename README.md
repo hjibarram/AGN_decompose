@@ -1,5 +1,5 @@
 # AGN_decompose v2.1.0.dev 🚀
-    ![2D AGN‑Host decomposition via bidimensional photometric decomposition](https://github.com/hjibarram/AGN_decompose/blob/dev_test/LogoAGNDecompose.png?raw=true)
+![2D AGN‑Host decomposition via bidimensional photometric decomposition](https://github.com/hjibarram/AGN_decompose/blob/dev_test/LogoAGNDecompose.png?raw=true)
 
 2D AGN‑Host decomposition via bidimensional photometric decomposition.
 
