@@ -103,13 +103,13 @@ See the `Examples/` directory for real use cases (e.g., `Example.ipynb`).
   [https://academic.oup.com/mnras/article/536/1/752/7907265](https://academic.oup.com/mnras/article/536/1/752/7907265)
 
 ---
-# Documentation: `priors_prop.yaml`
+### Documentation: `priors_prop.yaml`
 
-This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`. Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process.
+This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`, and its prior configuration can be found [here](https://github.com/hjibarram/AGN_decompose/blob/main/AGNdecomp/configfiles/priors_prop.yml). Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process.
 
 ---
 
-## 🔧 Model: `moffat`
+#### 🔧 Model: `moffat`
 
 The `moffat` model is commonly used to describe point spread functions (PSFs) in astronomical imaging. The parameters listed below are likely used for 2D image fitting or profile modeling.
 
@@ -129,7 +129,7 @@ The `moffat` model is commonly used to describe point spread functions (PSFs) in
 
 ---
 
-## 📌 Notes
+### 📌 Notes
 
 - All parameters are provided with an `ini_value` (initial guess), `inf_value` (minimum allowed), and `sup_value` (maximum allowed).
 - The `name_plot` field uses LaTeX syntax to allow rendering of mathematical symbols in plots or graphical output.
