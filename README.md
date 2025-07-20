@@ -103,13 +103,64 @@ See the `Examples/` directory for real use cases (e.g., `Example.ipynb`).
   [https://academic.oup.com/mnras/article/536/1/752/7907265](https://academic.oup.com/mnras/article/536/1/752/7907265)
 
 ---
+
+### Documentation: `config_file.yaml` & command line execution
+
+This file contains the configuration settings for executing the **AGN decomposition** (`AGNdecomp`) comand:
+
+```bash
+run_agndec run --config_file config_file.yaml
+```
+
+Below is a detailed explanation of each variable defined under the `config` section.
+
+---
+
+#### 🔧 Configuration Parameters
+
+| Parameter   | Description |
+|-------------|-------------|
+| `run_type`  | Type of execution. Set to `FULL` to run the full decomposition pipeline. |
+| `name`      | Identifier name for the IFS (Integral Field Spectroscopy) data cube. |
+| `path`      | Directory path where the input data cubes are located. |
+| `verbose`   | Enables verbose output if set to `True`. Useful for debugging and detailed logging. |
+| `ncpus`     | Number of CPU cores to use for parallel processing. |
+| `nameb`     | File name pattern for the input data cube. Typically includes the `.cube.fits.gz` extension. |
+| `test`      | If `True`, runs the pipeline in test mode (possibly with reduced resolution or steps). |
+| `sampling`  | Spectral sampling interval for the analysis in Angstroms (e.g., 1 Å per pixel). |
+| `pipeline`  | If `True`, runs the execution in pipeline/batch mode. |
+| `clean`     | If `True`, forces a clean run by removing intermediate files or previous results. |
+| `psamp`     | Spectral sampling value used in the previous phase. Default is 10 Å. |
+| `path_out`  | Output directory where the results and products will be stored. |
+| `head_dat`  | Extension index for the primary data in the FITS file (default is 0). |
+| `head_err`  | Extension index for the error data in the FITS file (default is 1). |
+| `mod_ind`   | Index indicating which model configuration to use for the current run. |
+| `mod_ind0`  | Index for the model used during the initial phase of the pipeline. |
+| `ext_name`  | Name of the external user-defined function module to be imported and used. |
+| `ext_path`  | Path to the directory where the external user module resides. |
+| `ext_file`  | Filename of the external Python module (e.g., `extern_file.py`) containing the function. |
+
+---
+
+### 🗂 Notes
+
+- This file is parsed by the `AGNdecomp` command line to set runtime behaviors, I/O paths, sampling configuration, and module extensions.
+- Custom user-defined behavior can be introduced via `ext_name`, `ext_path`, and `ext_file`.
+
+---
+
+### ✅ Usage
+
+Place this file in your working directory and modify the parameters to fit your dataset and analysis goals. Then execute the AGN decomposition script that reads this configuration to run the analysis.
+---
+
 ### Documentation: `priors_prop.yaml`
 
 This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`, and its prior configuration can be found [here](https://github.com/hjibarram/AGN_decompose/blob/main/AGNdecomp/configfiles/priors_prop.yml). Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process.
 
 ---
 
-#### 🔧 Model: `moffat`
+#### 🔧 Example Model Parameters: `moffat`
 
 The `moffat` model is commonly used to describe point spread functions (PSFs) in astronomical imaging. The parameters listed below are likely used for 2D image fitting or profile modeling.
 
