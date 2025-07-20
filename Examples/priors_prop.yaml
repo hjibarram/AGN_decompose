@@ -1,0 +1,60 @@
+--- 
+# Input line config
+models:
+  - name: moffat #name of the line, Example of unconstrained line
+    parameters:   #central wavelenght
+      - name: At
+        name_plot: '$A_t$'
+        ini_value: 1.22  #central wavelenght
+        inf_value: 0.1  #central wavelenght 
+        sup_value: 10.5
+      - name: alpha
+        name_plot: $\alpha$
+        ini_value: 21  #central wavelenght
+        inf_value: 10  #central wavelenght 
+        sup_value: 45    
+      - name: beta
+        name_plot: $\beta$
+        ini_value: 42  #central wavelenght
+        inf_value: 0  #central wavelenght 
+        sup_value: 70    
+      - name: xo
+        name_plot: $X_0$
+        ini_value: 0  #central wavelenght
+        inf_value: -20  #central wavelenght 
+        sup_value: 20
+      - name: yo
+        name_plot: $Y_0$
+        ini_value: 0  #central wavelenght
+        inf_value: -20  #central wavelenght 
+        sup_value: 20   
+      - name: Io
+        name_plot: $I_e$
+        ini_value: 0.01  #central wavelenght
+        inf_value: 0  #central wavelenght 
+        sup_value: 10.5  
+      - name: bn
+        name_plot: $b_n$
+        ini_value: 2  #central wavelenght
+        inf_value: 0.5  #central wavelenght 
+        sup_value: 20  
+      - name: Re
+        name_plot: $R_e$
+        ini_value: 15  #central wavelenght
+        inf_value: 0  #central wavelenght 
+        sup_value: 40  
+      - name: ns
+        name_plot: $n_s$
+        ini_value: 2  #central wavelenght
+        inf_value: 0  #central wavelenght 
+        sup_value: 15  
+      - name: ellip
+        name_plot: $e_s$
+        ini_value: 0  #central wavelenght
+        inf_value: 0  #central wavelenght 
+        sup_value: 10  
+      - name: theta
+        name_plot: $\theta_s$
+        ini_value: 98  #central wavelenght
+        inf_value: 50  #central wavelenght 
+        sup_value: 160  
