@@ -70,19 +70,16 @@ pip install -e .
 After installation, you can import the module and perform decomposition:
 
 ```python
-from AGNdecomp import Decomposer
+from AGNdecomp.tools.prof_fit import prof_an
 
 # Initialize with IFU image or datacube
-decomp = Decomposer('path/to/image.fits')
+cube_data, hdr0=fits.getdata('path/to/image.fits', 'FLUX', header=True)
+cube_dataE=fits.getdata('path/to/image.fits', 'ERROR', header=False)
+
 
 # Run decomposition
-results = decomp.run()
+prof_ana(cube_data,cube_dataE,hdr0,name='NAME',ncpu=ncpus)
 
-# Save separated spectra
-results.save_spectra('AGN.fits', 'host.fits')
-
-# Plot component maps
-results.plot_maps('AGN_map.png', 'host_map.png')
 ```
 
 See the `Examples/` directory for real use cases (e.g., `decompose_example.py`).
@@ -139,7 +136,6 @@ For questions, comments, or collaboration:
 
 ## 🔭 Roadmap
 
-- Support for other formats (e.g., JWST/MUSE datacubes).
 - Custom PSF fitting options.
 - Interactive map visualizations.
 
