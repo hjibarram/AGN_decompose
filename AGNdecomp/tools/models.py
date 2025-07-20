@@ -4,6 +4,8 @@ import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
+import warnings
+warnings.filterwarnings("ignore")
 
 def Dmoffat_model(theta, x_t=0, y_t=0,be_t=2.064,ds_t=3.47):
     At,dx,dy,Io,bn,Re,ns,Lt=theta
@@ -28,15 +30,16 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
     name=Usermods[0]
     path=Usermods[1]
     namef=Usermods[2]
-    if verbose:
-        print('Loading external function for',name)
     try:
         spec = importlib.util.spec_from_file_location(name, path + namef)
         extmod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(extmod)
+        #if verbose:
+        print('Loading external function for',name)
         return getattr(extmod, name )
     except Exception as e:
-        print('Error loading external function:', e)
+        if verbose:
+            print('Error loading external function:', e)
         sys.exit()
 
 def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True):
@@ -93,13 +96,13 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     return spec_t   
 
 def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
-    psf=pars_max['alpha']*2.0*np.sqrt(2.0**(1./pars_max['beta'])-1)
-    ft_fit=np.pi*pars_max['alpha']**2.0*pars_max['At']/(pars_max['beta']-1.0)
+    psf=pars['alpha']*2.0*np.sqrt(2.0**(1./pars['beta'])-1)
+    ft_fit=np.pi*pars['alpha']**2.0*pars['At']/(pars['beta']-1.0)
     return psf, ft_fit
 
-def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
-    ft_fit=2*np.pi*pars_max['sigma']**2.0*pars_max['At']
-    psf=pars_max['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
+def gaussian_flux_psf_modelF(pars, x_t=0, y_t=0,):
+    ft_fit=2*np.pi*pars['sigma']**2.0*pars['At']
+    psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
 def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):

@@ -1,0 +1,23 @@
+--- 
+# config file to run the AGN decomposition pipeline
+config:
+  # Run AGNdecomp
+  - run_type: FULL #Pipeline Type
+    name: '11944-12704' #name of the IFS cube
+    path: data_dir/ #path to the data cubes
+    verbose: True #Flag to activate verbosity
+    ncpus: 5 #number of CPUs
+    nameb: manga-NAME-LINCUBE.fits.gz # base format naming of the IFS files
+    test: True #flag to run the full analysis in test mode
+    sampling: 1 #spectral sampling for the analysis in AA
+    pipeline: False #run in pipeline mode
+    clean: True #generate a full clean run
+    psamp: 1 #spectral sampling of the previus phase, default 10 AA
+    path_out: outputs/ #path of the output files
+    head_dat: 0 #header data extension, default 0
+    head_err: 1 #header error data extension, default 1
+    mod_ind: 0 #model index for the run, default 0
+    mod_ind0: 0 #model index for the initial run, default 0
+    #ext_name: externfunc #name of the external module user defined function')
+    #ext_path: '' #path of the external module file user defined function')
+    #ext_file: extern_file.py #name of the externel module file user defined function')    
