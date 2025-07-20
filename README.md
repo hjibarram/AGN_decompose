@@ -134,7 +134,7 @@ This file contains the configuration settings for executing the **AGN decomposit
 run_agndec run --config_file config_file.yaml
 ```
 
-Below is a detailed explanation of each variable defined under the `config` section.
+Below is a detailed explanation of each variable defined under the `config` [section](https://github.com/hjibarram/AGN_decompose/blob/main/AGNdecomp/configfiles/config_file.yaml).
 
 ---
 
