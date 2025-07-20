@@ -82,7 +82,7 @@ prof_ana(cube_data,cube_dataE,hdr0,name='NAME',ncpu=ncpus)
 
 ```
 
-See the `Examples/` directory for real use cases (e.g., `decompose_example.py`).
+See the `Examples/` directory for real use cases (e.g., `Example.ipynb`).
 
 ---
 
