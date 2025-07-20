@@ -103,6 +103,45 @@ See the `Examples/` directory for real use cases (e.g., `Example.ipynb`).
   [https://academic.oup.com/mnras/article/536/1/752/7907265](https://academic.oup.com/mnras/article/536/1/752/7907265)
 
 ---
+# Documentation: `priors_prop.yaml`
+
+This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`. Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process.
+
+---
+
+## 🔧 Model: `moffat`
+
+The `moffat` model is commonly used to describe point spread functions (PSFs) in astronomical imaging. The parameters listed below are likely used for 2D image fitting or profile modeling.
+
+| Parameter | Plot Label | Description | Initial Value | Lower Bound | Upper Bound |
+|-----------|------------|-------------|----------------|-------------|-------------|
+| `At`      | `$A_t$`     | Amplitude or normalization factor of the Moffat profile. | 0.22 | 0.1 | 0.5 |
+| `alpha`   | `$\alpha$` | Moffat parameter controlling the width of the core. | 2 | 0 | 10 |
+| `beta`    | `$\beta$`  | Moffat parameter that controls the wings of the profile. | 2 | 0 | 10 |
+| `xo`      | `$X_0$`     | X-coordinate of the profile center. | 0 | -10 | 10 |
+| `yo`      | `$Y_0$`     | Y-coordinate of the profile center. | 0 | -10 | 10 |
+| `Io`      | `$I_e$`     | Effective intensity, typically at the effective radius. | 0.01 | 0 | 10 |
+| `bn`      | `$b_n$`     | Sersic parameter related to profile concentration. | 2 | 0.5 | 20 |
+| `Re`      | `$R_e$`     | Effective radius (radius enclosing half of the light). | 4 | 0 | 30 |
+| `ns`      | `$n_s$`     | Sersic index defining the shape of the light profile. | 2 | 0 | 15 |
+| `ellip`   | `$e_s$`     | Ellipticity of the model (0 = circular). | 0 | 0 | 10 |
+| `theta`   | `$\theta_s$` | Position angle of the model in degrees. | 0 | 0 | 180 |
+
+---
+
+## 📌 Notes
+
+- All parameters are provided with an `ini_value` (initial guess), `inf_value` (minimum allowed), and `sup_value` (maximum allowed).
+- The `name_plot` field uses LaTeX syntax to allow rendering of mathematical symbols in plots or graphical output.
+- This configuration is likely used in an automated fitting pipeline or modeling framework.
+
+---
+
+## ✅ Usage
+
+This file can be used as a configuration input for scripts that perform 2D fitting, such as galaxy decomposition or PSF modeling, by parsing these parameter priors.
+
+---
 
 ## 🧪 Testing & CI
 
