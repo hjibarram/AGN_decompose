@@ -9,6 +9,30 @@
 AGN_decompose is a Python-based tool designed for the two-dimensional decomposition of integral field spectroscopic (IFU) images of galaxies hosting active galactic nuclei (AGN). It uses an iterative method to separate the nuclear AGN emission from the host galaxy, yielding clean spectra and spatial maps of both components ([academic.oup.com](https://academic.oup.com/mnras/article-pdf/536/1/752/61021285/stae2623.pdf?utm_source=chatgpt.com)).
 
 This tool is ideal for analyzing astronomical data and studying AGN properties without contamination from the surrounding galaxy.
+If you find usefull this tool pleas cite the paper:
+
+```bibtex
+@ARTICLE{Ibarra-Medel2025,
+       author = {{Ibarra-Medel}, H. and {Negrete}, C.~A. and {Lacerna}, I. and {Hern{\'a}ndez-Toledo}, H.~M. and {Cortes-Su{\'a}rez}, E. and {S{\'a}nchez}, S.~F.},
+        title = "{An iterative method to deblend AGN-Host contributions for Integral Field spectroscopic observations}",
+      journal = {\mnras},
+     keywords = {Astrophysics - Astrophysics of Galaxies, Astrophysics - Instrumentation and Methods for Astrophysics},
+         year = 2025,
+        month = jan,
+       volume = {536},
+       number = {1},
+        pages = {752-776},
+          doi = {10.1093/mnras/stae2623},
+archivePrefix = {arXiv},
+       eprint = {2411.13270},
+ primaryClass = {astro-ph.GA},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2025MNRAS.536..752I},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+```
+
 
 ---
 
