@@ -155,15 +155,165 @@ Place this file in your working directory and modify the parameters to fit your 
 
 ---
 
-### Documentation: `priors_prop.yaml`
+### Documentation: Writing External Functions for AGN Decomposition
 
-This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`, and its prior configuration can be found [here](https://github.com/hjibarram/AGN_decompose/blob/main/AGNdecomp/configfiles/priors_prop.yml). Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process.
+This guide explains how to create and use custom external functions in the `AGNdecomp` pipeline for modeling the light distribution of AGN and host galaxies. It covers the expected function structure, required parameters, and example models including **Moffat** and **Gaussian** profiles.
 
 ---
 
-#### 🔧 Example Model Parameters: `moffat`
+#### 🧩 Purpose of External Functions
 
-The `moffat` model is commonly used to describe point spread functions (PSFs) in astronomical imaging. The parameters listed below are likely used for 2D image fitting or profile modeling.
+External functions allow users to define their own models for point spread functions (PSF) or galaxy light profiles. These models can be used in place of or in addition to built-in profiles, providing flexibility for special cases or new scientific requirements.
+
+---
+
+#### 📁 File Format and Structure
+
+Create a `.py` file with the following requirements:
+
+- Must contain at least one main function that returns a model array.
+- Optionally, include a second function to return derived values such as PSF FWHM or total flux.
+- Must be importable from the location specified in your `config_file.yaml`.
+- It requires the prior definitions in `priors_prop.yaml` to set initial guesses and bounds for the parameters.
+
+#### Required Imports
+
+```python
+import numpy as np
+import AGNdecomp.tools.tools as tol  # for elliptical radius calculations
+```
+
+---
+
+#### 🔧 Example 1: Full Moffat Profile plus Sersic
+
+```python
+def ExternFunctionName(pars, x_t=0, y_t=0):
+    At=pars['At']
+    ds=pars['alpha']
+    be=pars['beta']
+    dx=pars['xo']
+    dy=pars['yo']
+    Io=pars['Io']
+    bn=pars['bn']
+    Re=pars['Re']
+    ns=pars['ns']
+    es=pars['ellip']
+    th=pars['theta']
+    r1=tol.radi_ellip(x_t-dx,y_t-dy,es,th)
+    model = At * (1.0 + (r1**2.0 / ds**2.0))**(-be)
+    model = Io * np.exp(-bn*((r1/Re)**(1./ns) -1.0)) + model
+    return model
+```
+
+#### Required: PSF total Flux & FWHM Functions
+
+```python
+def ExternFunctionName_flux_psf(pars, x_t=0, y_t=0):
+    psf = pars['alpha'] * 2.0 * np.sqrt(2.0**(1.0 / pars['beta']) - 1)
+    flux = np.pi * pars['alpha']**2.0 * pars['At'] / (pars['beta'] - 1.0)
+    return psf, flux
+```
+
+---
+
+#### 🔧 Example 2: Gaussian Profile
+
+```python
+def GaussianModel(pars, x_t=0, y_t=0):
+    A = pars['At']
+    sigma = pars['sigma']
+    xo = pars['xo']
+    yo = pars['yo']
+    ellip = pars['ellip']
+    theta = pars['theta']
+
+    r = tol.radi_ellip(x_t - xo, y_t - yo, ellip, theta)
+    model = A * np.exp(-0.5 * (r / sigma)**2)
+    return model
+
+def GaussianModel_flux_psf(pars, x_t=0, y_t=0):
+    sigma = pars['sigma']
+    A = pars['At']
+    fwhm = 2.3548 * sigma
+    flux = 2 * np.pi * sigma**2 * A
+    return fwhm, flux
+```
+
+---
+
+#### 🔄 Integration Steps
+
+1. Define your external model in a `.py` file.
+2. Update your `config_file.yaml`:
+
+```yaml
+ext_name: GaussianModel
+ext_file: extern_function_example.py
+ext_path: path/to/your/file/
+```
+
+3. Ensure the file is placed in the directory specified in `ext_path`.
+4. Define the priors for your model in `priors_prop.yaml`.
+
+---
+
+#### 📌 Parameters
+
+Your external function will receive:
+
+- `pars`: Dictionary containing model parameters as defined in `priors_prop.yaml`.
+- `x_t`, `y_t`: 2D arrays (meshgrids) representing spatial pixel coordinates.
+
+Use `tol.radi_ellip(x, y, e, theta)` to compute elliptical distances for modeling elliptical shapes.
+
+---
+
+#### 📚 Tips
+
+- You can test your function independently by calling it with mock `pars` and coordinate grids.
+- Use vectorized NumPy operations for performance.
+- Return `float32` arrays if memory efficiency is critical.
+
+---
+
+#### 📬 Support
+
+For more advanced use cases or to contribute your functions, refer to the [AGN_decompose GitHub repository](https://github.com/hjibarram/AGN_decompose) or contact the maintainer.
+
+---
+
+### Documentation: `priors_prop.yaml`
+
+This YAML file defines the prior configuration for the model parameters used in a photometric decomposition, the package has a predefined model named `moffat`, and its prior configuration can be found [here](https://github.com/hjibarram/AGN_decompose/blob/main/AGNdecomp/configfiles/priors_prop.yml). Each parameter includes a LaTeX-compatible plot label, an initial guess, and lower/upper bounds for the fitting process with the next structure:
+
+```yaml
+
+--- 
+models:
+  - name: MODEL_NAME 
+    parameters:   
+      - name: Par1
+        name_plot: '$Par_1$'
+        ini_value: InitValue  
+        inf_value: LoweBound  
+        sup_value: UpperBound  
+
+```
+
+---
+
+### 📌 Notes
+
+- All parameters are provided with an `ini_value` (initial guess), `inf_value` (minimum allowed), and `sup_value` (maximum allowed).
+- The `name_plot` field uses LaTeX syntax to allow rendering of mathematical symbols in plots or graphical output.
+- This configuration is likely used in an automated fitting pipeline or modeling framework.
+
+---
+
+#### 🔧 Example: Model `moffat`
+
+The `moffat` model is commonly used to describe point spread functions (PSFs) in astronomical imaging, this model is predefined within the package, but the user can define his own models with the use of `ext_file`. The parameters listed below are likely used for 2D image fitting or profile modeling.
 
 | Parameter | Plot Label | Description | Initial Value | Lower Bound | Upper Bound |
 |-----------|------------|-------------|----------------|-------------|-------------|
@@ -178,14 +328,6 @@ The `moffat` model is commonly used to describe point spread functions (PSFs) in
 | `ns`      | `$n_s$`     | Sersic index defining the shape of the light profile. | 2 | 0 | 15 |
 | `ellip`   | `$e_s$`     | Ellipticity of the model (0 = circular). | 0 | 0 | 10 |
 | `theta`   | `$\theta_s$` | Position angle of the model in degrees. | 0 | 0 | 180 |
-
----
-
-### 📌 Notes
-
-- All parameters are provided with an `ini_value` (initial guess), `inf_value` (minimum allowed), and `sup_value` (maximum allowed).
-- The `name_plot` field uses LaTeX syntax to allow rendering of mathematical symbols in plots or graphical output.
-- This configuration is likely used in an automated fitting pipeline or modeling framework.
 
 ---
 
