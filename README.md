@@ -152,6 +152,7 @@ Below is a detailed explanation of each variable defined under the `config` sect
 ### ✅ Usage
 
 Place this file in your working directory and modify the parameters to fit your dataset and analysis goals. Then execute the AGN decomposition script that reads this configuration to run the analysis.
+
 ---
 
 ### Documentation: `priors_prop.yaml`
