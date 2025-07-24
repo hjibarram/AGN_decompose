@@ -34,8 +34,8 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
         spec = importlib.util.spec_from_file_location(name, path + namef)
         extmod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(extmod)
-        #if verbose:
-        print('Loading external function for',name)
+        if verbose:
+            print('Loading external function for',name)
         return getattr(extmod, name )
     except Exception as e:
         if verbose:
