@@ -5,7 +5,7 @@ from cloup.constraints import mutually_exclusive, RequireExactly, IsSet, If
 import numpy as np
 from astropy.io import fits
 from AGNdecomp.tools.prof_fit import prof_ana
-from AGNdecomp.tools.prof_fit import map_ana
+from AGNdecomp.tools.map_fit import map_ana
 from AGNdecomp.tools.models import get_model
 from AGNdecomp.tools.tools import plot_outputs
 import AGNdecomp.tools.tools as tol
