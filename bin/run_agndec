@@ -145,7 +145,7 @@ def plots(name,aperture,rapos,decpos,path_out):
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
-def runmap(config_file,name,path,verbose,ncpus,nameb,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
+def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
     data=tol.read_config_file(config_file)
     if data:
         name=data['config'][0]['name']
