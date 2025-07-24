@@ -27,8 +27,6 @@ def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',Usermods=['extern
     dpix=(np.abs(dx)+np.abs(dy))/2.0    
     wcs = WCS(hdr)
     wcs=wcs.celestial
-    print(Usermods)
-    sys.exit()
     valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,0,str_p=False)
     pars_max,psf1,Ft,FtF=evaluate_2dPSF(map,mapE,name=name,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI)
     sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
