@@ -54,7 +54,7 @@ def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, hos
     elif Namemodel == 'gaussian':
         spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
     elif Namemodel == Usermods[0]:
-        extern_func=get_extern_function(Usermods=Usermods,verbose=False)
+        extern_func=get_extern_function(Usermods=Usermods,verbose=False) 
         spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
     else:
         print('Error, the model '+Namemodel+' is not implemented, available models are moffat gaussian or '+Usermods[0])
