@@ -130,8 +130,7 @@ def plots(name,aperture,rapos,decpos,path_out):
     dir_out=path_out
     plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos)
 
-
-@cloup.command('runmap', short_help='Run the AGN decomposition on a 2Dmap')
+@cli.command('runmap', short_help='Run the AGN decomposition on a 2Dmap')
 @click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the 2Dmap')
 @click.option('-p', '--path', type=str, help='path to the data map')
