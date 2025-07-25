@@ -35,7 +35,7 @@ configmap:
     head_err: 1 #header error data extension, default 1
     mod_ind: 0 #model index for the run, default 0
     mod_ind0: 0 #model index for the initial run, default 0
-    logP: True #use log scale for ploting the residual maps
+    logp: True #use log scale for ploting the residual maps
     ext_name: externfunc #name of the external module user defined function
     ext_path: '' #path of the external module file user defined function
     ext_file: extern_file.py #name of the externel module file user defined function
