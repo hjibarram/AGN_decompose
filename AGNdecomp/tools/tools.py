@@ -555,12 +555,15 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[]):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True):
     # Plot the original map, model AGN, model HST, residuals and corner plot
     cm=plt.cm.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    else:
+        ict=plt.imshow(inMap,cmap=cm) 
     cbar=plt.colorbar(ict)
     ics=plt.contour(inMap,lev,colors='k',linewidths=1)            
     cbar.set_label(r"Relative Density")
@@ -571,7 +574,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
+    else:
+        ict=plt.imshow(modelAGN,cmap=cm) 
     cbar=plt.colorbar(ict)
     ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
     ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
@@ -583,7 +589,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm) #np.log10
+    if logP:
+        ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm)
+    else:
+        ict=plt.imshow((inMap-modelAGN),cmap=cm)
     cbar=plt.colorbar(ict)
     ics=plt.contour((inMap-modelAGN),lev,colors='k',linewidths=1)
     cbar.set_label(r"Relative Density")
@@ -594,7 +603,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    else:
+        ict=plt.imshow((inMap-modelAGN-modelHST),cmap=cm) 
     cbar=plt.colorbar(ict)
     ics=plt.contour((inMap-modelAGN-modelHST),lev,colors='k',linewidths=1)
     cbar.set_label(r"Relative Density")
