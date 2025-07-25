@@ -95,12 +95,12 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     spec_t=np.exp(-0.5*((((x_t-dx)/ds)**2.0)+((y_t-dy)/ds)**2.0))*At
     return spec_t   
 
-def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
+def moffat_flux_psf_modelF(pars):
     psf=pars['alpha']*2.0*np.sqrt(2.0**(1./pars['beta'])-1)
     ft_fit=np.pi*pars['alpha']**2.0*pars['At']/(pars['beta']-1.0)
     return psf, ft_fit
 
-def gaussian_flux_psf_modelF(pars, x_t=0, y_t=0,):
+def gaussian_flux_psf_modelF(pars):
     ft_fit=2*np.pi*pars['sigma']**2.0*pars['At']
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit

@@ -73,7 +73,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
-    print(x_t.shape, y_t.shape, pf_map.shape)
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
@@ -99,7 +98,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     except:
         model=getattr(mod, Model_name + '_modelF')
         flux_psf=getattr(mod, Model_name + '_flux_psf_modelF')
-    psf,ft_fit=flux_psf(pars_max, x_t=x_t, y_t=y_t)    
+    psf,ft_fit=flux_psf(pars_max)    
     if plot_f:
         try:
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False)
