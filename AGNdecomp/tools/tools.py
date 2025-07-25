@@ -574,11 +574,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    #if logP:
-    #    ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
-    #else:
-    #    ict=plt.imshow(modelAGN,cmap=cm) 
-    #cbar=plt.colorbar(ict)
+    if logP:
+        ict=plt.imshow(np.log10(modelAGN),cmap=cm,alpha=0.6) 
+    else:
+        ict=plt.imshow(modelAGN,cmap=cm,alpha=0.6) 
+    cbar=plt.colorbar(ict)
     ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
     ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
     cbar.set_label(r"Relative Density")
