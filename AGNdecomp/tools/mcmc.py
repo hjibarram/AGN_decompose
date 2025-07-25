@@ -69,12 +69,12 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
     else:
         min_in=[valsI['dyo'],valsI['dxo']]
-    x_t=np.arange(ny)-min_in[1]
-    y_t=np.arange(nx)-min_in[0]
+    x_t=np.arange(ny)#-min_in[1]
+    y_t=np.arange(nx)#-min_in[0]
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
-    valsI['xo']=valsI['xo']-min_in[1]
-    valsI['yo']=valsI['yo']-min_in[0]
+    #valsI['xo']=valsI['xo']-min_in[1]
+    #valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
     data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods)
     nwalkers=240
@@ -107,6 +107,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
         tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP)
-    pars_max['xo']=pars_max['xo']+min_in[1]
-    pars_max['yo']=pars_max['yo']+min_in[0]
+    #pars_max['xo']=pars_max['xo']+min_in[1]
+    #pars_max['yo']=pars_max['yo']+min_in[0]
     return pars_max,psf,ft_num,ft_fit
