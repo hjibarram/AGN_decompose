@@ -142,26 +142,28 @@ def plots(name,aperture,rapos,decpos,path_out):
 @click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
 @click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
 @click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
+@click.option('-r', '--logP', is_flag=True, default=True, help='use log scale for ploting the residual maps')
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
-def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
+def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logP,ext_name,ext_path,ext_file):
     data=tol.read_config_file(config_file)
     if data:
-        name=data['config'][0]['name']
-        path=data['config'][0]['path']
-        verbose=data['config'][0]['verbose']
-        ncpus=data['config'][0]['ncpus']
-        nameb=data['config'][0]['nameb']
-        path_out=data['config'][0]['path_out']
-        head_dat=data['config'][0]['head_dat']
-        head_err=data['config'][0]['head_err']
-        mod_ind=data['config'][0]['mod_ind']
-        mod_ind0=data['config'][0]['mod_ind0']
+        name=data['configmap'][0]['name']
+        path=data['configmap'][0]['path']
+        verbose=data['configmap'][0]['verbose']
+        ncpus=data['configmap'][0]['ncpus']
+        nameb=data['configmap'][0]['nameb']
+        path_out=data['configmap'][0]['path_out']
+        head_dat=data['configmap'][0]['head_dat']
+        head_err=data['configmap'][0]['head_err']
+        mod_ind=data['configmap'][0]['mod_ind']
+        mod_ind0=data['configmap'][0]['mod_ind0']
+        logP=data['configmap'][0]['logP']
         try:
-            ext_name=data['config'][0]['ext_name']
-            ext_path=data['config'][0]['ext_path']
-            ext_file=data['config'][0]['ext_file']
+            ext_name=data['configmap'][0]['ext_name']
+            ext_path=data['configmap'][0]['ext_path']
+            ext_file=data['configmap'][0]['ext_file']
         except:
             pass
     prior_config='priors_prop.yml'        
@@ -187,7 +189,7 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
         map_dataE=map_data*0.1
     map_dataE[np.where(map_dataE == 1)]=np.nan
     map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
-         mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+         mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,logP=logP)
 
 if __name__ == "__main__":
     cli()
