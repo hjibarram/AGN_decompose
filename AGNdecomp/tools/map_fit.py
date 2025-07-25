@@ -31,7 +31,7 @@ def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',Usermods=['extern
     pars_max,psf1,Ft,FtF=evaluate_2dPSF(map,mapE,name=name,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI)
     sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
     val1=sky1.to_string('hmsdms')
-    linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
+    linet='FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
     linev=''
     for val in Namevalues0:
         linev=linev+' '+val+'='+str(pars_max[val])
