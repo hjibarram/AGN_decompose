@@ -73,7 +73,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
-    print(x_t.shape, y_t.shape, pf_map)
+    print(x_t.shape, y_t.shape, pf_map.shape)
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
