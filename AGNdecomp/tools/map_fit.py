@@ -24,14 +24,15 @@ def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',Usermods=['extern
         except:
             dx=hdr['CDELT1']*3600.
             dy=hdr['CDELT2']*3600.
-    dpix=(np.abs(dx)+np.abs(dy))/2.0    
+    dpix=(np.abs(dx)+np.abs(dy))/2.0
+    print(dpix)    
     wcs = WCS(hdr)
     wcs=wcs.celestial
     valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,0,str_p=False)
     pars_max,psf1,Ft,FtF=evaluate_2dPSF(map,mapE,name=name,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI)
     sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
     val1=sky1.to_string('hmsdms')
-    linet='FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
+    linet='FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1)#*dpix)
     linev=''
     for val in Namevalues0:
         linev=linev+' '+val+'='+str(pars_max[val])
