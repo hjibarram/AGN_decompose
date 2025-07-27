@@ -15,6 +15,7 @@ from astropy.wcs import WCS
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from tqdm import tqdm
 
 def read_cvsfile(name,path='',hid='wave'):
     """
@@ -305,6 +306,47 @@ def step_vect_Mean(flux,sp=20,pst=True,mask_val=[]):
             flux_t[i]=np.nanmean(flux_0[i0:i1])
     return flux_t    
 
+def get_error_cube(cubeI,sp=20,pst=True,sigma=10,pgr_bar=False):
+    nz,nx,ny=cubeI.shape
+    cubeE= np.copy(cubeI)
+    if pgr_bar:
+        pbar=tqdm(total=nx*ny)
+    for i in range(0, nx):
+        for j in range(0, ny):
+            flux=cubeI[:,i,j]
+            flux_t=step_vect2(flux,sp=sp,pst=pst,sigma=sigma)
+            cubeE[:,i,j]=flux_t
+        if pgr_bar:
+            pbar.update(1)        
+    return cubeE
+
+def step_vect2(fluxi,sp=20,pst=True,sigma=10):
+    flux_sm=conv(fluxi,ke=sigma)
+    flux=fluxi-flux_sm
+    nz=len(flux)
+    flux_t=np.copy(flux)
+    for i in range(0, nz):
+        i0=int(i-sp/2.0)
+        i1=int(i+sp/2.0)
+        if i1 > nz:
+            i1=nz
+        if i0 > nz:
+            i0=int(nz-sp)
+        if i0 < 0:
+            i0=0
+        if i1 < 0:
+            i1=sp   
+        if pst:
+            lts=np.nanpercentile(flux[i0:i1],78)
+            lt0=np.nanpercentile(flux[i0:i1],50)
+            lti=np.nanpercentile(flux[i0:i1],22)
+            val=(np.abs(lts-lt0)+np.abs(lti-lt0))/2.0
+            flux_t[i]=val#mean
+        else:
+            flux_t[i]=np.nanstd(flux[i0:i1])
+    return flux_t
+
+
 def step_vect(flux,sp=20,pst=True):
     nz=len(flux)
     flux_t=np.copy(flux)
@@ -555,12 +597,15 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[]):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True):
     # Plot the original map, model AGN, model HST, residuals and corner plot
     cm=plt.cm.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(inMap),cmap=cm) 
+    else:
+        ict=plt.imshow(inMap,cmap=cm) 
     cbar=plt.colorbar(ict)
     ics=plt.contour(inMap,lev,colors='k',linewidths=1)            
     cbar.set_label(r"Relative Density")
@@ -571,7 +616,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(modelAGN),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(modelAGN),cmap=cm,alpha=0.6) 
+    else:
+        ict=plt.imshow(modelAGN,cmap=cm,alpha=0.6) 
     cbar=plt.colorbar(ict)
     ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
     ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
@@ -583,7 +631,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm) #np.log10
+    if logP:
+        ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm)
+    else:
+        ict=plt.imshow((inMap-modelAGN),cmap=cm)
     cbar=plt.colorbar(ict)
     ics=plt.contour((inMap-modelAGN),lev,colors='k',linewidths=1)
     cbar.set_label(r"Relative Density")
@@ -594,7 +645,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    if logP:
+        ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
+    else:
+        ict=plt.imshow((inMap-modelAGN-modelHST),cmap=cm) 
     cbar=plt.colorbar(ict)
     ics=plt.contour((inMap-modelAGN-modelHST),lev,colors='k',linewidths=1)
     cbar.set_label(r"Relative Density")
