@@ -18,9 +18,12 @@ config:
     head_err: 1 #header error data extension, default 1
     mod_ind: 0 #model index for the run, default 0
     mod_ind0: 0 #model index for the initial run, default 0
-    ext_name: externfunc #name of the external module user defined function')
-    ext_path: '' #path of the external module file user defined function')
-    ext_file: extern_file.py #name of the externel module file user defined function')    
+    logp: True #use log scale for ploting the residual maps
+    ext_name: externfunc #optional, name of the external module user defined function
+    ext_path: '' #optional, path of the external module file user defined function
+    ext_file: extern_file.py #optional, name of the externel module file user defined function
+    wavew1: 4850.0 #optional, initial wavelength for the test analysis, default 4850 AA
+    wavew2: 5150.0 #optional, final wavelength for the test analysis, default 5150 AA
 
 configmap:
   # Run AGNdecomp for a 2D map

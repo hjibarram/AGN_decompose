@@ -69,8 +69,6 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         min_in=np.unravel_index(np.nanargmax(pf_map_c), (nx,ny))
     else:
         min_in=[valsI['dyo'],valsI['dxo']]
-    print(pf_map)
-    print(np.nansum(pf_map))
     x_t=np.arange(ny)-min_in[1]
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
