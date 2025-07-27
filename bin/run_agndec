@@ -5,6 +5,7 @@ from cloup.constraints import mutually_exclusive, RequireExactly, IsSet, If
 import numpy as np
 from astropy.io import fits
 from AGNdecomp.tools.prof_fit import prof_ana
+from AGNdecomp.tools.map_fit import map_ana
 from AGNdecomp.tools.models import get_model
 from AGNdecomp.tools.tools import plot_outputs
 import AGNdecomp.tools.tools as tol
@@ -30,11 +31,14 @@ def cli():
 @click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
 @click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
 @click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
-@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
-@click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
-@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
+@click.option('-x', '--logp', is_flag=True, default=True, help='use log scale for ploting the residual maps')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
+@click.option('-g', '--wavew1', type=float, default=4850.0 ,help='optional, initial wavelength for the test analysis, default 4850 AA')
+@click.option('-b', '--wavew2', type=float, default=5150.0 ,help='optional, final wavelength for the test analysis, default 5150 AA')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,ext_name,ext_path,ext_file):
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2):
     data=tol.read_config_file(config_file)
     if data:
         name=data['config'][0]['name']
@@ -52,10 +56,16 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         head_err=data['config'][0]['head_err']
         mod_ind=data['config'][0]['mod_ind']
         mod_ind0=data['config'][0]['mod_ind0']
+        logp=data['config'][0]['logp']
         try:
             ext_name=data['config'][0]['ext_name']
             ext_path=data['config'][0]['ext_path']
             ext_file=data['config'][0]['ext_file']
+        except:
+            pass
+        try:
+            wavew1=data['config'][0]['wavew1']
+            wavew2=data['config'][0]['wavew2']
         except:
             pass
     prior_config='priors_prop.yml'        
@@ -77,9 +87,13 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         except:
             cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
     except:
+        #print('Warrning, No error extension found, autoestimate the error vector')
         print('Warrning, No error extension found, using the scaled data as error')
         cube_dataE=cube_data*0.1
-    cube_dataE[np.where(cube_dataE == 1)]=np.nan
+        cube_dataE[np.where(np.isfinite(cube_dataE) == False)]=1.0
+        cube_dataE[:,:,:]=1.0
+        #cube_dataE=tol.get_error_cube(cube_data,sp=50,pgr_bar=True)
+    #cube_dataE[np.where(cube_dataE == 1)]=np.nan
     if clean:
         str_p=False
     else:
@@ -89,8 +103,9 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     else:
         local=False
     if (pipeline == False) or local:
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,
-             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
+             wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
+             Usermods=Usermods,prior_config=prior_config)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
@@ -129,8 +144,66 @@ def plots(name,aperture,rapos,decpos,path_out):
     dir_out=path_out
     plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos)
 
-#cli.add_command(model)
-
+@cli.command('runmap', short_help='Run the AGN decomposition on a 2Dmap')
+@click.option('-c', '--config_file', type=str, default='', help='name of the config file')
+@click.option('-n', '--name', type=str, help='name of the 2Dmap')
+@click.option('-p', '--path', type=str, help='path to the data map')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
+@click.option('-u', '--ncpus', type=int, default=10, help='number of CPUs')
+@click.option('-m', '--nameb', type=str, default='NAME.map.fits.gz' ,help='naming format base of the 2Dmap files')
+@click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
+@click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
+@click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
+@click.option('-q', '--mod_ind', type=int, default=0, help='model index for the run, default 0')
+@click.option('-d', '--mod_ind0', type=int, default=0, help='model index for the initial run, default 0')
+@click.option('-r', '--logp', is_flag=True, default=True, help='use log scale for ploting the residual maps')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
+def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file):
+    data=tol.read_config_file(config_file)
+    if data:
+        name=data['configmap'][0]['name']
+        path=data['configmap'][0]['path']
+        verbose=data['configmap'][0]['verbose']
+        ncpus=data['configmap'][0]['ncpus']
+        nameb=data['configmap'][0]['nameb']
+        path_out=data['configmap'][0]['path_out']
+        head_dat=data['configmap'][0]['head_dat']
+        head_err=data['configmap'][0]['head_err']
+        mod_ind=data['configmap'][0]['mod_ind']
+        mod_ind0=data['configmap'][0]['mod_ind0']
+        logp=data['configmap'][0]['logp']
+        try:
+            ext_name=data['configmap'][0]['ext_name']
+            ext_path=data['configmap'][0]['ext_path']
+            ext_file=data['configmap'][0]['ext_file']
+        except:
+            pass
+    prior_config='priors_prop.yml'        
+    Usermods=[ext_name,ext_path,ext_file]
+    dir_map=path
+    dir_out=path_out
+    if nameb == '':
+        map_file='NAME'.replace('NAME',name)
+    else:
+        map_file=nameb.replace('NAME',name)
+    try:
+        [map_data, hdr0]=fits.getdata(dir_map+map_file, 'FLUX', header=True)
+    except:
+        [map_data, hdr0]=fits.getdata(dir_map+map_file, head_dat, header=True)
+    try:
+        try:
+            map_dataIvr=fits.getdata(dir_map+map_file, 'IVAR', header=False)
+            map_dataE=1.0/np.sqrt(map_dataIvr)
+        except:
+            map_dataE=fits.getdata(dir_map+map_file, head_err, header=False)
+    except:
+        print('Warrning, No error extension found, using the scaled data as error')
+        map_dataE=map_data*0.1
+    map_dataE[np.where(map_dataE == 1)]=np.nan
+    map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
+         mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,logP=logp)
 
 if __name__ == "__main__":
     cli()

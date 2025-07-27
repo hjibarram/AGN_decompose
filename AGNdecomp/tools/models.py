@@ -34,8 +34,8 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
         spec = importlib.util.spec_from_file_location(name, path + namef)
         extmod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(extmod)
-        #if verbose:
-        print('Loading external function for',name)
+        if verbose:
+            print('Loading external function for',name)
         return getattr(extmod, name )
     except Exception as e:
         if verbose:
@@ -54,7 +54,7 @@ def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, hos
     elif Namemodel == 'gaussian':
         spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
     elif Namemodel == Usermods[0]:
-        extern_func=get_extern_function(Usermods=Usermods,verbose=False)
+        extern_func=get_extern_function(Usermods=Usermods,verbose=False) 
         spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
     else:
         print('Error, the model '+Namemodel+' is not implemented, available models are moffat gaussian or '+Usermods[0])
@@ -95,12 +95,12 @@ def gaussian_modelF(pars, x_t=0, y_t=0,):
     spec_t=np.exp(-0.5*((((x_t-dx)/ds)**2.0)+((y_t-dy)/ds)**2.0))*At
     return spec_t   
 
-def moffat_flux_psf_modelF(pars, x_t=0, y_t=0,):
+def moffat_flux_psf_modelF(pars):
     psf=pars['alpha']*2.0*np.sqrt(2.0**(1./pars['beta'])-1)
     ft_fit=np.pi*pars['alpha']**2.0*pars['At']/(pars['beta']-1.0)
     return psf, ft_fit
 
-def gaussian_flux_psf_modelF(pars, x_t=0, y_t=0,):
+def gaussian_flux_psf_modelF(pars):
     ft_fit=2*np.pi*pars['sigma']**2.0*pars['At']
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
