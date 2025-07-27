@@ -104,7 +104,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False)
             spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False)
         except:
-            pars_max['xo']=pars_max['xo']+0.4
+            pars_max['xo']=pars_max['xo']+0.3
             pars_max['yo']=pars_max['yo']+0
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
