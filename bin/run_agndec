@@ -89,7 +89,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     except:
         print('Warrning, No error extension found, autoestimate the error vector')
         #cube_dataE=cube_data*0.1
-        cube_dataE=tol.get_error_cube(cube_data,sp=50)
+        cube_dataE=tol.get_error_cube(cube_data,sp=50,pgr_bar=True)
     cube_dataE[np.where(cube_dataE == 1)]=np.nan
     if clean:
         str_p=False

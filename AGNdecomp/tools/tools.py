@@ -15,6 +15,7 @@ from astropy.wcs import WCS
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from tqdm import tqdm
 
 def read_cvsfile(name,path='',hid='wave'):
     """
@@ -305,14 +306,18 @@ def step_vect_Mean(flux,sp=20,pst=True,mask_val=[]):
             flux_t[i]=np.nanmean(flux_0[i0:i1])
     return flux_t    
 
-def get_error_cube(cubeI,sp=20,pst=True,sigma=10):
+def get_error_cube(cubeI,sp=20,pst=True,sigma=10,pgr_bar=False):
     nz,nx,ny=cubeI.shape
     cubeE= np.copy(cubeI)
+    if pgr_bar:
+        pbar=tqdm(total=nx*ny)
     for i in range(0, nx):
         for j in range(0, ny):
             flux=cubeI[:,i,j]
             flux_t=step_vect2(flux,sp=sp,pst=pst,sigma=sigma)
             cubeE[:,i,j]=flux_t
+        if pgr_bar:
+            pbar.update(1)        
     return cubeE
 
 def step_vect2(fluxi,sp=20,pst=True,sigma=10):
