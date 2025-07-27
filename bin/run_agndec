@@ -99,7 +99,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     else:
         local=False
     if (pipeline == False) or local:
-        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logp=logp,
+        prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
              Usermods=Usermods,prior_config=prior_config)
     else:
