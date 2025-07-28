@@ -151,7 +151,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,verbose=Fal
                         valt1=model(pars, x_t=j, y_t=i)
                 if cube0[k,i,j] != 0:    
                     cube_mod[k,i,j]=valt1
-        if pgr_bar:
+        if verbose:
             pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
     h=h1.header
