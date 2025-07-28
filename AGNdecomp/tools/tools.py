@@ -231,12 +231,12 @@ def radi_ellip(dx,dy,e,tht):
     return b
 
 
-def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',convt=False,mask_val=[]):
+def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',convt=False,mask_val=[],Model_name='moffat'):
     if sp > 0:
         spt='_sp'+str(int(sp))
     else:
         spt=''
-    file=dir+name+'_moffat'+spt+tp+'.csv'
+    file=dir+name+'_'+Model_name+spt+tp+'.csv'
     f=open(file,'r')
     wave=[]
     val_v=[]
