@@ -105,7 +105,7 @@ def gaussian_flux_psf_modelF(pars):
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
-def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
     if moffat:
         psf_file='NAME_moffat'.replace('NAME',name)
     else:
@@ -127,13 +127,25 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     nz,nx,ny=cube0.shape
     cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
+    try:
+        model=get_extern_function(Usermods=Usermods,verbose=False)
+        extern=True
+    except:
+        extern=False
+        #model=getattr(mod, Model_name + '_modelF')
     for k in range(0, nz):
         pars={}
         for key in keys:
             pars[key]=valsT[key][k]
         for i in range(0, nx):
             for j in range(0, ny):
-                valt1=moffat_modelF(pars, x_t=j, y_t=i)
+                if extern == False:
+                    valt1=moffat_modelF(pars, x_t=j, y_t=i, host=False)
+                else:
+                    try:
+                        valt1=model(pars, x_t=j, y_t=i, host=False)
+                    except:
+                        valt1=model(pars, x_t=j, y_t=i)
                 if cube0[k,i,j] != 0:    
                     cube_mod[k,i,j]=valt1
     h1=fits.PrimaryHDU(cube_mod)
