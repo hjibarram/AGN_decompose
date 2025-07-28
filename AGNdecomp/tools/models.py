@@ -4,6 +4,7 @@ import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
+from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -105,7 +106,7 @@ def gaussian_flux_psf_modelF(pars):
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
-def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,verbose=False,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
     if moffat:
         psf_file='NAME_moffat'.replace('NAME',name)
     else:
@@ -128,11 +129,13 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
     try:
-        model=get_extern_function(Usermods=Usermods,verbose=False)
+        model=get_extern_function(Usermods=Usermods,verbose=verbose)
         extern=True
     except:
         extern=False
         #model=getattr(mod, Model_name + '_modelF')
+    if verbose:
+        pbar=tqdm(total=nz)
     for k in range(0, nz):
         pars={}
         for key in keys:
@@ -148,6 +151,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
                         valt1=model(pars, x_t=j, y_t=i)
                 if cube0[k,i,j] != 0:    
                     cube_mod[k,i,j]=valt1
+        if pgr_bar:
+            pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
     h=h1.header
     keys=list(hdr0.keys())

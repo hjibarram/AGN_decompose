@@ -44,6 +44,7 @@ configmap: # Run AGNdecomp for a 2D map
 configmodel: # Run the rutine to obtain the cube models
   - run_type: FULL #Pipeline Type
     name: NAME #name of the IFS cube
+    verbose: False #Flag to activate verbosity
     path: cubes/ #path to the data cubes
     nameb: NAME.cube.fits.gz #naming format base of the IFS files
     path_out: outputs/ #path of the output files

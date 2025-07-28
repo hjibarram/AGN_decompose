@@ -123,6 +123,7 @@ cli.add_command(run)
 #@click.argument('filename', type=click.Path(exists=True))
 @click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
 @click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
@@ -132,10 +133,11 @@ cli.add_command(run)
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
-def model(config_file,name,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
+def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
     data=tol.read_config_file(config_file)
     if data:
         name=data['configmodel'][0]['name']
+        verbose=data['configmodel'][0]['verbose']
         path=data['configmodel'][0]['path']
         nameb=data['configmodel'][0]['nameb']
         path_out=data['configmodel'][0]['path_out']
@@ -153,7 +155,7 @@ def model(config_file,name,path,nameb,path_out,pathc_out,head_dat,head_err,ext_n
     dir_cube_m=pathc_out
     Usermods=[ext_name,ext_path,ext_file]
     get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,vt='_sp0',
-         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods) 
+         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,verbose=verbose) 
     
 @cli.command('plots', short_help='obtain the final plots')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
