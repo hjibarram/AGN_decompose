@@ -259,7 +259,7 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
     else:    
         val_c,p=continum_fit(wave,val_vt,deg=deg)
     if out_p:
-        file2=dir+name+'_moffat'+spt+tp+'_smoth_'+str(int(np.round(sigma)))+'_val'+str(val)+'.csv'
+        file2=dir+name+'_'+Model_name+spt+tp+'_smoth_'+str(int(np.round(sigma)))+'_val'+str(val)+'.csv'
         f=open(file2,'w')
         f.write('WAVE , Val, Val_s, Val_c \n')
         for i in range(0, len(wave)):
