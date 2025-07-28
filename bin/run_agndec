@@ -113,7 +113,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
              sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
-             hdri0=head_dat,hdri1=head_err,basename=nameb) 
+             hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
@@ -121,18 +121,41 @@ cli.add_command(run)
 
 @cli.command('model', short_help='obtain the cube model')
 #@click.argument('filename', type=click.Path(exists=True))
+@click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
 @click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
-@click.option('-c', '--cosmetic',is_flag=True, default=False, help='apply cosmetics')
+@click.option('-u', '--cosmetic',is_flag=True, default=False, help='apply cosmetics')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
 @click.option('-t', '--pathc_out', type=str, default='', help='path for the save cube')
-def model(name,path,nameb,cosmetic,path_out,pathc_out):
+@click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
+@click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
+def model(config_file,name,path,nameb,cosmetic,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
+    data=tol.read_config_file(config_file)
+    if data:
+        name=data['configmodel'][0]['name']
+        path=data['configmodel'][0]['path']
+        nameb=data['configmodel'][0]['nameb']
+        cosmetic=data['configmodel'][0]['cosmetic']
+        path_out=data['configmodel'][0]['path_out']
+        pathc_out=data['configmodel'][0]['pathc_out']
+        head_dat=data['configmodel'][0]['head_dat']
+        head_err=data['configmodel'][0]['head_err']
+        try:
+            ext_name=data['configmodel'][0]['ext_name']
+            ext_path=data['configmodel'][0]['ext_path']
+            ext_file=data['configmodel'][0]['ext_file']
+        except:
+            pass
     dir_cube=path[0]
     dir_out=path_out
     dir_cube_m=pathc_out
-    get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,cosmetic=cosmetic,vt='_sp1',corr=False)
-
+    Usermods=[ext_name,ext_path,ext_file]
+    get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,vt='_sp0',
+         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods) 
     
 @cli.command('plots', short_help='obtain the final plots')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')

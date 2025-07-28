@@ -1,7 +1,6 @@
 --- 
-# config file to run the AGN decomposition pipeline
-config:
-  # Run AGNdecomp
+# config file to run the AGN decomposition pipelines and functions
+config: # Run AGNdecomp
   - run_type: FULL #Pipeline Type
     name: NAME #name of the IFS cube
     path: cubes/ #path to the data cubes
@@ -25,8 +24,7 @@ config:
     wavew1: 4850.0 #optional, initial wavelength for the test analysis, default 4850 AA
     wavew2: 5150.0 #optional, final wavelength for the test analysis, default 5150 AA
 
-configmap:
-  # Run AGNdecomp for a 2D map
+configmap: # Run AGNdecomp for a 2D map
   - run_type: FULL #Pipeline Type
     name: NAME #name of the 2Dmap
     path: maps/ #path to the data map
@@ -42,3 +40,16 @@ configmap:
     ext_name: externfunc #name of the external module user defined function
     ext_path: '' #path of the external module file user defined function
     ext_file: extern_file.py #name of the externel module file user defined function
+
+configmodel: # Run the rutine to obtain the cube models
+  - run_type: FULL #Pipeline Type
+    name: NAME #name of the IFS cube
+    path: cubes/ #path to the data cubes
+    nameb: NAME.cube.fits.gz #naming format base of the IFS files
+    path_out: outputs/ #path of the output files
+    pathc_out: outputs/ #path for the save data-cube
+    head_dat: 0 #header data extension, default 0
+    head_err: 1 #header error data extension, default 1
+    ext_name: externfunc #optional, name of the external module user defined function
+    ext_path: '' #optional, path of the external module file user defined function
+    ext_file: extern_file.py #optional, name of the externel module file user defined function
