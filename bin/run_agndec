@@ -163,9 +163,10 @@ def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_e
 @click.option('-r', '--rapos', type=str, default='', help='ra position in h:m:s.s, default None')
 @click.option('-d', '--decpos', type=str, default='', help='dec position in d:m:s.s, default None')
 @click.option('-y', '--path_out', type=str, default='', help='path of the output cubes')
-def plots(name,aperture,rapos,decpos,path_out):
+@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
+def plots(name,aperture,rapos,decpos,path_out,nameb):
     dir_out=path_out
-    plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos)
+    plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos,basename=nameb)
 
 @cli.command('runmap', short_help='Run the AGN decomposition on a 2Dmap')
 @click.option('-c', '--config_file', type=str, default='', help='name of the config file')
