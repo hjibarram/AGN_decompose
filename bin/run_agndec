@@ -125,7 +125,6 @@ cli.add_command(run)
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
 @click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
-@click.option('-u', '--cosmetic',is_flag=True, default=False, help='apply cosmetics')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
 @click.option('-t', '--pathc_out', type=str, default='', help='path for the save cube')
 @click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
@@ -133,13 +132,12 @@ cli.add_command(run)
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
-def model(config_file,name,path,nameb,cosmetic,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
+def model(config_file,name,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
     data=tol.read_config_file(config_file)
     if data:
         name=data['configmodel'][0]['name']
         path=data['configmodel'][0]['path']
         nameb=data['configmodel'][0]['nameb']
-        cosmetic=data['configmodel'][0]['cosmetic']
         path_out=data['configmodel'][0]['path_out']
         pathc_out=data['configmodel'][0]['pathc_out']
         head_dat=data['configmodel'][0]['head_dat']
@@ -150,7 +148,7 @@ def model(config_file,name,path,nameb,cosmetic,path_out,pathc_out,head_dat,head_
             ext_file=data['configmodel'][0]['ext_file']
         except:
             pass
-    dir_cube=path[0]
+    dir_cube=path
     dir_out=path_out
     dir_cube_m=pathc_out
     Usermods=[ext_name,ext_path,ext_file]
