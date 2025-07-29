@@ -127,7 +127,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sig=sig)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sigm=sig)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
@@ -276,7 +276,7 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
     map_dataE[np.where(map_dataE == 1)]=np.nan
     map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
          mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
-         prior_pathconf=prior_pathconf,logP=logp,stl=stl,smoth=smoth,sig=sig)
+         prior_pathconf=prior_pathconf,logP=logp,stl=stl,smoth=smoth,sigm=sig)
 
 if __name__ == "__main__":
     cli()
