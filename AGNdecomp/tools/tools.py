@@ -137,7 +137,7 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False,onlymodel=F
             else:
                 return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
-        print('No configuration line model file')
+        print('No configuration model file')
         sys.exit()
 
 def read_config_file(file):
@@ -149,7 +149,7 @@ def read_config_file(file):
                 print(exc)
         return data
     except:
-        print('Config File not found')
+        print('Config File '+file+' not found')
         return None
 
 def get_spectra(vect_pyqsfit,wave):
