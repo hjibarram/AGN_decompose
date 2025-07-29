@@ -600,11 +600,10 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=False):
     if stl:
         try:
             import MapLines.tools.tools as mptol
-            smoth=False
         except:
             print('No module MapLine installed. Please install it to use this function with pip install mapline')
             stl=False
