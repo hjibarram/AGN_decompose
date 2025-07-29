@@ -632,7 +632,7 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
             maxval=np.nanmax(np.log10(inMap)) 
         else:
             maxval=np.nanmax(inMap)
-        minval=-2
+        minval=-1.7
         mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
