@@ -628,7 +628,10 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     else:
         plt.show()
     if stl:
-        maxval=np.nanmax(inMap)
+        if logP:
+            maxval=np.nanmax(np.log10(inMap)) 
+        else:
+            maxval=np.nanmax(inMap)
         minval=-2
         mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
 
