@@ -7,7 +7,7 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,sp=0,logP=True,smoth=True,stl=False,sig=1.8):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,sp=0,logP=True,smoth=True,stl=False):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
