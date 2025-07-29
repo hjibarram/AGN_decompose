@@ -37,9 +37,10 @@ def cli():
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
 @click.option('-g', '--wavew1', type=float, default=4850.0 ,help='optional, initial wavelength for the test analysis, default 4850 AA')
 @click.option('-b', '--wavew2', type=float, default=5150.0 ,help='optional, final wavelength for the test analysis, default 5150 AA')
-
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2):
-    data=tol.read_config_file(config_file)
+@click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
+@click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path):
+    data=tol.read_config_file(configs_path+config_file)
     if data:
         name=data['config'][0]['name']
         path=data['config'][0]['path']
@@ -57,6 +58,11 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         mod_ind=data['config'][0]['mod_ind']
         mod_ind0=data['config'][0]['mod_ind0']
         logp=data['config'][0]['logp']
+        prior_config=data['config'][0]['prior_config']
+        try:
+            configs_path=data['config'][0]['configs_path']
+        except:
+            pass
         try:
             ext_name=data['config'][0]['ext_name']
             ext_path=data['config'][0]['ext_path']
@@ -67,9 +73,8 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             wavew1=data['config'][0]['wavew1']
             wavew2=data['config'][0]['wavew2']
         except:
-            pass
-    prior_config='priors_prop.yml'  
-    prior_pathconf=''    
+            pass  
+    prior_pathconf=configs_path    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
     dir_out=path_out
