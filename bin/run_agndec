@@ -208,7 +208,8 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
             ext_file=data['configmap'][0]['ext_file']
         except:
             pass
-    prior_config='priors_prop.yml'        
+    prior_config='priors_prop.yml'      
+    prior_pathconf=''  
     Usermods=[ext_name,ext_path,ext_file]
     dir_map=path
     dir_out=path_out
