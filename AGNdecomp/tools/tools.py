@@ -73,7 +73,7 @@ def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,d
     valsI['dyo']=dyo
     return valsI, Inpvalues
 
-def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
+def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False,onlymodel=False):
     """
     Reads the priors values from a YAML file.
     """
@@ -132,7 +132,10 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
         if onlynames:
             return Namevalues
         else:
-            return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
+            if onlymodel:
+                return model_name[mod_ind]
+            else:
+                return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
         print('No configuration line model file')
         sys.exit()
