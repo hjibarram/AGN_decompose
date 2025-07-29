@@ -51,7 +51,7 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
             print("Serial took {0:.1f} seconds".format(serial_time))
     return sampler, pos, prob, state
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,ncpu=10,valsI={}):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,smoth=True,ncpu=10,valsI={}):
     if plot_f:
         tim=True
     else:
@@ -106,7 +106,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         except:
             spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
-        tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl)
+        tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl,smoth=smoth)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
     return pars_max,psf,ft_num,ft_fit
