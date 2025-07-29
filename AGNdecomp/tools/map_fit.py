@@ -7,7 +7,7 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],mod_ind=0,mod_ind0=0,verbose=False,dir_o='',name='spectra',ncpu=10,logP=True,stl=False,smoth=True,sigm=1.8):
+def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],mod_ind=0,mod_ind0=0,verbose=False,dir_o='',name='spectra',ncpu=10,logP=True,stl=False,smoth=True,sigm=1.8,ofsval=-1):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
@@ -28,7 +28,7 @@ def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf=''
     wcs = WCS(hdr)
     wcs=wcs.celestial
     valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,0,str_p=False)
-    pars_max,psf1,Ft,FtF=evaluate_2dPSF(map,mapE,name=name,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,path_out=dir_o,logP=logP,stl=stl,smoth=smoth,sigm=sigm)
+    pars_max,psf1,Ft,FtF=evaluate_2dPSF(map,mapE,name=name,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,path_out=dir_o,logP=logP,stl=stl,smoth=smoth,sigm=sigm,ofsval=ofsval)
     sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
     val1=sky1.to_string('hmsdms')
     linet='FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
