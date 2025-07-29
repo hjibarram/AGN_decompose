@@ -23,6 +23,8 @@ config: # Run AGNdecomp
     ext_file: extern_file.py #optional, name of the externel module file user defined function
     wavew1: 4850.0 #optional, initial wavelength for the test analysis, default 4850 AA
     wavew2: 5150.0 #optional, final wavelength for the test analysis, default 5150 AA
+    prior_config: priors_prop.yml #line model configuration file
+    configs_path: '' #optional, path to the configuration files
 
 configmap: # Run AGNdecomp for a 2D map
   - run_type: FULL #Pipeline Type
