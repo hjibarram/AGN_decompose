@@ -107,7 +107,7 @@ def gaussian_flux_psf_modelF(pars):
     return psf, ft_fit
 
 def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_config='priors_prop.yaml',mod_ind0=0,prior_pathconf='',verbose=False,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
-    modelname=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind0,onlymodel=True)
+    modelname=tol.get_priorsvalues(prior_config,verbose=verbose,mod_ind=mod_ind0,onlymodel=True)
     psf_file='NAME_MODEL'.replace('NAME',name).replace('MODEL',modelname)
     valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
     keys=list(valsT.keys())
