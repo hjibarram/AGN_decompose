@@ -27,6 +27,7 @@ config: # Run AGNdecomp
     configs_path: '' #optional, path to the configuration files
     stl: False #optional, activate the STL ouput otput for the analysis, requires MapLine module
     smoth: True #optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module
+    sig: 1.8 #optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module
 
 configmap: # Run AGNdecomp for a 2D map
   - run_type: FULL #Pipeline Type
@@ -44,7 +45,11 @@ configmap: # Run AGNdecomp for a 2D map
     ext_name: externfunc #name of the external module user defined function
     ext_path: '' #path of the external module file user defined function
     ext_file: extern_file.py #name of the externel module file user defined function
+    prior_config: priors_prop.yml #line model configuration file
+    configs_path: '' #optional, path to the configuration files
     stl: False #optional, activate the STL ouput otput for the analysis, requires MapLine module
+    smoth: True #optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module
+    sig: 1.8 #optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module
 
 configmodel: # Run the rutine to obtain the cube models
   - run_type: FULL #Pipeline Type

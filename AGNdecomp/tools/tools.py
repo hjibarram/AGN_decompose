@@ -600,7 +600,7 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True,sig=1.8):
     if stl:
         try:
             import MapLines.tools.tools as mptol
@@ -628,7 +628,7 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     else:
         plt.show()
     if stl:
-        mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=1.8,smoth=smoth, pval=27, mval=0, border=True,logP=logP)    
+        mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP)    
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:

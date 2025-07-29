@@ -41,8 +41,9 @@ def cli():
 @click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
 @click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
 @click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-st', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth):
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth,sig):
     data=tol.read_config_file(configs_path+config_file)
     if data:
         name=data['config'][0]['name']
@@ -84,7 +85,11 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         try:
             smoth=data['config'][0]['smoth']
         except:
-            pass    
+            pass
+        try:
+            sig=data['config'][0]['sig']
+        except:
+            pass         
     prior_pathconf=configs_path    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
@@ -122,7 +127,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sig=sig)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
@@ -205,7 +210,11 @@ def plots(name,aperture,rapos,decpos,path_out,nameb):
 @click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
 @click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
-def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,stl):
+@click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-st', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
+@click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
+def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,stl,smoth,sig,prior_config,configs_path):
     data=tol.read_config_file(config_file)
     if data:
         name=data['configmap'][0]['name']
@@ -219,6 +228,11 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
         mod_ind=data['configmap'][0]['mod_ind']
         mod_ind0=data['configmap'][0]['mod_ind0']
         logp=data['configmap'][0]['logp']
+        prior_config=data['configmap'][0]['prior_config']
+        try:
+            configs_path=data['configmap'][0]['configs_path']
+        except:
+            pass
         try:
             ext_name=data['configmap'][0]['ext_name']
             ext_path=data['configmap'][0]['ext_path']
@@ -228,9 +242,17 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
         try:
             stl=data['configmap'][0]['stl']
         except:
-            pass     
-    prior_config='priors_prop.yml'      
-    prior_pathconf=''  
+            pass
+        try:
+            smoth=data['configmap'][0]['smoth']
+        except:
+            pass
+        try:
+            sig=data['configmap'][0]['sig']
+        except:
+            pass           
+    #prior_config='priors_prop.yml'      
+    prior_pathconf=configs_path 
     Usermods=[ext_name,ext_path,ext_file]
     dir_map=path
     dir_out=path_out
@@ -254,7 +276,7 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
     map_dataE[np.where(map_dataE == 1)]=np.nan
     map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
          mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
-         prior_pathconf=prior_pathconf,logP=logp,stl=stl)
+         prior_pathconf=prior_pathconf,logP=logp,stl=stl,smoth=smoth,sig=sig)
 
 if __name__ == "__main__":
     cli()
