@@ -601,12 +601,17 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
 
 
 def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False):
-    try:
-        import MapLines.tools.tools as mptol
-    except:
-        print('No module MapLine installed. Please install it to use this function with pip install mapline')
-        stl=False
+    if stl:
+        try:
+            import MapLines.tools.tools as mptol
+        except:
+            print('No module MapLine installed. Please install it to use this function with pip install mapline')
+            stl=False
     # Plot the original map, model AGN, model HST, residuals and corner plot
+    nameO='Original_NAME'.replace('NAME',name)
+    nameM='Model_NAME'.replace('NAME',name)
+    nameR1='Residual1_NAME'.replace('NAME',name)
+    nameR2='Residual2_NAME'.replace('NAME',name)
     cm=plt.cm.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
@@ -619,9 +624,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Original_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameO+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=1.8,smoth=True, pval=27, mval=0, border=True,logP=logP)    
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -634,9 +641,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Model_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameM+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(modelAGN, nameid=nameM, path_out=path_out,sig=1.8,smoth=True, pval=27, mval=0, border=True,logP=logP)    
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -648,9 +657,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Residual1_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameR1+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(inMap-modelAGN, nameid=nameR1, path_out=path_out,sig=1.8,smoth=True, pval=27, mval=0, border=True,logP=logP)    
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -662,9 +673,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Residual2_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameR2+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(inMap-modelAGN-modelHST, nameid=nameR2, path_out=path_out,sig=1.8,smoth=True, pval=27, mval=0, border=True,logP=logP) 
             
     labels = [*Labelvalues]
     fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
