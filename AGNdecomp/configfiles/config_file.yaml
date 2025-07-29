@@ -26,6 +26,7 @@ config: # Run AGNdecomp
     prior_config: priors_prop.yml #line model configuration file
     configs_path: '' #optional, path to the configuration files
     stl: False #optional, activate the STL ouput otput for the analysis, requires MapLine module
+    smoth: True #optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module
 
 configmap: # Run AGNdecomp for a 2D map
   - run_type: FULL #Pipeline Type

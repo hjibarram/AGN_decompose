@@ -40,8 +40,9 @@ def cli():
 @click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
 @click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
 @click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
+@click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl):
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth):
     data=tol.read_config_file(configs_path+config_file)
     if data:
         name=data['config'][0]['name']
@@ -78,6 +79,10 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             pass  
         try:
             stl=data['config'][0]['stl']
+        except:
+            pass
+        try:
+            smoth=data['config'][0]['smoth']
         except:
             pass    
     prior_pathconf=configs_path    
@@ -117,7 +122,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
