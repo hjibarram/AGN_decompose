@@ -136,21 +136,25 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,verbose=Fal
         #model=getattr(mod, Model_name + '_modelF')
     if verbose:
         pbar=tqdm(total=nz)
+    x_t=np.arange(ny)
+    y_t=np.arange(nx)
+    x_t=np.array([x_t]*nx)
+    y_t=np.array([y_t]*ny).T    
     for k in range(0, nz):
         pars={}
         for key in keys:
             pars[key]=valsT[key][k]
+        if extern == False:
+            valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
+        else:
+            try:
+                valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
+            except:
+                valt1=model(pars, x_t=x_t, y_t=y_t)
         for i in range(0, nx):
             for j in range(0, ny):
-                if extern == False:
-                    valt1=moffat_modelF(pars, x_t=j, y_t=i, host=False)
-                else:
-                    try:
-                        valt1=model(pars, x_t=j, y_t=i, host=False)
-                    except:
-                        valt1=model(pars, x_t=j, y_t=i)
                 if cube0[k,i,j] != 0:    
-                    cube_mod[k,i,j]=valt1
+                    cube_mod[k,i,j]=valt1[i,j]
         if verbose:
             pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
