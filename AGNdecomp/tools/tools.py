@@ -600,7 +600,12 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False):
+    try:
+        import MapLines.tools.tools as mptol
+    except:
+        print('No module MapLine installed. Please install it to use this function with pip install mapline')
+        stl=False
     # Plot the original map, model AGN, model HST, residuals and corner plot
     cm=plt.cm.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
