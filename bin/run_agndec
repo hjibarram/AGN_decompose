@@ -68,7 +68,8 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             wavew2=data['config'][0]['wavew2']
         except:
             pass
-    prior_config='priors_prop.yml'        
+    prior_config='priors_prop.yml'  
+    prior_pathconf=''    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
     dir_out=path_out
@@ -105,15 +106,18 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf)
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
-             hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods) 
+             hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
