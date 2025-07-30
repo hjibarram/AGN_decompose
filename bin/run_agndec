@@ -37,9 +37,14 @@ def cli():
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
 @click.option('-g', '--wavew1', type=float, default=4850.0 ,help='optional, initial wavelength for the test analysis, default 4850 AA')
 @click.option('-b', '--wavew2', type=float, default=5150.0 ,help='optional, final wavelength for the test analysis, default 5150 AA')
+@click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
+@click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
+@click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
+@click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-st', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2):
-    data=tol.read_config_file(config_file)
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth,sig):
+    data=tol.read_config_file(configs_path+config_file)
     if data:
         name=data['config'][0]['name']
         path=data['config'][0]['path']
@@ -57,6 +62,11 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         mod_ind=data['config'][0]['mod_ind']
         mod_ind0=data['config'][0]['mod_ind0']
         logp=data['config'][0]['logp']
+        prior_config=data['config'][0]['prior_config']
+        try:
+            configs_path=data['config'][0]['configs_path']
+        except:
+            pass
         try:
             ext_name=data['config'][0]['ext_name']
             ext_path=data['config'][0]['ext_path']
@@ -67,8 +77,24 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             wavew1=data['config'][0]['wavew1']
             wavew2=data['config'][0]['wavew2']
         except:
+            pass  
+        try:
+            stl=data['config'][0]['stl']
+        except:
             pass
-    prior_config='priors_prop.yml'        
+        try:
+            smoth=data['config'][0]['smoth']
+        except:
+            pass
+        try:
+            sig=data['config'][0]['sig']
+        except:
+            pass   
+    try:
+        ofsval=data['config'][0]['ofsval']
+    except:
+        ofsval=-1              
+    prior_pathconf=configs_path    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
     dir_out=path_out
@@ -105,15 +131,18 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sigm=sig,ofsval=ofsval)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+             sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf)
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
-             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config)
+             sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
-             hdri0=head_dat,hdri1=head_err,basename=nameb) 
+             hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,prior_config=prior_config,
+             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
@@ -121,18 +150,41 @@ cli.add_command(run)
 
 @cli.command('model', short_help='obtain the cube model')
 #@click.argument('filename', type=click.Path(exists=True))
+@click.option('-c', '--config_file', type=str, default='', help='name of the config file')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='flag for verbosity')
 @click.option('-p', '--path', type=str, multiple=True, help='path to the data cubes')
 @click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
-@click.option('-c', '--cosmetic',is_flag=True, default=False, help='apply cosmetics')
 @click.option('-y', '--path_out', type=str, default='outputs/', help='path of the output files')
 @click.option('-t', '--pathc_out', type=str, default='', help='path for the save cube')
-def model(name,path,nameb,cosmetic,path_out,pathc_out):
-    dir_cube=path[0]
+@click.option('-h', '--head_dat', type=int, default=0, help='header data extension, default 0')
+@click.option('-o', '--head_err', type=int, default=1, help='header error data extension, default 1')
+@click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
+@click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
+@click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
+def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
+    data=tol.read_config_file(config_file)
+    if data:
+        name=data['configmodel'][0]['name']
+        verbose=data['configmodel'][0]['verbose']
+        path=data['configmodel'][0]['path']
+        nameb=data['configmodel'][0]['nameb']
+        path_out=data['configmodel'][0]['path_out']
+        pathc_out=data['configmodel'][0]['pathc_out']
+        head_dat=data['configmodel'][0]['head_dat']
+        head_err=data['configmodel'][0]['head_err']
+        try:
+            ext_name=data['configmodel'][0]['ext_name']
+            ext_path=data['configmodel'][0]['ext_path']
+            ext_file=data['configmodel'][0]['ext_file']
+        except:
+            pass
+    dir_cube=path
     dir_out=path_out
     dir_cube_m=pathc_out
-    get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,cosmetic=cosmetic,vt='_sp1',corr=False)
-
+    Usermods=[ext_name,ext_path,ext_file]
+    get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,vt='_sp0',
+         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,verbose=verbose) 
     
 @cli.command('plots', short_help='obtain the final plots')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')
@@ -140,9 +192,10 @@ def model(name,path,nameb,cosmetic,path_out,pathc_out):
 @click.option('-r', '--rapos', type=str, default='', help='ra position in h:m:s.s, default None')
 @click.option('-d', '--decpos', type=str, default='', help='dec position in d:m:s.s, default None')
 @click.option('-y', '--path_out', type=str, default='', help='path of the output cubes')
-def plots(name,aperture,rapos,decpos,path_out):
+@click.option('-m', '--nameb', type=str, default='' ,help='naming format base of the IFS files')
+def plots(name,aperture,rapos,decpos,path_out,nameb):
     dir_out=path_out
-    plot_outputs(vt='_sp1',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos)
+    plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=aperture,ra=rapos,dec=decpos,basename=nameb)
 
 @cli.command('runmap', short_help='Run the AGN decomposition on a 2Dmap')
 @click.option('-c', '--config_file', type=str, default='', help='name of the config file')
@@ -160,7 +213,12 @@ def plots(name,aperture,rapos,decpos,path_out):
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='name of the externel module file user defined function')
-def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file):
+@click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
+@click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-st', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
+@click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
+def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,stl,smoth,sig,prior_config,configs_path):
     data=tol.read_config_file(config_file)
     if data:
         name=data['configmap'][0]['name']
@@ -174,13 +232,35 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
         mod_ind=data['configmap'][0]['mod_ind']
         mod_ind0=data['configmap'][0]['mod_ind0']
         logp=data['configmap'][0]['logp']
+        prior_config=data['configmap'][0]['prior_config']
+        try:
+            configs_path=data['configmap'][0]['configs_path']
+        except:
+            pass
         try:
             ext_name=data['configmap'][0]['ext_name']
             ext_path=data['configmap'][0]['ext_path']
             ext_file=data['configmap'][0]['ext_file']
         except:
             pass
-    prior_config='priors_prop.yml'        
+        try:
+            stl=data['configmap'][0]['stl']
+        except:
+            pass
+        try:
+            smoth=data['configmap'][0]['smoth']
+        except:
+            pass
+        try:
+            sig=data['configmap'][0]['sig']
+        except:
+            pass
+    try:
+        ofsval=data['configmap'][0]['ofsval']
+    except:
+        ofsval=-1             
+    #prior_config='priors_prop.yml'      
+    prior_pathconf=configs_path 
     Usermods=[ext_name,ext_path,ext_file]
     dir_map=path
     dir_out=path_out
@@ -203,7 +283,8 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
         map_dataE=map_data*0.1
     map_dataE[np.where(map_dataE == 1)]=np.nan
     map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
-         mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,logP=logp)
+         mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
+         prior_pathconf=prior_pathconf,logP=logp,stl=stl,smoth=smoth,sigm=sig,ofsval=ofsval)
 
 if __name__ == "__main__":
     cli()

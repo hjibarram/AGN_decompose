@@ -73,7 +73,7 @@ def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,d
     valsI['dyo']=dyo
     return valsI, Inpvalues
 
-def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
+def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False,onlymodel=False):
     """
     Reads the priors values from a YAML file.
     """
@@ -132,9 +132,12 @@ def get_priorsvalues(filename,mod_ind=0,verbose=True,onlynames=False):
         if onlynames:
             return Namevalues
         else:
-            return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
+            if onlymodel:
+                return model_name[mod_ind]
+            else:
+                return Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, model_name[mod_ind]
     else:
-        print('No configuration line model file')
+        print('No configuration model file')
         sys.exit()
 
 def read_config_file(file):
@@ -146,7 +149,7 @@ def read_config_file(file):
                 print(exc)
         return data
     except:
-        print('Config File not found')
+        print('Config File '+file+' not found')
         return None
 
 def get_spectra(vect_pyqsfit,wave):
@@ -231,12 +234,12 @@ def radi_ellip(dx,dy,e,tht):
     return b
 
 
-def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',convt=False,mask_val=[]):
+def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',convt=False,mask_val=[],Model_name='moffat'):
     if sp > 0:
         spt='_sp'+str(int(sp))
     else:
         spt=''
-    file=dir+name+'_moffat'+spt+tp+'.csv'
+    file=dir+name+'_'+Model_name+spt+tp+'.csv'
     f=open(file,'r')
     wave=[]
     val_v=[]
@@ -259,7 +262,7 @@ def get_somoth_val(name,dir='./',sigma=20,sp=10,val=10,out_p=False,deg=5,tp='',c
     else:    
         val_c,p=continum_fit(wave,val_vt,deg=deg)
     if out_p:
-        file2=dir+name+'_moffat'+spt+tp+'_smoth_'+str(int(np.round(sigma)))+'_val'+str(val)+'.csv'
+        file2=dir+name+'_'+Model_name+spt+tp+'_smoth_'+str(int(np.round(sigma)))+'_val'+str(val)+'.csv'
         f=open(file2,'w')
         f.write('WAVE , Val, Val_s, Val_c \n')
         for i in range(0, len(wave)):
@@ -597,8 +600,18 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
     return
 
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True,sig=1.8,ofsval=-1):
+    if stl:
+        try:
+            import MapLines.tools.tools as mptol
+        except:
+            print('No module MapLine installed. Please install it to use this function with pip install mapline')
+            stl=False
     # Plot the original map, model AGN, model HST, residuals and corner plot
+    nameO='Original_NAME'.replace('NAME',name)
+    nameM='Model_NAME'.replace('NAME',name)
+    nameR1='Residual1_NAME'.replace('NAME',name)
+    nameR2='Residual2_NAME'.replace('NAME',name)
     cm=plt.cm.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
@@ -611,9 +624,16 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Original_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameO+'.pdf')
     else:
         plt.show()
+    if stl:
+        if logP:
+            maxval=np.nanmax(np.log10(inMap)) 
+        else:
+            maxval=np.nanmax(inMap)
+        minval=-0.1#1.7
+        mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -626,9 +646,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Model_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameM+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(modelAGN, nameid=nameM, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -640,9 +662,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Residual1_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameR1+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(inMap-modelAGN, nameid=nameR1, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
             
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
@@ -654,9 +678,11 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     cbar.set_label(r"Relative Density")
     fig.tight_layout()
     if savefig:
-        fig.savefig(path_out+'Residual2_NAME.pdf'.replace('NAME',name))
+        fig.savefig(path_out+nameR2+'.pdf')
     else:
         plt.show()
+    if stl:
+        mptol.get_map_to_stl(inMap-modelAGN-modelHST, nameid=nameR2, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval) 
             
     labels = [*Labelvalues]
     fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
