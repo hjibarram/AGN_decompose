@@ -4,6 +4,7 @@ import importlib.util
 import numpy as np
 import AGNdecomp.tools.tools as tol
 from astropy.io import fits
+from tqdm import tqdm
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -105,18 +106,19 @@ def gaussian_flux_psf_modelF(pars):
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
-def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m='./',name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
-    if moffat:
-        psf_file='NAME_moffat'.replace('NAME',name)
-    else:
-        psf_file='NAME'.replace('NAME',name)
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_config='priors_prop.yml',mod_ind0=0,prior_pathconf='',verbose=False,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz'):
+    modelname=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind0,onlymodel=True)
+    psf_file='NAME_MODEL'.replace('NAME',name).replace('MODEL',modelname)
     valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
     keys=list(valsT.keys())
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
-    [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
+    try:
+        [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
+    except:
+        [cube1, hdr1]=[cube0, hdr0]
     try:
         [cube2, hdr2]=fits.getdata(dir_cube+cube_file, hdri2, header=True)
     except:
@@ -124,15 +126,38 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,dir_cube_m=
     nz,nx,ny=cube0.shape
     cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
+    try:
+        model=get_extern_function(Usermods=Usermods,verbose=verbose)
+        extern=True
+    except:
+        extern=False
+        #model=getattr(mod, Model_name + '_modelF')
+    if verbose:
+        pbar=tqdm(total=nz)
+    x_t=np.arange(ny)
+    y_t=np.arange(nx)
+    x_t=np.array([x_t]*nx)
+    y_t=np.array([y_t]*ny).T    
     for k in range(0, nz):
-        pars={}
-        for key in keys:
-            pars[key]=valsT[key][k]
-        for i in range(0, nx):
-            for j in range(0, ny):
-                valt1=moffat_modelF(pars, x_t=j, y_t=i)
-                if cube0[k,i,j] != 0:    
-                    cube_mod[k,i,j]=valt1
+        try:
+            pars={}
+            for key in keys:
+                pars[key]=valsT[key][k]
+            if extern == False:
+                valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
+            else:
+                try:
+                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
+                except:
+                    valt1=model(pars, x_t=x_t, y_t=y_t)
+            for i in range(0, nx):
+                for j in range(0, ny):
+                    if cube0[k,i,j] != 0:    
+                        cube_mod[k,i,j]=valt1[i,j]
+        except:
+            pass
+        if verbose:
+            pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
     h=h1.header
     keys=list(hdr0.keys())
