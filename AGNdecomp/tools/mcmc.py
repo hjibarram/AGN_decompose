@@ -58,6 +58,8 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
         tim=False
     if psfmod:
         datapsf=np.copy(psfmodData)
+    else:
+        datapsf=None
     nx,ny=pf_map.shape
     if autocent:
         if sig == 0:
