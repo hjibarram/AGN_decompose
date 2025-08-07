@@ -51,11 +51,13 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
             print("Serial took {0:.1f} seconds".format(serial_time))
     return sampler, pos, prob, state
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,smoth=True,sigm=1.8,ofsval=-1,ncpu=10,valsI={}):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,smoth=True,sigm=1.8,ofsval=-1,ncpu=10,valsI={},psfmod=False,psfmodData=None):
     if plot_f:
         tim=True
     else:
         tim=False
+    if psfmod:
+        datapsf=np.copy(psfmodData)
     nx,ny=pf_map.shape
     if autocent:
         if sig == 0:
@@ -76,7 +78,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     valsI['xo']=valsI['xo']-min_in[1]
     valsI['yo']=valsI['yo']-min_in[0]
     #print("Input values: ",valsI)
-    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods)
+    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods, datapsf)
     nwalkers=240
     niter=1024
     initial = np.array([*Inpvalues])
@@ -101,10 +103,17 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     psf,ft_fit=flux_psf(pars_max)    
     if plot_f:
         try:
-            spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False)
-            spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False)
+            if psfmod:
+                spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False, datapsf=datapsf)
+                spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False, datapsf=datapsf)
+            else:
+                spec_agn=model(pars_max, x_t=x_t, y_t=y_t, host=False)
+                spec_hst=model(pars_max, x_t=x_t, y_t=y_t, agn=False)
         except:
-            spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
+            if psfmod:
+                spec_agn=model(pars_max, x_t=x_t, y_t=y_t, datapsf=datapsf)
+            else:
+                spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
         tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl,smoth=smoth,sig=sigm,ofsval=ofsval)
     pars_max['xo']=pars_max['xo']+min_in[1]

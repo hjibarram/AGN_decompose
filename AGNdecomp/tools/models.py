@@ -43,7 +43,7 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
             print('Error loading external function:', e)
         sys.exit()
 
-def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True):
+def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True, datapsf=None):
     pars={}
     keys=list(valsI.keys())
     for key in keys:
@@ -55,8 +55,11 @@ def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, hos
     elif Namemodel == 'gaussian':
         spec_t=gaussian_modelF(pars, x_t=x_t, y_t=y_t)
     elif Namemodel == Usermods[0]:
-        extern_func=get_extern_function(Usermods=Usermods,verbose=False) 
-        spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
+        extern_func=get_extern_function(Usermods=Usermods,verbose=False)
+        if datapsf is not None:
+            spec_t=extern_func(pars, x_t=x_t, y_t=y_t, datapsf=datapsf)
+        else:
+            spec_t=extern_func(pars, x_t=x_t, y_t=y_t)
     else:
         print('Error, the model '+Namemodel+' is not implemented, available models are moffat gaussian or '+Usermods[0])
         sys.exit()

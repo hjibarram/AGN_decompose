@@ -41,9 +41,12 @@ def cli():
 @click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
 @click.option('-i', '--stl', is_flag=True, default=False, help='optional, activate the STL ouput otput for the analysis, requires MapLine module')
 @click.option('-st','--smoth', is_flag=True, default=True, help='optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module')
-@click.option('-st', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-at', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
+@click.option('-at', '--psfmod', is_flag=True, default=False, help='optional, key to activate an external PSF model')
+@click.option('-mt', '--psfmodpath', type=str, default='', help='optional, path to the PSF model file')
+@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file')
 
-def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth,sig):
+def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth,sig,psfmod,psfmodpath,psfmodname):
     data=tol.read_config_file(configs_path+config_file)
     if data:
         name=data['config'][0]['name']
@@ -89,11 +92,26 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         try:
             sig=data['config'][0]['sig']
         except:
-            pass   
+            pass
+        try:
+            psfmod=data['config'][0]['psfmod']
+            psfmodpath=data['config'][0]['psfmodpath']
+            psfmodname=data['config'][0]['psfmodname']
+        except:
+            pass       
     try:
         ofsval=data['config'][0]['ofsval']
     except:
-        ofsval=-1              
+        ofsval=-1 
+    if psfmod:   
+        try:
+            psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
+        except:
+            print('Warning, PSF model file not found, discarding the PSF model decomposition')
+            psfmodData=None
+            psfmod=False
+    else:
+        psfmodData=None
     prior_pathconf=configs_path    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
@@ -131,15 +149,16 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if (pipeline == False) or local:
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
-             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sigm=sig,ofsval=ofsval)
+             Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sigm=sig,
+             ofsval=ofsval,psfmod=psfmod,psfmodData=psfmodData)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
              sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind0,Usermods=Usermods,prior_config=prior_config,
-             prior_pathconf=prior_pathconf)
+             prior_pathconf=prior_pathconf,psfmod=psfmod,psfmodData=psfmodData)
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
              sp=0,str_p=True,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
-             prior_pathconf=prior_pathconf)
+             prior_pathconf=prior_pathconf,psfmod=psfmod,psfmodData=psfmodData)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
              hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,prior_config=prior_config,
              prior_pathconf=prior_pathconf,mod_ind0=mod_ind0) 
