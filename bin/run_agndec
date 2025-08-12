@@ -161,7 +161,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
              prior_pathconf=prior_pathconf,psfmod=psfmod,psfmodData=psfmodData)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
              hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,prior_config=prior_config,
-             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0) 
+             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0,psfmod=psfmod,psfmodData=psfmodData) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
@@ -181,7 +181,12 @@ cli.add_command(run)
 @click.option('-j', '--ext_name', type=str, default='externfunc' ,help='optional, name of the external module user defined function')
 @click.option('-k', '--ext_path', type=str, default='' ,help='optional, path of the external module file user defined function')
 @click.option('-l', '--ext_file', type=str, default='extern_file.py' ,help='optional, name of the externel module file user defined function')
-def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file):
+@click.option('-e', '--prior_config', type=str, default='priors_prop.yml', help='line model configuration file')
+@click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
+@click.option('-at', '--psfmod', is_flag=True, default=False, help='optional, key to activate an external PSF model')
+@click.option('-mt', '--psfmodpath', type=str, default='', help='optional, path to the PSF model file')
+@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file')
+def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file,prior_config,configs_path,psfmod,psfmodpath,psfmodname):
     data=tol.read_config_file(config_file)
     if data:
         name=data['configmodel'][0]['name']
@@ -198,12 +203,34 @@ def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_e
             ext_file=data['configmodel'][0]['ext_file']
         except:
             pass
+        prior_config=data['config'][0]['prior_config']
+        try:
+            configs_path=data['config'][0]['configs_path']
+        except:
+            pass
+        try:
+            psfmod=data['config'][0]['psfmod']
+            psfmodpath=data['config'][0]['psfmodpath']
+            psfmodname=data['config'][0]['psfmodname']
+        except:
+            pass     
+    if psfmod:   
+        try:
+            psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
+        except:
+            print('Warning, PSF model file not found, discarding the PSF model decomposition')
+            psfmodData=None
+            psfmod=False
+    else:
+        psfmodData=None         
+    prior_pathconf=configs_path        
     dir_cube=path
     dir_out=path_out
     dir_cube_m=pathc_out
     Usermods=[ext_name,ext_path,ext_file]
     get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_cube_m,name=name,sig=3.0,vt='_sp0',
-         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,verbose=verbose) 
+         hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,verbose=verbose,
+         prior_config=prior_config,prior_pathconf=prior_pathconf,psfmod=psfmod,psfmodData=psfmodData) 
     
 @cli.command('plots', short_help='obtain the final plots')
 @click.option('-n', '--name', type=str, help='name of the IFS cube')

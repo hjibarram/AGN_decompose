@@ -28,6 +28,9 @@ config: # Run AGNdecomp
     stl: False #optional, activate the STL ouput otput for the analysis, requires MapLine module
     smoth: True #optional, activate the smothing option for the STL ouput otputs for the analysis, requires MapLine module
     sig: 1.8 #optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module
+    psfmod: False #optional, key to activate an external PSF model
+    psfmodpath: '' #optional, path to the PSF model file
+    psfmodname: PSFmod #optional, name of the PSF model file
 
 configmap: # Run AGNdecomp for a 2D map
   - run_type: FULL #Pipeline Type
@@ -64,3 +67,8 @@ configmodel: # Run the rutine to obtain the cube models
     ext_name: externfunc #optional, name of the external module user defined function
     ext_path: '' #optional, path of the external module file user defined function
     ext_file: extern_file.py #optional, name of the externel module file user defined function
+    prior_config: priors_prop.yml #line model configuration file
+    configs_path: '' #optional, path to the configuration files
+    psfmod: False #optional, key to activate an external PSF model
+    psfmodpath: '' #optional, path to the PSF model file
+    psfmodname: PSFmod #optional, name of the PSF model file
