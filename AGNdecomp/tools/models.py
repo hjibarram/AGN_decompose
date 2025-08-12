@@ -149,14 +149,13 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
             if extern == False:
                 valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
             else:
-                if True:
-                #try:
-                    if psfmod:
-                        valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=psfmodData)
-                    else:
+                if psfmod:
+                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=psfmodData)
+                else:
+                    try:
                         valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
-                #except:
-                #    valt1=model(pars, x_t=x_t, y_t=y_t)
+                    except:
+                        valt1=model(pars, x_t=x_t, y_t=y_t)
             for i in range(0, nx):
                 for j in range(0, ny):
                     if cube0[k,i,j] != 0:    
