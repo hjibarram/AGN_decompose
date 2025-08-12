@@ -203,15 +203,15 @@ def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_e
             ext_file=data['configmodel'][0]['ext_file']
         except:
             pass
-        prior_config=data['config'][0]['prior_config']
+        prior_config=data['configmodel'][0]['prior_config']
         try:
-            configs_path=data['config'][0]['configs_path']
+            configs_path=data['configmodel'][0]['configs_path']
         except:
             pass
         try:
-            psfmod=data['config'][0]['psfmod']
-            psfmodpath=data['config'][0]['psfmodpath']
-            psfmodname=data['config'][0]['psfmodname']
+            psfmod=data['configmodel'][0]['psfmod']
+            psfmodpath=data['configmodel'][0]['psfmodpath']
+            psfmodname=data['configmodel'][0]['psfmodname']
         except:
             pass     
     if psfmod:   
