@@ -179,7 +179,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     
 
     [data1,hdr1]=fits.getdata(path+outf1, hd, header=True)
-    [data2,hdr2]=fits.getdata(path+outf1, hd, header=True)
+    [data2,hdr2]=fits.getdata(path+outf2, hd, header=True)
     data0=data1+data2
     try:
         dx=np.sqrt((hdr1['CD1_1'])**2.0+(hdr1['CD1_2'])**2.0)*3600.0
@@ -215,8 +215,8 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
         val21=data1[indx2,:,:]*scalef
         val22=data2[indx2,:,:]*scalef
         map_val0=map_val0/val20
-        map_val1=map_val0/val21
-        map_val2=map_val0/val22
+        map_val1=map_val1/val21
+        map_val2=map_val2/val22
     if zerofil:
         if valz == None:
             map_val0[np.where(map_val0 == 0)]=np.nan
