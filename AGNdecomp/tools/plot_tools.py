@@ -234,11 +234,11 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
         map_val2=np.log10(map_val2)
 
     if len(maxmin) > 0:
-            mav=maxmin[1]
-            miv=maxmin[0]
-        else:
-            mav=np.nammax(map_val0)*1.1
-            miv=0.001
+        mav=maxmin[1]
+        miv=maxmin[0]
+    else:
+        mav=np.nammax(map_val0)*1.1
+        miv=0.001
 
     
     facx=0.99
