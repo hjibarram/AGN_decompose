@@ -156,7 +156,7 @@ def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='
 
     return    
 
-def get_plotmap(plt,flux,vmax,vmin,pix=0.5,tit='flux',lab='[10^{-16}erg/s/cm^2/arcsec^2]',clb=False,logt=True):
+def get_plotmap(plt,flux,vmax,vmin,pix=0.5,tit='flux',lab='[10^{-16}erg/s/cm^2/arcsec^2]',clb=False,logt=True,alpha=0.6):
     nx,ny=flux.shape
     max_f=vmax-(vmax-vmin)*0.05
     min_f=vmin+(vmax-vmin)*0.05
@@ -164,16 +164,16 @@ def get_plotmap(plt,flux,vmax,vmin,pix=0.5,tit='flux',lab='[10^{-16}erg/s/cm^2/a
     plt.xlabel(r'$\Delta \alpha\ [arcsec]$',fontsize=22)
     plt.ylabel(r'$\Delta \delta\ [arcsec]$',fontsize=22)
     if logt:#,vmax=vmax,vmin=vmin
-        ict=plt.imshow(flux,cmap=cm,origin='lower',extent=[-ny*pix/2.,ny*pix/2.,-nx*pix/2.,nx*pix/2.],alpha=0.6,aspect='auto',norm=colors.SymLogNorm(vmax=vmax,vmin=vmin,linthresh=10**-2))#,norm=colors.SymLogNorm(10**-2))#norm=LogNorm(0.2,7.0))#colors.SymLogNorm(10**-1))#50  norm=colors.SymLogNorm(10**-0.1)
+        ict=plt.imshow(flux,cmap=cm,origin='lower',extent=[-ny*pix/2.,ny*pix/2.,-nx*pix/2.,nx*pix/2.],alpha=alpha,aspect='auto',norm=colors.SymLogNorm(vmax=vmax,vmin=vmin,linthresh=10**-2))#,norm=colors.SymLogNorm(10**-2))#norm=LogNorm(0.2,7.0))#colors.SymLogNorm(10**-1))#50  norm=colors.SymLogNorm(10**-0.1)
     else:
-        ict=plt.imshow(flux,cmap=cm,origin='lower',extent=[-ny*pix/2.,ny*pix/2.,-nx*pix/2.,nx*pix/2.],vmax=vmax,vmin=vmin,alpha=0.6,aspect='auto')#norm=LogNorm(0.2,7.0))#colors.SymLogNorm(10**-1))#50  norm=colors.SymLogNorm(10**-0.1)
+        ict=plt.imshow(flux,cmap=cm,origin='lower',extent=[-ny*pix/2.,ny*pix/2.,-nx*pix/2.,nx*pix/2.],vmax=vmax,vmin=vmin,alpha=alpha,aspect='auto')#norm=LogNorm(0.2,7.0))#colors.SymLogNorm(10**-1))#50  norm=colors.SymLogNorm(10**-0.1)
     plt.xlim(-ny*pix/2,ny*pix/2)
     plt.ylim(-nx*pix/2,nx*pix/2)
     if clb:
         return ict
 
 
-def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['Input','Model','Residual'],fontsizest=20,colorst='black',fontsize=20,basefigname='maps_NAME',sumc=False,scale=0,sb=False,fwcs=False,logt=False,logs=False,zerofil=False,valz=None,maxmin=[],vt='',name='Name',basename='NAME.cube.fits.gz',path='',hd=0,indx=0,indx2=None,scalef=1.0,facs=1,av=[0.15,0.2,0.12,0.03]):
+def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['Input','Model','Residual'],alpha=0.6,fontsizest=20,colorst='black',fontsize=20,basefigname='maps_NAME',sumc=False,scale=0,sb=False,fwcs=False,logt=False,logs=False,zerofil=False,valz=None,maxmin=[],vt='',name='Name',basename='NAME.cube.fits.gz',path='',hd=0,indx=0,indx2=None,scalef=1.0,facs=1,av=[0.15,0.2,0.12,0.03]):
     outf1='Model_'+basename.replace('NAME',name+vt)
     outf2='Residual_'+basename.replace('NAME',name+vt)
     
@@ -266,7 +266,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['
     pro2=[0,0,0]
     ax = fig.add_axes([dx1+pro1[0]*dx, dy1+pro2[0]*dy, dx, dy])
     flux=map_val0
-    get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,logt=logt)
+    get_plotmap(plt,flux,vmax,vmin,pix=pix,tit='flux',lab=lab,logt=logt,alpha=alpha)
     plt.text(0.05, 0.96, labelst[0], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.yaxis.set_major_locator(plt.MaxNLocator(5))
@@ -274,7 +274,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['
 
     ax = fig.add_axes([dx1+pro1[1]*dx, dy1+pro2[1]*dy, dx, dy])
     flux=map_val1
-    get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,logt=logt)
+    get_plotmap(plt,flux,vmax,vmin,pix=pix,tit='flux',lab=lab,logt=logt,alpha=alpha)
     plt.text(0.05, 0.96, labelst[1], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.set_ylabel('').set_visible(False)
@@ -284,7 +284,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['
 
     ax = fig.add_axes([dx1+pro1[2]*dx, dy1+pro2[2]*dy, dx, dy])
     flux=map_val2
-    sc=get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,clb=True,logt=logt)
+    sc=get_plotmap(plt,flux,vmax,vmin,pix=pix,tit='flux',lab=lab,clb=True,logt=logt,alpha=alpha)
     plt.text(0.05, 0.96, labelst[2], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.set_ylabel('').set_visible(False)
