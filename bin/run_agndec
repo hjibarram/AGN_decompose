@@ -7,7 +7,7 @@ from astropy.io import fits
 from AGNdecomp.tools.prof_fit import prof_ana
 from AGNdecomp.tools.map_fit import map_ana
 from AGNdecomp.tools.models import get_model
-from AGNdecomp.tools.tools import plot_outputs
+from AGNdecomp.tools.plot_tools import plot_outputs
 import AGNdecomp.tools.tools as tol
 
 @click.group('run_agndec', short_help='CLI for the AGN spectra decomposition')

@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import corner 
+from astropy.io import fits
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import AGNdecomp.tools.tools as tol
