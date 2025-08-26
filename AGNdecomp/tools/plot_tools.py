@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import matplotlib.pyplot as plt
+from matplotlib import colors
 import numpy as np
 import corner 
 from astropy.io import fits
