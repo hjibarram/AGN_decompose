@@ -177,8 +177,8 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     outf2='Residual_'+basename.replace('NAME',name+vt)
     
 
-    [data1,hdr1]=fits.getdata(path+'/'+outf1, hd, header=True)
-    [data2,hdr2]=fits.getdata(path+'/'+outf1, hd, header=True)
+    [data1,hdr1]=fits.getdata(path+outf1, hd, header=True)
+    [data2,hdr2]=fits.getdata(path+outf1, hd, header=True)
     data0=data1+data2
     try:
         dx=np.sqrt((hdr1['CD1_1'])**2.0+(hdr1['CD1_2'])**2.0)*3600.0
@@ -235,11 +235,11 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
         map_val2=np.log10(map_val2)
 
     if len(maxmin) > 0:
-        mav=maxmin[1]
-        miv=maxmin[0]
+        vmax=maxmin[1]
+        vmin=maxmin[0]
     else:
-        mav=np.nammax(map_val0)*1.1
-        miv=0.001
+        vmax=np.nammax(map_val0)*1.1
+        vmin=0.001
 
     
     facx=0.99
