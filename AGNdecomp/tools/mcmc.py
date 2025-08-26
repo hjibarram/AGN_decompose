@@ -3,6 +3,7 @@ import numpy as np
 import emcee
 from astropy.convolution import convolve, Gaussian2DKernel
 import AGNdecomp.tools.tools as tol
+import AGNdecomp.tools.plot_tools as tolpl
 import AGNdecomp.tools.models as mod
 from AGNdecomp.tools.priors import lnprob_multmodel
 
@@ -117,7 +118,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
             else:
                 spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
-        tol.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl,smoth=smoth,sig=sigm,ofsval=ofsval)
+        tolpl.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl,smoth=smoth,sig=sigm,ofsval=ofsval)
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
     return pars_max,psf,ft_num,ft_fit

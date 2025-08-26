@@ -4,8 +4,7 @@ import numpy as np
 from scipy.special import gamma, gammaincinv, gammainc
 from scipy.ndimage.filters import gaussian_filter1d as filt1d
 import os.path as ptt
-import yaml
-import corner  
+import yaml 
 from astropy.io import fits
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import ICRS, Galactic, FK4, FK5
@@ -13,8 +12,6 @@ from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
 from astropy.wcs import WCS
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from tqdm import tqdm
 
 def read_cvsfile(name,path='',hid='wave'):
@@ -535,156 +532,3 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
         single_T=conv(single_T,ke=sig)
     
     return wave_f,single_T,single_ET
-
-def plot_outputs(vt='',dir_cube_m='',name='Name',rad=1.5,smoth=False,ra='',dec='',basename='NAME.cube.fits.gz'):
-    outf1='Model_'+basename.replace('NAME',name+vt)
-    outf2='Residual_'+basename.replace('NAME',name+vt)
-    wave1,spec_mod,spec_modE=extract_spec(outf1,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
-    wave2,spec_res,spec_resE=extract_spec(outf2,dir_cube_m=dir_cube_m,rad=rad,sig=10,smoth=smoth,fErrr=True,ra=ra,dec=dec)
-    spec0=spec_res+spec_mod
-
-    
-    
-    fig = make_subplots(rows=1, cols=1, row_heights=(3,))
-    
-    fig.add_trace(go.Scatter( x = wave1, y = spec0 ,    mode="lines", line=go.scatter.Line(color="white", width=1), name='Input Spectra', legendrank=1, showlegend=True), row=1, col=1)
-    fig.add_trace(go.Scatter( x = wave1, y = spec_resE, mode="lines", line=go.scatter.Line(color="#FE00CE"  , width=1), name='Noise Spectra',     legendrank=2, showlegend=True), row=1, col=1)
-    fig.add_trace(go.Scatter( x = wave1, y = spec_res,  mode="lines", line=go.scatter.Line(color="lime", width=1), name='Host Galaxy Spectra',    legendrank=3, showlegend=True), row=1, col=1)
-    fig.add_trace(go.Scatter( x = wave2, y = spec_mod,  mode="lines", line=go.scatter.Line(color="red", width=1), name='AGN Spectra',legendrank=4, showlegend=True), row=1, col=1)
-        
-        
-    #fig.add_hline(y=0.0, line=dict(color="gray", width=2), row=1, col=1)  
-    #fig.add_trace(go.Scatter( x = wave1, y = spec_res, mode="lines", line=go.scatter.Line(color="white"  , width=1), name="Residuals", showlegend=False), row=2, col=1)
-    if ra != '':
-        post=' at '+ra+' '+dec
-    else:
-        post=''
-    fig.update_layout(
-        autosize=False,
-        width=1500,
-        height=600,
-        margin=dict(
-            l=100,
-            r=100,
-            b=100,
-            t=100,
-            pad=1
-        ),
-        title= name+' central '+str(rad)+' arcsec aperture'+post,
-        font_family="Times New Roman",
-        font_size=16,
-        font_color="white",
-        legend_title_text="Components",
-        legend_bgcolor="black",
-        paper_bgcolor="black",
-        plot_bgcolor="black",
-    )
-    fig.update_xaxes(title=r"$\Large\rm{Wavelength}\;\left[Å\right]$", linewidth=0.5, linecolor="gray", mirror=True, 
-                     gridwidth=1, gridcolor="#222A2A", zerolinewidth=2, zerolinecolor="#222A2A",
-                     row=1, col=1)
-    fig.update_yaxes(title=r"$\Large\rm{Density}\;{Flux}\;\left[10^{16}\rm{erg}\;\rm{cm}^{-2}\;\rm{s}^{-1}\;Å^{-1}\right]$", linewidth=0.5, linecolor="gray",  mirror=True,
-                     gridwidth=1, gridcolor="#222A2A", zerolinewidth=2, zerolinecolor="#222A2A",
-                     row=1, col=1)
-        
-    fig.update_xaxes(matches='x')
-    # fig.update_yaxes(matches='y')
-    # fig.show()
-    
-    if ra != '':
-        file_f=dir_cube_m+'NAME_R_ra_dec_bestfit.html'.replace('NAME',name).replace('R',str(rad)).replace('ra',ra).replace('dec',dec)
-    else:
-        file_f=dir_cube_m+'NAME_R_bestfit.html'.replace('NAME',name).replace('R',str(rad))
-    fig.write_html(file_f,include_mathjax="cdn")
-    fig.write_image(file_f.replace('.html','.pdf'))
-
-    return
-
-
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True,sig=1.8,ofsval=-1):
-    if stl:
-        try:
-            import MapLines.tools.tools as mptol
-        except:
-            print('No module MapLine installed. Please install it to use this function with pip install mapline')
-            stl=False
-    # Plot the original map, model AGN, model HST, residuals and corner plot
-    nameO='Original_NAME'.replace('NAME',name)
-    nameM='Model_NAME'.replace('NAME',name)
-    nameR1='Residual1_NAME'.replace('NAME',name)
-    nameR2='Residual2_NAME'.replace('NAME',name)
-    cm=plt.cm.get_cmap('jet')
-    lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
-    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    if logP:
-        ict=plt.imshow(np.log10(inMap),cmap=cm) 
-    else:
-        ict=plt.imshow(inMap,cmap=cm) 
-    cbar=plt.colorbar(ict)
-    ics=plt.contour(inMap,lev,colors='k',linewidths=1)            
-    cbar.set_label(r"Relative Density")
-    fig.tight_layout()
-    if savefig:
-        fig.savefig(path_out+nameO+'.pdf')
-    else:
-        plt.show()
-    if stl:
-        if logP:
-            maxval=np.nanmax(np.log10(inMap)) 
-        else:
-            maxval=np.nanmax(inMap)
-        minval=-0.1#1.7
-        mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-
-    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    if logP:
-        ict=plt.imshow(np.log10(modelAGN),cmap=cm,alpha=0.6) 
-    else:
-        ict=plt.imshow(modelAGN,cmap=cm,alpha=0.6) 
-    cbar=plt.colorbar(ict)
-    ics=plt.contour(modelAGN,lev,colors='k',linewidths=1)
-    ics=plt.contour(inMap,lev,colors='red',linewidths=1)            
-    cbar.set_label(r"Relative Density")
-    fig.tight_layout()
-    if savefig:
-        fig.savefig(path_out+nameM+'.pdf')
-    else:
-        plt.show()
-    if stl:
-        mptol.get_map_to_stl(modelAGN, nameid=nameM, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-            
-    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    if logP:
-        ict=plt.imshow(np.log10(inMap-modelAGN),cmap=cm)
-    else:
-        ict=plt.imshow((inMap-modelAGN),cmap=cm)
-    cbar=plt.colorbar(ict)
-    ics=plt.contour((inMap-modelAGN),lev,colors='k',linewidths=1)
-    cbar.set_label(r"Relative Density")
-    fig.tight_layout()
-    if savefig:
-        fig.savefig(path_out+nameR1+'.pdf')
-    else:
-        plt.show()
-    if stl:
-        mptol.get_map_to_stl(inMap-modelAGN, nameid=nameR1, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-            
-    fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
-    if logP:
-        ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
-    else:
-        ict=plt.imshow((inMap-modelAGN-modelHST),cmap=cm) 
-    cbar=plt.colorbar(ict)
-    ics=plt.contour((inMap-modelAGN-modelHST),lev,colors='k',linewidths=1)
-    cbar.set_label(r"Relative Density")
-    fig.tight_layout()
-    if savefig:
-        fig.savefig(path_out+nameR2+'.pdf')
-    else:
-        plt.show()
-    if stl:
-        mptol.get_map_to_stl(inMap-modelAGN-modelHST, nameid=nameR2, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval) 
-            
-    labels = [*Labelvalues]
-    fig = corner.corner(samples,show_titles=True,labels=labels,plot_datapoints=True,quantiles=[0.16, 0.5, 0.84],title_kwargs={"fontsize": 16},label_kwargs={"fontsize": 16})
-    fig.set_size_inches(15.8*len(labels)/8.0, 15.8*len(labels)/8.0)
-    fig.savefig(path_out+'corners_NAME.pdf'.replace('NAME',name))    
