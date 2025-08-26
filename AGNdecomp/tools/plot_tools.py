@@ -283,7 +283,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     ax.xaxis.set_major_locator(plt.MaxNLocator(5))
 
     ax = fig.add_axes([dx1+pro1[2]*dx, dy1+pro2[2]*dy, dx, dy])
-    flux=map_val3
+    flux=map_val2
     sc=get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,clb=True,logt=logs)
     plt.text(0.05, 0.96, r'Residual', fontsize=20, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
