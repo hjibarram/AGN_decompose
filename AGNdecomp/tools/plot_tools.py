@@ -297,4 +297,5 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     cbar.set_label(r'$'+lab+'$',fontsize=20)
 
     plt.savefig(fig_path+basefigname.replace('NAME',name)+'.pdf')
+    plt.show()
     plt.close()
