@@ -173,7 +173,7 @@ def get_plotmap(plt,flux,vmax,vmin,pix=0.5,tit='flux',lab='[10^{-16}erg/s/cm^2/a
         return ict
 
 
-def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefigname='maps_NAME',sumc=False,scale=0,sb=False,fwcs=False,logt=False,logs=False,zerofil=False,valz=None,maxmin=[],vt='',name='Name',basename='NAME.cube.fits.gz',path='',hd=0,indx=0,indx2=None,scalef=1.0,facs=1,av=[0.15,0.2,0.12,0.03]):
+def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['Input','Model','Residual'],fontsizest=20,colorst='black',fontsize=20,basefigname='maps_NAME',sumc=False,scale=0,sb=False,fwcs=False,logt=False,logs=False,zerofil=False,valz=None,maxmin=[],vt='',name='Name',basename='NAME.cube.fits.gz',path='',hd=0,indx=0,indx2=None,scalef=1.0,facs=1,av=[0.15,0.2,0.12,0.03]):
     outf1='Model_'+basename.replace('NAME',name+vt)
     outf2='Residual_'+basename.replace('NAME',name+vt)
     
@@ -267,7 +267,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     ax = fig.add_axes([dx1+pro1[0]*dx, dy1+pro2[0]*dy, dx, dy])
     flux=map_val0
     get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,logt=logt)
-    plt.text(0.05, 0.96, r'Input', fontsize=20, va='center',transform=ax.transAxes)
+    plt.text(0.05, 0.96, labelst[0], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.yaxis.set_major_locator(plt.MaxNLocator(5))
     ax.xaxis.set_major_locator(plt.MaxNLocator(5))
@@ -275,7 +275,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     ax = fig.add_axes([dx1+pro1[1]*dx, dy1+pro2[1]*dy, dx, dy])
     flux=map_val1
     get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,logt=logt)
-    plt.text(0.05, 0.96, r'AGN Model', fontsize=20, va='center',transform=ax.transAxes)
+    plt.text(0.05, 0.96, labelst[1], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.set_ylabel('').set_visible(False)
     plt.setp( ax.get_yticklabels(), visible=False)
@@ -285,7 +285,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     ax = fig.add_axes([dx1+pro1[2]*dx, dy1+pro2[2]*dy, dx, dy])
     flux=map_val2
     sc=get_plotmap(plt,flux,vmax,vmin,pix=0.499,tit='flux',lab=lab,clb=True,logt=logt)
-    plt.text(0.05, 0.96, r'Residual', fontsize=20, va='center',transform=ax.transAxes)
+    plt.text(0.05, 0.96, labelst[2], fontsize=fontsizest, color=colorst, va='center',transform=ax.transAxes)
     ax.tick_params(axis='both', which='major', labelsize=20)
     ax.set_ylabel('').set_visible(False)
     plt.setp( ax.get_yticklabels(), visible=False)
@@ -294,7 +294,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',basefignam
     ax2 = fig.add_axes([dx1+pro1[2]*dx+dx, dy1+pro2[2]*dy, dx*0.05, dy]) 
     ax2.tick_params(axis='both', which='major', labelsize=18)
     cbar=plt.colorbar(sc, cax=ax2, orientation="vertical")#,ticks=[0.02,0.06,0.10,0.20])
-    cbar.set_label(r'$'+lab+'$',fontsize=20)
+    cbar.set_label(r'$'+lab+'$',fontsize=fontsize)
 
     plt.savefig(fig_path+basefigname.replace('NAME',name)+'.pdf')
     plt.show()
