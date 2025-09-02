@@ -165,6 +165,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
         if verbose:
             pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
+    h2=fits.ImageHDU(cube1)
+    h3=fits.ImageHDU(cube2)
     h=h1.header
     keys=list(hdr0.keys())
     for i in range(0, len(keys)):
@@ -174,7 +176,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                 h.comments[keys[i]]=hdr0.comments[keys[i]]
         except:
             continue
-    hlist=fits.HDUList([h1])
+    hlist=fits.HDUList([h1,h2,h3])
     hlist.update_extend()
     out_fit=dir_cube_m+outf1+'.fits'
     hlist.writeto(out_fit, overwrite=True)
