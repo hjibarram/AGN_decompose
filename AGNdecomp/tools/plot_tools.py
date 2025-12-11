@@ -16,6 +16,7 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
             print('No module MapLine installed. Please install it to use this function with pip install mapline')
             stl=False
     # Plot the original map, model AGN, model HST, residuals and corner plot
+    #Elian estuvo aqui :D
     nameO='Original_NAME'.replace('NAME',name)
     nameM='Model_NAME'.replace('NAME',name)
     nameR1='Residual1_NAME'.replace('NAME',name)
