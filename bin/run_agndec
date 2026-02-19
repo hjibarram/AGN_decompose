@@ -103,6 +103,10 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         ofsval=data['config'][0]['ofsval']
     except:
         ofsval=-1 
+    try:
+        get_modelhost=data['config'][0]['get_modelhost']
+    except:
+        get_modelhost=False    
     if psfmod:   
         try:
             psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
@@ -150,7 +154,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=local,ncpu=ncpus,logP=logp,
              wavew1=wavew1,wavew2=wavew2,sp=sampling,str_p=str_p,psamp=psamp,mod_ind=mod_ind,mod_ind0=mod_ind0,
              Usermods=Usermods,prior_config=prior_config,prior_pathconf=prior_pathconf,stl=stl,smoth=smoth,sigm=sig,
-             ofsval=ofsval,psfmod=psfmod,psfmodData=psfmodData)
+             ofsval=ofsval,psfmod=psfmod,psfmodData=psfmodData,get_modelhost=get_modelhost)
     else:
         psamp=sampling
         prof_ana(cube_data,cube_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,local=False,ncpu=ncpus,
@@ -304,7 +308,11 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
     try:
         ofsval=data['configmap'][0]['ofsval']
     except:
-        ofsval=-1             
+        ofsval=-1
+    try:
+        get_modelhost=data['config'][0]['get_modelhost']
+    except:
+        get_modelhost=False                 
     #prior_config='priors_prop.yml'      
     prior_pathconf=configs_path 
     Usermods=[ext_name,ext_path,ext_file]
@@ -330,7 +338,8 @@ def runmap(config_file,name,path,verbose,ncpus,nameb,path_out,head_dat,head_err,
     map_dataE[np.where(map_dataE == 1)]=np.nan
     map_ana(map_data,map_dataE,hdr0,dir_o=dir_out,name=name,verbose=verbose,ncpu=ncpus,
          mod_ind=mod_ind,mod_ind0=mod_ind0,Usermods=Usermods,prior_config=prior_config,
-         prior_pathconf=prior_pathconf,logP=logp,stl=stl,smoth=smoth,sigm=sig,ofsval=ofsval)
+         prior_pathconf=prior_pathconf,logP=logp,stl=stl,get_modelhost=get_modelhost,
+         smoth=smoth,sigm=sig,ofsval=ofsval)
 
 if __name__ == "__main__":
     cli()

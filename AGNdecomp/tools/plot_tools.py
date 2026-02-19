@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import AGNdecomp.tools.tools as tol
 
-def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True,sig=1.8,ofsval=-1):
+def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',savefig=False,Labelvalues=[],logP=True,stl=False,smoth=True,sig=1.8,ofsval=-1,get_modelhost=False):
     if stl:
         try:
             import MapLines.tools.tools as mptol
@@ -76,7 +76,8 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
     if stl:
         mptol.get_map_to_stl(inMap-modelAGN, nameid=nameR1, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-        mptol.rescale_mapmodel(inMap-modelAGN, nameR1, path_out=path_out, modelbasename='host_NAME', sigmat=0.2, verbose=False)
+        if get_modelhost:
+            mptol.rescale_mapmodel(inMap-modelAGN, nameR1, path_out=path_out, modelbasename='host_NAME', sigmat=0.2, verbose=False)
 
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
