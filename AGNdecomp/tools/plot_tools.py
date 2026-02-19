@@ -43,7 +43,7 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
             maxval=np.nanmax(inMap)
         minval=-0.1#1.7
         mptol.get_map_to_stl(inMap, nameid=nameO, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-
+        
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
         ict=plt.imshow(np.log10(modelAGN),cmap=cm,alpha=0.6) 
@@ -76,7 +76,8 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
         plt.show()
     if stl:
         mptol.get_map_to_stl(inMap-modelAGN, nameid=nameR1, path_out=path_out,sig=sig,smoth=smoth, pval=27, mval=0, border=True,logP=logP,ofsval=ofsval,maxval=maxval,minval=minval)    
-            
+        mptol.rescale_mapmodel(inMap-modelAGN, nameR1, path_out=path_out, modelbasename='host_NAME', sigmat=0.2, verbose=False)
+
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
         ict=plt.imshow(np.log10(inMap-modelAGN-modelHST),cmap=cm) 
