@@ -185,7 +185,7 @@ This guide explains how to create and use custom external functions in the `AGNd
 
 #### 🧩 Purpose of External Functions
 
-External functions allow users to define their own models for point spread functions (PSF) or galaxy light profiles. These models can be used in place of or in addition to built-in profiles, providing flexibility for special cases or new scientific requirements.
+External functions allow users to define their own models for point spread functions (PSF) or galaxy light profiles. These models can be used in place of or in addition to built-in profiles, providing flexibility for special cases or new scientific requirements. Note, NEVER place external modules on sshfs external mount disks when using multiprocessing; run from local paths.
 
 ---
 
