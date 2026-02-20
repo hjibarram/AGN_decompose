@@ -539,4 +539,4 @@ def get_skys_strings(pars_max,wcs):
         sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
         val1=sky1.to_string('hmsdms')
     except:
-        val1='None , None'   
+        val1=str('None , None') 
