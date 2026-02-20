@@ -78,8 +78,11 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     y_t=np.arange(nx)-min_in[0]
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T
-    valsI['xo']=valsI['xo']-min_in[1]
-    valsI['yo']=valsI['yo']-min_in[0]
+    try:
+        valsI['xo']=valsI['xo']-min_in[1]
+        valsI['yo']=valsI['yo']-min_in[0]
+    except:
+        pass
     #print("Input values: ",valsI)
     data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods, datapsf)
     nwalkers=240
@@ -119,6 +122,9 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
                 spec_agn=model(pars_max, x_t=x_t, y_t=y_t)
             spec_hst=spec_agn*0
         tolpl.plot_models_maps(pf_map,spec_agn,spec_hst,samples,name=name,path_out=path_out,savefig=savefig,Labelvalues=Labelvalues,logP=logP,stl=stl,smoth=smoth,sig=sigm,ofsval=ofsval,get_modelhost=get_modelhost)
+    try:
     pars_max['xo']=pars_max['xo']+min_in[1]
     pars_max['yo']=pars_max['yo']+min_in[0]
+    except:
+        pass
     return pars_max,psf,ft_num,ft_fit
