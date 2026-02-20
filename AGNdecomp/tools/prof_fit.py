@@ -83,6 +83,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
                 for val in Namevalues0:
                     linev=linev+' '+val+'='+str(pars_max[val])
                 print(linet+linev)
+            print(val1)    
             linet=str(wave_1)+' , '+str(FtF)+' , '+str(Ft)+' , '+val1.replace('s -','s , -').replace('s +','s , +')+' , '+str(psf1*dpix)
             linev=''
             for val in Namevalues0:
