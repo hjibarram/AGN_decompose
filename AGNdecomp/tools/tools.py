@@ -52,7 +52,7 @@ def read_cvsfile(name,path='',hid='wave'):
     f.close()
     return dic
 
-def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,dyo=0,dxo=0):
+def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,Infvalues,Supvalues,wave_1,str_p=False,dyo=0,dxo=0):
     """
     Defines the initial values for the parameters.
     """
@@ -64,7 +64,8 @@ def define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=False,d
             valsI[Namevalues0[i]]=val_t
             for j in range(0, len(Namevalues)):
                 if Namevalues0[i] == Namevalues[j]:
-                    Inpvalues[j]= val_t
+                    if val_t > Infvalues[j] and val_t < Supvalues[j]:
+                        Inpvalues[j]= val_t
         else:
             valsI[Namevalues0[i]]=Inpvalues[i]
     valsI['dxo']=dxo

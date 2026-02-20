@@ -14,6 +14,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
     nz,nx,ny=cube.shape
     p_vals=[]
     if str_p:
+        # Try to read the previusly fitted values for the parameters in the prior output file, if not possible use the default values in the priors configuration
         try:
             Namevalues0=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind0,onlynames=True)
             for i in range(0, len(Namevalues0)):
@@ -74,7 +75,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
                 map1=cube[i,:,:]
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]  
-            valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)    
+            valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,Infvalues,Supvalues,wave_1,str_p=str_p)    
             pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
             val1=tol.get_skys_strings(pars_max,wcs)
             if verbose:
@@ -94,7 +95,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
         map1=np.nanmean(cube[ntw,:,:],axis=0)
         map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
         wave_1=np.nanmean(wave_f[ntw])
-        valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)
+        valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,Infvalues,Supvalues,wave_1,str_p=str_p)
         pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
         val1=tol.get_skys_strings(pars_max,wcs)
         linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
