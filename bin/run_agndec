@@ -44,7 +44,7 @@ def cli():
 @click.option('-at', '--sig', type=float, default=1.8 ,help='optional, define the smothing kernel for the STL ouput otputs for the analysis, requires MapLine module')
 @click.option('-at', '--psfmod', is_flag=True, default=False, help='optional, key to activate an external PSF model')
 @click.option('-mt', '--psfmodpath', type=str, default='', help='optional, path to the PSF model file')
-@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file')
+@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file without in the basename of "NAME.fits.gz", it could be a list of models or a single one')
 
 def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,psamp,path_out,head_dat,head_err,mod_ind,mod_ind0,logp,ext_name,ext_path,ext_file,wavew1,wavew2,prior_config,configs_path,stl,smoth,sig,psfmod,psfmodpath,psfmodname):
     data=tol.read_config_file(configs_path+config_file)
@@ -98,7 +98,8 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             psfmodpath=data['config'][0]['psfmodpath']
             psfmodname=data['config'][0]['psfmodname']
         except:
-            pass       
+            pass
+
     try:
         ofsval=data['config'][0]['ofsval']
     except:
@@ -111,6 +112,14 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         try:
             psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
         except:
+            try:
+                psfmodData=[]
+                for modelname in psfmodname:
+                    psfmodData.append([fits.getdata(psfmodpath+modelname+'.fits.gz', 0, header=False)])
+            except:
+                print('Warning, PSF model file not found, discarding the PSF model decomposition')
+                psfmodData=None
+                psfmod=False
             print('Warning, PSF model file not found, discarding the PSF model decomposition')
             psfmodData=None
             psfmod=False
@@ -189,7 +198,7 @@ cli.add_command(run)
 @click.option('-w', '--configs_path', type=str, default='', help='optional, path to the configuration files')
 @click.option('-at', '--psfmod', is_flag=True, default=False, help='optional, key to activate an external PSF model')
 @click.option('-mt', '--psfmodpath', type=str, default='', help='optional, path to the PSF model file')
-@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file')
+@click.option('-pt', '--psfmodname', type=str, default='PSFmod', help='optional, name of the PSF model file without in the basename of "NAME.fits.gz", it could be a list of models or a single one')
 def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_err,ext_name,ext_path,ext_file,prior_config,configs_path,psfmod,psfmodpath,psfmodname):
     data=tol.read_config_file(config_file)
     if data:
@@ -222,6 +231,14 @@ def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_e
         try:
             psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
         except:
+            try:
+                psfmodData=[]
+                for modelname in psfmodname:
+                    psfmodData.append([fits.getdata(psfmodpath+modelname+'.fits.gz', 0, header=False)])
+            except:
+                print('Warning, PSF model file not found, discarding the PSF model decomposition')
+                psfmodData=None
+                psfmod=False
             print('Warning, PSF model file not found, discarding the PSF model decomposition')
             psfmodData=None
             psfmod=False
