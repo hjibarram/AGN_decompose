@@ -112,18 +112,15 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         try:
             psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
         except:
-            if True:
+            try:
                 psfmodData=[]
                 for modelname in psfmodname:
-                    print(modelname)
+                    print('Info: Loading model name:',modelname)
                     psfmodData.append([fits.getdata(psfmodpath+modelname+'.fits.gz', 0, header=False)])
-            #except:
-            #    print('Warning, PSF model file not found, discarding the PSF model decomposition')
-            #    psfmodData=None
-            #    psfmod=False
-            print('Warning, PSF model file not found, discarding the PSF model decomposition')
-            psfmodData=None
-            psfmod=False
+            except:
+                print('Warning, PSF model file not found, discarding the PSF model decomposition')
+                psfmodData=None
+                psfmod=False
     else:
         psfmodData=None
     prior_pathconf=configs_path    
