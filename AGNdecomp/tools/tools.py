@@ -10,6 +10,7 @@ from astropy.coordinates import SkyCoord
 from astropy.coordinates import ICRS, Galactic, FK4, FK5
 from astropy import units as u
 from astropy.wcs.utils import skycoord_to_pixel
+from astropy.wcs.utils import pixel_to_skycoord
 from astropy.wcs import WCS
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -532,3 +533,10 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
         single_T=conv(single_T,ke=sig)
     
     return wave_f,single_T,single_ET
+
+def get_skys_strings(pars_max,wcs):
+    try:
+        sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
+        val1=sky1.to_string('hmsdms')
+    except:
+        val1='None , None'   

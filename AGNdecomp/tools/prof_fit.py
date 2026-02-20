@@ -76,8 +76,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
                 wave_1=wave_f[i]  
             valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)    
             pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
-            sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
-            val1=sky1.to_string('hmsdms')
+            val1=tol.get_skys_strings(pars_max,wcs)
             if verbose:
                 linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
                 linev=''
@@ -97,8 +96,7 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
         wave_1=np.nanmean(wave_f[ntw])
         valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,wave_1,str_p=str_p)
         pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
-        sky1=pixel_to_skycoord(pars_max['xo'],pars_max['yo'],wcs)
-        val1=sky1.to_string('hmsdms')
+        val1=tol.get_skys_strings(pars_max,wcs)
         linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
         linev=''
         for val in Namevalues0:
