@@ -130,7 +130,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
     #try:
-    if true:
+    if True:
         model=get_extern_function(Usermods=Usermods,verbose=verbose)
         extern=True
     #except:
