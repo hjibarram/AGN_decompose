@@ -150,9 +150,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                 valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
             else:
                 if psfmod:
-                    print('A',pars)
                     valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=psfmodData)
-                    print(valt1)
                 else:
                     try:
                         valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
@@ -162,6 +160,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                 for j in range(0, ny):
                     if cube0[k,i,j] != 0:    
                         cube_mod[k,i,j]=valt1[i,j]
+                        print(valt1[i,j], cube0[k,i,j])
         except:
             pass
         if verbose:
