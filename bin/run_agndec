@@ -237,9 +237,9 @@ def model(config_file,name,verbose,path,nameb,path_out,pathc_out,head_dat,head_e
                 print('Warning, PSF model file not found, discarding the PSF model decomposition')
                 psfmodData=None
                 psfmod=False
-            print('Warning, PSF model file not found, discarding the PSF model decomposition')
-            psfmodData=None
-            psfmod=False
+            #print('Warning, PSF model file not found, discarding the PSF model decomposition')
+            #psfmodData=None
+            #psfmod=False
     else:
         psfmodData=None         
     prior_pathconf=configs_path        
