@@ -137,6 +137,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
         #model=getattr(mod, Model_name + '_modelF')
     if verbose:
         pbar=tqdm(total=nz)
+    if psfmod:
+        modData=np.copy(psfmodData)
     x_t=np.arange(ny)
     y_t=np.arange(nx)
     x_t=np.array([x_t]*nx)
@@ -151,7 +153,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                 valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
             else:
                 if psfmod:
-                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=psfmodData)
+                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=modData)
                 else:
                     try:
                         valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
@@ -159,10 +161,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                         valt1=model(pars, x_t=x_t, y_t=y_t)
             for i in range(0, nx):
                 for j in range(0, ny):
-                    print(valt1[i,j], cube0[k,i,j])
                     if cube0[k,i,j] != 0:    
                         cube_mod[k,i,j]=valt1[i,j]
-                        print(valt1[i,j], cube0[k,i,j])
         #except:
         #    pass
         if verbose:
