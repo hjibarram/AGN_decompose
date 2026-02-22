@@ -129,11 +129,12 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     nz,nx,ny=cube0.shape
     cube_mod=np.copy(cube0)
     cube_mod[:,:,:]=0.0
-    try:
+    #try:
+    if true:
         model=get_extern_function(Usermods=Usermods,verbose=verbose)
         extern=True
-    except:
-        extern=False
+    #except:
+    #    extern=False
         #model=getattr(mod, Model_name + '_modelF')
     if verbose:
         pbar=tqdm(total=nz)
