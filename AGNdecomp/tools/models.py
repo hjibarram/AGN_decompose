@@ -221,7 +221,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     h_r.update()    
     hlist=fits.HDUList([h1,h2,h3])
     hlist.update_extend()
-    sycall('mkdir -p '+dir_cube_m)
+    tol.sycall('mkdir -p '+dir_cube_m)
     out_fit=dir_cube_m+outf3+'.fits'
     hlist.writeto(out_fit, overwrite=True)
     tol.sycall('gzip -f '+out_fit)         
