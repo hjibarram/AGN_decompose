@@ -157,7 +157,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         in2=mask[1]
         in3=mask[2]
         in4=mask[3]
-        cube_data=cube_data[:,in1:id2,in3:in4]
+        cube_data=cube_data[:,in1:in2,in3:in4]
         cube_dataE=cube_dataE[:,in1:in2,in3:in4]
         try:
             if psfmodData.ndim == 3:
