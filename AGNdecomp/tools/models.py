@@ -117,9 +117,15 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     cube_file=basename.replace('NAME',name)
     outf1='Model_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
     outf3='Residual_'+basename.replace('.fits','').replace('.gz','').replace('NAME',name+vt)
-    [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
     try:
-        [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
+        [cube0, hdr0]=fits.getdata(dir_cube+cube_file, 'FLUX', header=True)
+    except:
+        [cube0, hdr0]=fits.getdata(dir_cube+cube_file, hdri0, header=True)
+    try:
+        try:
+            [cube1, hdr1]=fits.getdata(dir_cube+cube_file, 'IVAR', header=False)
+        except:
+            [cube1, hdr1]=fits.getdata(dir_cube+cube_file, hdri1, header=True)
     except:
         [cube1, hdr1]=[cube0, hdr0]
     try:
