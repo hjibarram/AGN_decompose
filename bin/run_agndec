@@ -166,7 +166,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             if True:
                 for i in range(len(psfmodData)):
                     valt=psfmodData[i]
-                    print(valt.shape)
+                    print(valt)
                     psfmodData[i]=psfmodData[i][:,in1:in2,in3:in4]
                     print('Testing PSF model shape after masking')
             #except:
