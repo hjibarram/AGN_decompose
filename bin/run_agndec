@@ -163,12 +163,12 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             if psfmodData.ndim == 3:
                 psfmodData=psfmodData[:,in1:in2,in3:in4]
         except:
-            try:
+            if True:
                 for i in range(len(psfmodData)):
                     psfmodData[i]=psfmodData[i][:,in1:in2,in3:in4]
                     print('Testing PSF model shape after masking')
-            except:
-                pass
+            #except:
+            #    pass
     if clean:
         str_p=False
     else:
