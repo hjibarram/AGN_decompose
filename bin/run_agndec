@@ -157,20 +157,25 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         in2=mask[1]
         in3=mask[2]
         in4=mask[3]
-        cube_data=cube_data[:,in1:in2,in3:in4]
-        cube_dataE=cube_dataE[:,in1:in2,in3:in4]
+        masking=False
         try:
             if psfmodData.ndim == 3:
                 psfmodData=psfmodData[:,in1:in2,in3:in4]
+                masking=True
+
         except:
-            if True:
+            try:
                 for i in range(len(psfmodData)):
                     valt=psfmodData[i][0]
-                    print(valt.shape)
                     psfmodData[i][0]=psfmodData[i][0][in1:in2,in3:in4]
-                    print('Testing PSF model shape after masking')
-            #except:
-            #    pass
+                    masking=True
+            except:
+                print('Warrning No masking applied to the PSF model, check the mask configuration')
+                masking=False
+        if masking:
+            print('Info: Testing PSF model shape after masking')
+            cube_data=cube_data[:,in1:in2,in3:in4]
+            cube_dataE=cube_dataE[:,in1:in2,in3:in4]
     if clean:
         str_p=False
     else:
