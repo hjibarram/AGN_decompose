@@ -99,7 +99,10 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             psfmodname=data['config'][0]['psfmodname']
         except:
             pass
-
+    try:
+        mask=data['config'][0]['mask']
+    except:
+        mask=None
     try:
         ofsval=data['config'][0]['ofsval']
     except:
@@ -149,6 +152,23 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         cube_dataE[:,:,:]=1.0
         #cube_dataE=tol.get_error_cube(cube_data,sp=50,pgr_bar=True)
     #cube_dataE[np.where(cube_dataE == 1)]=np.nan
+    if mask is not None:
+        in1=mask[0]
+        in2=mask[1]
+        in3=mask[2]
+        in4=mask[3]
+        cube_data=cube_data[:,in1:ind2,in3:ind4]
+        cube_dataE=cube_dataE[:,in1:ind2,in3:ind4]
+        try:
+            if psfmodData.ndim == 3:
+                psfmodData=psfmodData[:,in1:ind2,in3:ind4]
+        except:
+            try:
+                for i in range(len(psfmodData)):
+                    psfmodData[i]=psfmodData[i][:,in1:ind2,in3:ind4]
+                    print('Testing PSF model shape after masking')
+            except:
+                pass
     if clean:
         str_p=False
     else:
