@@ -150,7 +150,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     x_t=np.array([x_t]*nx)
     y_t=np.array([y_t]*ny).T    
     for k in range(0, nz):
-        try:
+        if True: #try:
             pars={}
             for key in keys:
                 pars[key]=valsT[key][k]
@@ -168,8 +168,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                 for j in range(0, ny):
                     if cube0[k,i,j] != 0:    
                         cube_mod[k,i,j]=valt1[i,j]
-        except:
-            pass
+        #except:
+        #    pass
         if verbose:
             pbar.update(1)  
     h1=fits.PrimaryHDU(cube_mod)
