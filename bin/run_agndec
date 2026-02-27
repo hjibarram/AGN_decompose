@@ -114,18 +114,22 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if psfmod:   
         try:
             psfmodData=fits.getdata(psfmodpath+psfmodname+'.fits.gz', 0, header=False)
+            modData=np.copy(psfmodData)
         except:
             try:
                 psfmodData=[]
                 for modelname in psfmodname:
                     print('Info: Loading model name:',modelname)
                     psfmodData.append([fits.getdata(psfmodpath+modelname+'.fits.gz', 0, header=False)])
+                modData=np.copy(psfmodData)
             except:
                 print('Warning, PSF model file not found, discarding the PSF model decomposition')
                 psfmodData=None
                 psfmod=False
+                modData=None
     else:
         psfmodData=None
+        modData=None
     prior_pathconf=configs_path    
     Usermods=[ext_name,ext_path,ext_file]
     dir_cube=path
@@ -162,7 +166,6 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             if psfmodData.ndim == 3:
                 psfmodData=psfmodData[:,in1:in2,in3:in4]
                 masking=True
-
         except:
             try:
                 for i in range(len(psfmodData)):
@@ -199,7 +202,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
              prior_pathconf=prior_pathconf,psfmod=psfmod,psfmodData=psfmodData)
         get_model(dir_o=dir_out,dir_cube=dir_cube,dir_cube_m=dir_out,name=name,sig=3.0,vt='_sp0',
              hdri0=head_dat,hdri1=head_err,basename=nameb,Usermods=Usermods,prior_config=prior_config,
-             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0,psfmod=psfmod,psfmodData=psfmodData) 
+             prior_pathconf=prior_pathconf,mod_ind0=mod_ind0,psfmod=psfmod,psfmodData=modData) 
         plot_outputs(vt='_sp0',dir_cube_m=dir_out,name=name,rad=1,basename=nameb)
 
 # register full fit command
