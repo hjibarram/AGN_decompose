@@ -7,7 +7,9 @@ from AGNdecomp.tools.mcmc import evaluate_2dPSF
 import warnings
 warnings.filterwarnings("ignore")
 
-def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,sp=0,logP=True,smoth=True,sigm=1.8,ofsval=-1,stl=False,get_modelhost=False,psfmod=False,psfmodData=None):
+def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf='',Usermods=['extern','pathext','extern_function.py'],
+    wavew1=4850,wavew2=5150,mod_ind=0,mod_ind0=0,verbose=False,psamp=10,tp='',dir_o='',name='spectra',str_p=False,local=False,ncpu=10,
+    sp=0,logP=True,smoth=True,sigm=1.8,ofsval=-1,stl=False,get_modelhost=False,psfmod=False,psfmodData=None,max_oversub=None):
     Inpvalues, Infvalues, Supvalues, Namevalues, Labelvalues, Model_name=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind)
     if dir_o != '':
         tol.sycall('mkdir -p '+dir_o)
@@ -76,7 +78,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
                 map1e=cubeE[i,:,:]
                 wave_1=wave_f[i]  
             valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,Infvalues,Supvalues,wave_1,str_p=str_p)    
-            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
+            pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,
+                Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,ncpu=ncpu,valsI=valsI,logP=logP,
+                stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData,
+                max_oversub=max_oversub)
             val1=tol.get_skys_strings(pars_max,wcs)
             if verbose:
                 linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
@@ -96,7 +101,10 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
         map1e=np.nanmean(cubeE[ntw,:,:],axis=0)
         wave_1=np.nanmean(wave_f[ntw])
         valsI,Inpvalues=tol.define_initvals(p_vals,Namevalues,Namevalues0,Inpvalues,Infvalues,Supvalues,wave_1,str_p=str_p)
-        pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,logP=logP,stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData)
+        pars_max,psf1,Ft,FtF=evaluate_2dPSF(map1,map1e,name=name+spt,Usermods=Usermods,Model_name=Model_name,Labelvalues=Labelvalues,
+            Namevalues=Namevalues,Inpvalues=Inpvalues,Infvalues=Infvalues,Supvalues=Supvalues,sig=sig,plot_f=True,ncpu=ncpu,valsI=valsI,logP=logP,
+            stl=stl,get_modelhost=get_modelhost,smoth=smoth,sigm=sigm,ofsval=ofsval,path_out=dir_o,psfmod=psfmod,psfmodData=psfmodData,
+            max_oversub=max_oversub)
         val1=tol.get_skys_strings(pars_max,wcs)
         linet='wave='+str(wave_1)+' FLUX='+str(FtF)+' FLUXN='+str(Ft)+' RADEC='+str(val1)+' PSF='+str(psf1*dpix)
         linev=''
