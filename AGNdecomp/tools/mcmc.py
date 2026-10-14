@@ -52,7 +52,10 @@ def mcmc(p0,nwalkers,niter,ndim,lnprob,data,verbose=False,multi=True,tim=False,n
             print("Serial took {0:.1f} seconds".format(serial_time))
     return sampler, pos, prob, state
 
-def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,get_modelhost=False,smoth=True,sigm=1.8,ofsval=-1,ncpu=10,valsI={},psfmod=False,psfmodData=None):
+def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','',''],
+    Labelvalues=[],Namevalues=[],Inpvalues=[],Infvalues=[],Supvalues=[],path_out='',
+    savefig=True,autocent=True,logP=True,sig=2,plot_f=False,stl=False,get_modelhost=False,
+    smoth=True,sigm=1.8,ofsval=-1,ncpu=10,valsI={},psfmod=False,psfmodData=None,max_oversub=None):
     if plot_f:
         tim=True
     else:
@@ -84,7 +87,7 @@ def evaluate_2dPSF(pf_map,pf_mapE,name='test',Model_name='moffat',Usermods=['','
     except:
         pass
     #print("Input values: ",valsI)
-    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods, datapsf)
+    data = (pf_map, pf_mapE, x_t, y_t, valsI, Infvalues, Supvalues, Namevalues, Model_name, Usermods, datapsf, max_oversub)
     nwalkers=240
     niter=1024
     initial = np.array([*Inpvalues])
