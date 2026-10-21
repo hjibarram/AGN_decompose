@@ -99,8 +99,16 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             psfmodname=data['config'][0]['psfmodname']
         except:
             pass
+    maskT=False        
     try:
         mask=data['config'][0]['mask']
+        try:
+            if isinstance(mask, (float, int, np.floating, np.integer)):
+                maskT=True
+            elif isinstance(x, (list, np.ndarray)):
+                maskT=False
+            else:
+                mask=None
     except:
         mask=None
     try:
@@ -167,11 +175,20 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         cube_dataE[:,:,:]=1.0
         #cube_dataE=tol.get_error_cube(cube_data,sp=50,pgr_bar=True)
     #cube_dataE[np.where(cube_dataE == 1)]=np.nan
+    nz,nx,ny=cube_data.shape
+    if mask >= nx or mask >= ny:
+        mask=None
     if mask is not None:
-        in1=mask[0]
-        in2=mask[1]
-        in3=mask[2]
-        in4=mask[3]
+        if maskT:
+            in1=maskT
+            in2=nx-maskT
+            in3=maskT
+            in4=ny-maskT
+        else:
+            in1=mask[0]
+            in2=mask[1]
+            in3=mask[2]
+            in4=mask[3]
         masking=False
         try:
             if psfmodData.ndim == 3:
