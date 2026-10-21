@@ -154,9 +154,9 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
         [cube_data, hdr0]=fits.getdata(dir_cube+cube_file, head_dat, header=True)
     try:
         try:
-            print('IVAR used to calculate the errors')
             cube_dataIvr=fits.getdata(dir_cube+cube_file, 'IVAR', header=False)
             cube_dataE=1.0/np.sqrt(cube_dataIvr)
+            print('IVAR used to calculate the errors')
         except:
             cube_dataE=fits.getdata(dir_cube+cube_file, head_err, header=False)
     except:
