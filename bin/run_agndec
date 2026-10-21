@@ -109,6 +109,8 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
                 maskT=False
             else:
                 mask=None
+        except:
+            mask=None
     except:
         mask=None
     try:
