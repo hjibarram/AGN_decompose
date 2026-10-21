@@ -242,7 +242,7 @@ def plot_mapmodelress(fig_path='',lab='[10^{-16}erg/s/cm^2/arcsec^2]',labelst=['
         vmax=maxmin[1]
         vmin=maxmin[0]
     else:
-        vmax=np.nammax(map_val0)*1.1
+        vmax=np.nanmax(map_val0)*1.1
         vmin=0.001
 
     
