@@ -208,6 +208,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
                 masking=False
         if masking:
             print('Info: Testing PSF model shape after masking')
+            print(in1,in2,in3,in4)
             cube_data=cube_data[:,in1:in2,in3:in4]
             cube_dataE=cube_dataE[:,in1:in2,in3:in4]
     if clean:
