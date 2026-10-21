@@ -183,10 +183,10 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
             mask=None
     if mask is not None:
         if maskT:
-            in1=int(maskT)
-            in2=int(nx-maskT)
-            in3=int(maskT)
-            in4=int(ny-maskT)
+            in1=int(mask)
+            in2=int(nx-mask)
+            in3=int(mask)
+            in4=int(ny-mask)
         else:
             in1=mask[0]
             in2=mask[1]
