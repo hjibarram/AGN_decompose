@@ -182,6 +182,7 @@ def run(config_file,name,path,verbose,ncpus,nameb,test,sampling,pipeline,clean,p
     if maskT:
         if mask >= nx or mask >= ny:
             mask=None
+    print(mask,maskT)
     if mask is not None:
         if maskT:
             in1=maskT
