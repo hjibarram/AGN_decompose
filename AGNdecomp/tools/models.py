@@ -145,11 +145,17 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
         model=getattr(mod, Model_name + '_modelF')
         extern=False
         nkeysargs={}
-
+    nmod=0
     if modelsfited is None:
         nmod=0
     else:
-        nmod = len(modelsfited)
+        try:
+            keys_list=list(modelsfited.keys())
+            nmod=len(keys_list)
+            values={}
+            
+        except:
+            nmod=0
     if verbose:
         pbar=tqdm(total=nz)
     if psfmod:
