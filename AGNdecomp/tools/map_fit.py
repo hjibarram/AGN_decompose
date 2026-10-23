@@ -24,8 +24,12 @@ def map_ana(map,mapE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf=''
             dx=hdr['CD1_1']*3600.0
             dy=hdr['CD2_2']*3600.0
         except:
-            dx=hdr['CDELT1']*3600.
-            dy=hdr['CDELT2']*3600.
+            try:
+                dx=hdr['CDELT1']*3600.
+                dy=hdr['CDELT2']*3600.
+            except:
+                dx=hdr['PC1_1']*3600.
+                dy=hdr['PC2_2']*3600.
     dpix=(np.abs(dx)+np.abs(dy))/2.0
     wcs = WCS(hdr)
     wcs=wcs.celestial

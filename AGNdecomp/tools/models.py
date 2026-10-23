@@ -43,7 +43,7 @@ def get_extern_function(Usermods=['moffat','path','extern_function.py'],verbose=
             print('Error loading external function:', e)
         sys.exit()
 
-def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True, datapsf=None):
+def multi_model(theta, valsI, Namevalues, Namemodel, Usermods, x_t=0, y_t=0, host=True, datapsf=None): #, **kwargs
     pars={}
     keys=list(valsI.keys())
     for key in keys:
@@ -109,9 +109,11 @@ def gaussian_flux_psf_modelF(pars):
     psf=pars['sigma']*2.0*np.sqrt(2.0*np.log10(2.0))
     return psf, ft_fit
 
-def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_config='priors_prop.yml',mod_ind0=0,prior_pathconf='',verbose=False,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz',psfmod=False,psfmodData=None):
-    modelname=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind0,onlymodel=True)
-    psf_file='NAME_MODEL'.replace('NAME',name).replace('MODEL',modelname)
+def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_config='priors_prop.yml',mod_ind0=0,prior_pathconf='',
+    verbose=False,dir_cube_m='./',Usermods=['','',''],name='Name',sig=10,moffat=True,basename='NAME.cube.fits.gz',
+    psfmod=False,psfmodData=None, modelsfited=None, **kwargs):
+    Model_name=tol.get_priorsvalues(prior_pathconf+prior_config,verbose=verbose,mod_ind=mod_ind0,onlymodel=True)
+    psf_file='NAME_MODEL'.replace('NAME',name).replace('MODEL',Model_name)
     valsT=tol.read_cvsfile(dir_o+psf_file+vt+'.csv',hid='wave')    
     keys=list(valsT.keys())
     cube_file=basename.replace('NAME',name)
@@ -138,9 +140,16 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     try:
         model=get_extern_function(Usermods=Usermods,verbose=verbose)
         extern=True
+        nkeysargs=kwargs
     except:
+        model=getattr(mod, Model_name + '_modelF')
         extern=False
-        #model=getattr(mod, Model_name + '_modelF')
+        nkeysargs={}
+
+    if modelsfited is None:
+        nmod=0
+    else:
+        nmod = len(modelsfited)
     if verbose:
         pbar=tqdm(total=nz)
     if psfmod:
@@ -154,16 +163,24 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
             pars={}
             for key in keys:
                 pars[key]=valsT[key][k]
-            if extern == False:
-                valt1=moffat_modelF(pars, x_t=x_t, y_t=y_t, host=False)
-            else:
+
+            try:
                 if psfmod:
-                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=modData)
+                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=modData, **nkeysargs)
                 else:
-                    try:
-                        valt1=model(pars, x_t=x_t, y_t=y_t, host=False)
-                    except:
-                        valt1=model(pars, x_t=x_t, y_t=y_t)
+                    valt1=model(pars, x_t=x_t, y_t=y_t, host=False, **nkeysargs)
+            except:
+                if psfmod:
+                    valt1=model(pars, x_t=x_t, y_t=y_t, datapsf=modData, **nkeysargs)
+                    if nmod > 0:
+                        try:
+                            for ni in range(0, nmod):
+                                
+                        except:
+                            nmod=0
+                except:
+                    valt1=model(pars, x_t=x_t, y_t=y_t, **nkeysargs)
+
             for i in range(0, nx):
                 for j in range(0, ny):
                     if cube0[k,i,j] != 0:    
