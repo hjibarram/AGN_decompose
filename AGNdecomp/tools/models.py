@@ -189,11 +189,10 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                             nmod=0
                 else:
                     valt1=model(pars, x_t=x_t, y_t=y_t, **nkeysargs)
-            if nmod == 0: 
-                for i in range(0, nx):
-                    for j in range(0, ny):
-                        if cube0[k,i,j] != 0:    
-                            cube_mod[k,i,j]=valt1[i,j]
+            for i in range(0, nx):
+                for j in range(0, ny):
+                    if cube0[k,i,j] != 0:    
+                        cube_mod[k,i,j]=valt1[i,j]
         except:
             pass
         if verbose:
