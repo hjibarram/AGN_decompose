@@ -153,7 +153,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
         #try:
             keys_list=list(modelsfited.keys())
             nmod=len(keys_list)
-            cube_mods=np.zeros(nmod,nz,nx,ny)
+            cube_mods=np.zeros([nmod,nz,nx,ny])
             print(nmod)
         #except:
         #    nmod=0
