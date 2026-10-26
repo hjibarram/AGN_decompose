@@ -149,14 +149,14 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     if modelsfited is None:
         nmod=0
     else:
-        if True:
-        #try:
+        try:
             keys_list=list(modelsfited.keys())
             nmod=len(keys_list)
             cube_mods=np.zeros([nmod,nz,nx,ny])
-            print(nmod)
-        #except:
-        #    nmod=0
+            print('Generate individual models: '+str(nmod)+' data cubes models')
+        except:
+            nmod=0
+            print('Bad modelist, generate total model')
     if verbose:
         pbar=tqdm(total=nz)
     if psfmod:
@@ -233,7 +233,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                     continue
             hlist=fits.HDUList([h1,h2,h3])
             hlist.update_extend()
-            out_fit=dir_cube_m+outf1+'_NM'+str(ni)+'.fits'
+            out_fit=dir_cube_m+outf1+'_'+keys_list[ni]+'.fits'
             hlist.writeto(out_fit, overwrite=True)
             tol.sycall('gzip -f '+out_fit)        
     res=cube0-cube_mod
