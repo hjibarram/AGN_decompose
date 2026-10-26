@@ -153,7 +153,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
             keys_list=list(modelsfited.keys())
             nmod=len(keys_list)
             values={}
-            
+            cube_mods=np.zeros(nmod,nz,nx,ny)
         except:
             nmod=0
     if verbose:
@@ -169,7 +169,6 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
             pars={}
             for key in keys:
                 pars[key]=valsT[key][k]
-
             try:
                 if psfmod:
                     valt1=model(pars, x_t=x_t, y_t=y_t, host=False, datapsf=modData, **nkeysargs)
@@ -181,38 +180,62 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
                     if nmod > 0:
                         try:
                             for ni in range(0, nmod):
-                                
+                                valtT=model(pars, x_t=x_t, y_t=y_t, datapsf=modData, **nkeysargs, **modelsfited[keys_list[ni]])
+                                for i in range(0, nx):
+                                    for j in range(0, ny):
+                                        if cube0[k,i,j] != 0:    
+                                            cube_mods[ni,k,i,j]=valtT[i,j]
                         except:
                             nmod=0
-                except:
+                else:
                     valt1=model(pars, x_t=x_t, y_t=y_t, **nkeysargs)
-
-            for i in range(0, nx):
-                for j in range(0, ny):
-                    if cube0[k,i,j] != 0:    
-                        cube_mod[k,i,j]=valt1[i,j]
+            if nmod == 0: 
+                for i in range(0, nx):
+                    for j in range(0, ny):
+                        if cube0[k,i,j] != 0:    
+                            cube_mod[k,i,j]=valt1[i,j]
         except:
             pass
         if verbose:
-            pbar.update(1)  
-    h1=fits.PrimaryHDU(cube_mod)
-    h2=fits.ImageHDU(cube1)
-    h3=fits.ImageHDU(cube2)
-    h=h1.header
-    keys=list(hdr0.keys())
-    for i in range(0, len(keys)):
-        try:
-            if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
-                h[keys[i]]=hdr0[keys[i]]
-                h.comments[keys[i]]=hdr0.comments[keys[i]]
-        except:
-            continue
-    hlist=fits.HDUList([h1,h2,h3])
-    hlist.update_extend()
-    out_fit=dir_cube_m+outf1+'.fits'
-    hlist.writeto(out_fit, overwrite=True)
-    tol.sycall('gzip -f '+out_fit)
-    
+            pbar.update(1)
+    if nmod == 0:  
+        h1=fits.PrimaryHDU(cube_mod)
+        h2=fits.ImageHDU(cube1)
+        h3=fits.ImageHDU(cube2)
+        h=h1.header
+        keys=list(hdr0.keys())
+        for i in range(0, len(keys)):
+            try:
+                if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                    h[keys[i]]=hdr0[keys[i]]
+                    h.comments[keys[i]]=hdr0.comments[keys[i]]
+            except:
+                continue
+        hlist=fits.HDUList([h1,h2,h3])
+        hlist.update_extend()
+        out_fit=dir_cube_m+outf1+'.fits'
+        hlist.writeto(out_fit, overwrite=True)
+        tol.sycall('gzip -f '+out_fit)
+    else:
+        for ni in range(0, nmod):
+            cube_modsT=cube_mods[ni,:,:,:]
+            h1=fits.PrimaryHDU(cube_modsT)
+            h2=fits.ImageHDU(cube1)
+            h3=fits.ImageHDU(cube2)
+            h=h1.header
+            keys=list(hdr0.keys())
+            for i in range(0, len(keys)):
+                try:
+                    if not "COMMENT" in  keys[i] and not 'HISTORY' in keys[i]:
+                        h[keys[i]]=hdr0[keys[i]]
+                        h.comments[keys[i]]=hdr0.comments[keys[i]]
+                except:
+                    continue
+            hlist=fits.HDUList([h1,h2,h3])
+            hlist.update_extend()
+            out_fit=dir_cube_m+outf1+'_NM'+str(ni)+'.fits'
+            hlist.writeto(out_fit, overwrite=True)
+            tol.sycall('gzip -f '+out_fit)        
     res=cube0-cube_mod
     h1=fits.PrimaryHDU(res)
     h2=fits.ImageHDU(cube1)
