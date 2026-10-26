@@ -149,13 +149,14 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     if modelsfited is None:
         nmod=0
     else:
-        try:
+        if True:
+        #try:
             keys_list=list(modelsfited.keys())
             nmod=len(keys_list)
-            values={}
             cube_mods=np.zeros(nmod,nz,nx,ny)
-        except:
-            nmod=0
+            print(nmod)
+        #except:
+        #    nmod=0
     if verbose:
         pbar=tqdm(total=nz)
     if psfmod:
