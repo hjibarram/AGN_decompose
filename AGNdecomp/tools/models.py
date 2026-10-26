@@ -216,6 +216,7 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
         out_fit=dir_cube_m+outf1+'.fits'
         hlist.writeto(out_fit, overwrite=True)
         tol.sycall('gzip -f '+out_fit)
+        print('General data cube saved')
     else:
         for ni in range(0, nmod):
             cube_modsT=cube_mods[ni,:,:,:]
@@ -235,7 +236,8 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
             hlist.update_extend()
             out_fit=dir_cube_m+outf1+'_'+keys_list[ni]+'.fits'
             hlist.writeto(out_fit, overwrite=True)
-            tol.sycall('gzip -f '+out_fit)        
+            tol.sycall('gzip -f '+out_fit)
+            print(keys_list[ni]+' data cube saved')        
     res=cube0-cube_mod
     h1=fits.PrimaryHDU(res)
     h2=fits.ImageHDU(cube1)
@@ -276,4 +278,5 @@ def get_model(dir_o='./',dir_cube='./',vt='',hdri0=0,hdri1=1,hdri2=2,prior_confi
     tol.sycall('mkdir -p '+dir_cube_m)
     out_fit=dir_cube_m+outf3+'.fits'
     hlist.writeto(out_fit, overwrite=True)
-    tol.sycall('gzip -f '+out_fit)         
+    tol.sycall('gzip -f '+out_fit)   
+    print('Residual data cube saved')      
