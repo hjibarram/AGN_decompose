@@ -36,20 +36,20 @@ def prof_ana(cube,cubeE,hdr,sig=2,prior_config='priors_prop.yaml',prior_pathconf
             dy=hdr['CD2_2']*3600.0
         except:
             try:
-                dx=hdr['CDELT1']*3600.
-                dy=hdr['CDELT2']*3600.
-            except:
                 dx=hdr['PC1_1']*3600.
                 dy=hdr['PC2_2']*3600.
+            except:
+                dx=hdr['CDELT1']*3600.
+                dy=hdr['CDELT2']*3600.
     dpix=(np.abs(dx)+np.abs(dy))/2.0    
     crpix=hdr['CRPIX3']
     try:
         cdelt=hdr['CD3_3']
     except:
         try:
-            cdelt=hdr['CDELT3']
-        except:
             cdelt=hdr['PC3_3']
+        except:
+            cdelt=hdr['CDELT3']
     crval=hdr['CRVAL3']
     wave_f=crval+cdelt*(np.arange(nz)+1-crpix)
     wcs = WCS(hdr)

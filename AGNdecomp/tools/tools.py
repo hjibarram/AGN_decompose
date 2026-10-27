@@ -463,11 +463,11 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
             dy=hdr0['CD2_2']*3600.0
         except:
             try:
-                dx=hdr0['CDELT1']*3600.
-                dy=hdr0['CDELT2']*3600.
-            except:
                 dx=hdr0['PC1_1']*3600.
                 dy=hdr0['PC2_2']*3600.
+            except:
+                dx=hdr0['CDELT1']*3600.
+                dy=hdr0['CDELT2']*3600.
     pix=(np.abs(dx)+np.abs(dy))/2.0    
     try:
         [cube1, hdr1]=fits.getdata(file, 1, header=True)
@@ -525,9 +525,9 @@ def extract_spec(filename,dir_cube_m='',ra='',dec='',rad=1.5,sig=10,smoth=False,
         cdelt=hdr0["CD3_3"]
     except:
         try:
-            cdelt=hdr0['CDELT3']
-        except:
             cdelt=hdr0['PC3_3']
+        except:
+            cdelt=hdr0['CDELT3']
     crval=hdr0["CRVAL3"]
     wave_f=(crval+cdelt*(np.arange(nz)+1-crpix))
     
