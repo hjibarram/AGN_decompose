@@ -21,7 +21,8 @@ def plot_models_maps(inMap,modelAGN,modelHST,samples,name='Name',path_out='',sav
     nameM='Model_NAME'.replace('NAME',name)
     nameR1='Residual1_NAME'.replace('NAME',name)
     nameR2='Residual2_NAME'.replace('NAME',name)
-    cm=plt.cm.get_cmap('jet')
+    #cm=plt.cm.get_cmap('jet')
+    cm=plt.get_cmap('jet')
     lev=np.sqrt(np.arange(0.0,10.0,1.5)+0.008)/np.sqrt(10.008)*np.amax(inMap)
     fig, ax = plt.subplots(figsize=(6.8*1.1,5.5*1.2))
     if logP:
