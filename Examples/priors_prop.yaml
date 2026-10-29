@@ -1,6 +1,6 @@
 --- 
 # Input line config
-models:
+models: 
   - name: moffat #name of the line, Example of unconstrained line
     parameters:   #central wavelenght
       - name: At
